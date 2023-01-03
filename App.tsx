@@ -6,19 +6,16 @@ import {useColorScheme} from 'react-native';
 import { NativeBaseProvider } from "native-base";
 import CustomTheme from "./theme/index"
 import Generate from "./src/screens/Generate"
+import PracticeRoutine from './src/screens/PracticeRoutine';
 
 
 
 const App = () => {
-
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <NativeBaseProvider theme={CustomTheme}>
-      <Generate />
+      <PracticeRoutine />
     </NativeBaseProvider>
   );
 };
-
 
 export default App;
