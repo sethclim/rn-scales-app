@@ -10,18 +10,18 @@ const Generate = () => {
     const exercises       = ["Scale", "Octaves", "Arpeggio", "Broken Chords", "Solid Chords"]
 
     return (
-        <Box flex={1} padding={5}>
-            <Text marginTop={20} fontSize={30}>Generate Routine</Text>
+        <Box flex={1} padding={5} bg="nord.background">
+            <Text color="nord.primary" marginTop={20} fontSize={30}>Generate Routine</Text>
 
             <VStack marginTop={20} alignItems="center">
 
-                <Box marginTop={5} bg="primary.600" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%">
+                <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <HStack space={3} flexWrap={'wrap'}>
                     
                         <HStack>
                         {
                             naturalRoots.map( (naturalRoot, i) => { return (
-                                <Checkbox key={i} value={naturalRoot} >{naturalRoot}</Checkbox>
+                                <Checkbox key={i} value={naturalRoot} size="md" >{naturalRoot}</Checkbox>
                             )})
                         }
                         </HStack>
@@ -29,7 +29,7 @@ const Generate = () => {
                         <HStack>
                         {
                             accidentalRoots.map( (accidentalRoot, i) => { return (
-                                <Checkbox key={i} value={accidentalRoot} >{accidentalRoot}</Checkbox>
+                                <Checkbox key={i} value={accidentalRoot} size="md" >{accidentalRoot}</Checkbox>
                             )})
                         }
                         </HStack>
@@ -37,21 +37,21 @@ const Generate = () => {
                     </HStack>
                 </Box>
 
-                <Box marginTop={5} bg="primary.600" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%">
+                <Box marginTop={5}bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <HStack space={3} flexWrap={'wrap'}>
                     {
                         scaleTypes.map( (scaleType, i) => { return (
-                            <Checkbox key={i} value={scaleType} >{scaleType}</Checkbox>
+                            <Checkbox key={i} value={scaleType} size="md" >{scaleType}</Checkbox>
                         )})
                     }
                     </HStack>
                 </Box>
 
-                <Box marginTop={5} bg="primary.600" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%">
+                <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <HStack space={3} flexWrap={'wrap'}>
                     {
                         exercises.map( (exercise, i) => { return (
-                            <Checkbox key={i} value={exercise} >{exercise}</Checkbox>
+                            <Checkbox key={i} value={exercise} size="md"  >{exercise}</Checkbox>
                         )})
                     }
                     </HStack>
