@@ -11,11 +11,12 @@ const Generate = () => {
 
     return (
         <Box flex={1} padding={5} bg="nord.background">
-            <Text color="nord.primary" marginTop={20} fontSize={30}>Generate Routine</Text>
+            <Text color="nord.primary.1" marginTop={20} fontSize={30}>Generate Routine</Text>
 
             <VStack marginTop={20} alignItems="center">
 
                 <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
+                    <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text>
                     <HStack space={3} flexWrap={'wrap'}>
                     
                         <HStack>
@@ -38,6 +39,7 @@ const Generate = () => {
                 </Box>
 
                 <Box marginTop={5}bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
+                    <Text color="nord.primary.1" mt={-3} fontSize={20}>Type</Text>
                     <HStack space={3} flexWrap={'wrap'}>
                     {
                         scaleTypes.map( (scaleType, i) => { return (
@@ -48,6 +50,7 @@ const Generate = () => {
                 </Box>
 
                 <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
+                    <Text color="nord.primary.1" mt={-3} fontSize={20}>Exercise</Text>
                     <HStack space={3} flexWrap={'wrap'}>
                     {
                         exercises.map( (exercise, i) => { return (
