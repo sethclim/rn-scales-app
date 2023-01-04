@@ -1,16 +1,31 @@
-import React from "react"
+import React, { useContext } from "react"
 
 import { Text, Box, Button, Center } from "native-base"
 import { StyleSheet, TouchableOpacity } from "react-native";
+import Context from "../state/modules/routine/context";
+import { IRequestTask } from "../state/modules/routine/store/actions";
+import { REQUEST_TASK } from "../state/modules/routine/store/types";
 
 const PracticeRoutine = () =>{
+
+    const { state, dispatch } = useContext(Context);
+
+    const Next = () => {
+
+        const msg : IRequestTask  = {
+            type: REQUEST_TASK,
+            payload: []
+        }
+
+        dispatch(msg);
+    }
 
     return(
         <Box flex={1} padding={5} bg="nord.background">
             <Center flex={1}>
-                <Text fontSize={50} color="nord.primary.1">C min Oct</Text>
+                <Text fontSize={50} color="nord.primary.1">{state.currentTask}</Text>
                 <TouchableOpacity
-                    //onPress={buttonClickedHandler}
+                    onPress={Next}
                     style={styles.roundButton}>
                     <Text fontSize={50}>Next</Text>
                 </TouchableOpacity>

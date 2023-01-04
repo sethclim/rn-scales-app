@@ -5,10 +5,10 @@ export interface IGenerateRequest {
   payload: Array<any>;
 }
 
-// export interface IApiSuccess {
-//   type: types.API_SUCCESS;
-//   payload: Array<any>;
-// }
+export interface IRequestTask {
+  type: types.REQUEST_TASK;
+  payload: Array<any>;
+}
 
 // export interface IApiError {
 //   type: types.API_ERROR;
@@ -20,10 +20,10 @@ export const generateRequest = (payload: Array<any>): IGenerateRequest => ({
   type: types.GENERATE_REQUEST,
 });
 
-// export const apiSuccess = (payload: Array<any>): IApiSuccess => ({
-//   payload,
-//   type: types.API_SUCCESS,
-// });
+export const requestTask = (payload: Array<any>): IRequestTask => ({
+  payload,
+  type: types.REQUEST_TASK,
+});
 
 // export const apiError = (payload: string): IApiError => ({
 //   payload,

@@ -7,8 +7,8 @@ const reducer = (state: IState, action: TAction): IState => {
   switch (type) {
     case types.GENERATE_REQUEST:
       return {...state, loading: true, generatedRoutine: GenerateRoutine(payload)};
-    // case types.API_SUCCESS:
-    //   return {...state, loading: false, data: payload};
+    case types.REQUEST_TASK:
+      return {...state, loading: false, currentTask: GetTask(state.generatedRoutine)};
     // case types.API_ERROR:
     //   return {...state, loading: false, error: payload};
     default:
@@ -16,6 +16,16 @@ const reducer = (state: IState, action: TAction): IState => {
   }
 };
 
+function getRandomInt(max : number) {
+  return Math.floor(Math.random() * max);
+}
+
+const GetTask = (routine : Array<string>) : string => {
+   const index = getRandomInt(routine.length);
+   const result = routine.splice(index, 1)[0];
+
+   return result;
+}
 
 const GenerateRoutine = (inputOptions : Array<any>): Array<string> => {
 
