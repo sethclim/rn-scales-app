@@ -2,6 +2,7 @@ import * as types from './types';
 
 export interface IApiRequest {
   type: types.API_REQUEST;
+  payload: Array<any>;
 }
 
 export interface IApiSuccess {
@@ -14,19 +15,22 @@ export interface IApiError {
   payload: string;
 }
 
-export const apiRequest = (): IApiRequest => ({
-  type: types.API_REQUEST
+export const apiRequest = (payload: Array<any>): IApiRequest => ({
+  payload,
+  type: types.API_REQUEST,
 });
 
-export const apiSuccess = (payload: Array<any>): IApiSuccess => 
-({
+export const apiSuccess = (payload: Array<any>): IApiSuccess => ({
   payload,
-  type: types.API_SUCCESS
+  type: types.API_SUCCESS,
 });
 
 export const apiError = (payload: string): IApiError => ({
   payload,
-  type: types.API_ERROR
+  type: types.API_ERROR,
 });
 
-export type TAction = IApiRequest & IApiSuccess & IApiError;
+export type TAction = {
+  type: string;
+  payload: Array<any>;
+};
