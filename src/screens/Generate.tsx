@@ -1,6 +1,9 @@
-import React from "react"
+import React, { useContext } from "react"
 
 import { Box, HStack, VStack, Text, Checkbox, Button } from 'native-base';
+import Context from "../state/modules/routine/context";
+import { IGenerateRequest } from "../state/modules/routine/store/actions";
+import { GENERATE_REQUEST } from "../state/modules/routine/store/types";
 
 const Generate = () => {
 
@@ -14,6 +17,17 @@ const Generate = () => {
     const [selectedRoots, setSelectedRoots] = React.useState([]);    
     const [selectedTypes, setSelectedTypes] = React.useState([]);    
     const [selectedExercises, setSelectedExercises] = React.useState([]); 
+
+    const { state, dispatch } = useContext(Context);
+
+    const OnStart = () =>{
+        const msg : IGenerateRequest  = {
+            type: GENERATE_REQUEST,
+            payload: [selectedRoots, selectedTypes, selectedExercises]
+        }
+
+        dispatch(msg)
+    }
 
     return (
         <Box flex={1} padding={5} bg="nord.background">
@@ -71,7 +85,7 @@ const Generate = () => {
                 </Box>
 
                 <HStack marginTop={10} space={4} alignItems="center">
-                    <Button  size="lg" width={130}>
+                    <Button  size="lg" width={130} onPress={()=>OnStart()}>
                         Start
                     </Button>
                     <Button  size="lg" width={130}>

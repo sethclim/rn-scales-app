@@ -1,16 +1,16 @@
 import Context from './context';
 import reducer, { initialState } from './store';
-import React, { FC, useReducer, useState } from 'react';
-import { GetInitialState, IState } from './store/initialState';
-import { TAction } from './store/actions';
+import React, { FC, PropsWithChildren, useReducer, useState } from 'react';
 
-const Routine: FC<{}> = () => {
+
+const RoutineProvider: FC<PropsWithChildren> = (props) => {
     const [state, dispatch] = useReducer(reducer, initialState);
+
     return (
         <Context.Provider value={{ state, dispatch }}>
-            {/* <MyComponent /> */}
+            { props.children }
         </Context.Provider>
     );
 };
 
-export default Routine;
+export default RoutineProvider;

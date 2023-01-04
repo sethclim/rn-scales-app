@@ -1,13 +1,13 @@
 export interface IState {
   error: string;
   loading: boolean;
-  data: Array<any>;
+  generatedRoutine: Array<string>;
 }
 
 const initialState: IState = {
   error: '',
   loading: false,
-  data: [],
+  generatedRoutine: [],
 };
 
 export function GetInitialState(): IState {
