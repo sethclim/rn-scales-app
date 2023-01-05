@@ -1,10 +1,11 @@
 import React, { useContext } from "react"
 
-import { Text, Box, Button, Center } from "native-base"
+import { Text, Box, Center } from "native-base"
 import { StyleSheet, TouchableOpacity } from "react-native";
 import Context from "../state/modules/routine/context";
 import { IRequestTask } from "../state/modules/routine/store/actions";
 import { REQUEST_TASK } from "../state/modules/routine/store/types";
+import navigation from "../navigation";
 
 const PracticeRoutine = () =>{
 
@@ -18,12 +19,13 @@ const PracticeRoutine = () =>{
         }
 
         dispatch(msg);
+
     }
 
     return(
         <Box flex={1} padding={5} bg="nord.background">
             <Center flex={1}>
-                <Text fontSize={50} color="nord.primary.1">{state.currentTask}</Text>
+                <Text fontSize={50} color="nord.primary.1" textAlign="center">{state.currentTask}</Text>
                 <TouchableOpacity
                     onPress={Next}
                     style={styles.roundButton}>

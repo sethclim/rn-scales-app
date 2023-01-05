@@ -6,7 +6,7 @@ import {BottomTabNavigatorParamList} from './types';
 import Generate from '../screens/Generate';
 import PracticeRoutine from '../screens/PracticeRoutine';
 
-const BottomTab = createBottomTabNavigator();
+const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
 const BottomTabs = () => {
 

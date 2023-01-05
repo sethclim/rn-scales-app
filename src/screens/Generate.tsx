@@ -5,6 +5,11 @@ import Context from "../state/modules/routine/context";
 import { IGenerateRequest } from "../state/modules/routine/store/actions";
 import { GENERATE_REQUEST } from "../state/modules/routine/store/types";
 
+import { useNavigation } from "@react-navigation/native";
+import { BottomTabNavigatorParamList } from "../navigation/types";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+
+
 const Generate = () => {
 
     //Options
@@ -19,14 +24,16 @@ const Generate = () => {
     const [selectedExercises, setSelectedExercises] = React.useState([]); 
 
     const { state, dispatch } = useContext(Context);
+    const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
-    const OnStart = () =>{
+    const OnStart = () => {
         const msg : IGenerateRequest  = {
             type: GENERATE_REQUEST,
             payload: [selectedRoots, selectedTypes, selectedExercises]
         }
 
         dispatch(msg)
+        navigation.navigate('Practice')
     }
 
     return (
