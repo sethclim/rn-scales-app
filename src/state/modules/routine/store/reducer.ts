@@ -53,7 +53,7 @@ const GenerateRoutine = (inputOptions : Array<any>): Array<string> => {
         const type = types[t];
         const exercise = exercises[e];
 
-        const result = `${root}${type} ${exercise}`
+        const result = `${root} ${type} ${exercise}`
         results.push(result);
       }
     }

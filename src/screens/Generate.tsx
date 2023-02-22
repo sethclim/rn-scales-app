@@ -1,6 +1,6 @@
 import React, { useContext } from "react"
 
-import { Box, HStack, VStack, Text, Checkbox, Button } from 'native-base';
+import { Box, HStack, VStack, Text, Checkbox, Button, AlertDialog } from 'native-base';
 import Context from "../state/modules/routine/context";
 import { IGenerateRequest } from "../state/modules/routine/store/actions";
 import { GENERATE_REQUEST } from "../state/modules/routine/store/types";
@@ -19,12 +19,16 @@ const Generate = () => {
     const exercises       = ["Scale", "Octaves", "Arpeggio", "Broken Chords", "Solid Chords"]
 
     //State
-    const [selectedRoots, setSelectedRoots] = React.useState([]);    
+    const [selectedRoots, setSelectedRoots] = React.useState(["C", "D", "E", "F", "G", "A", "B", "C#", "Eb", "F#", "G#", "Bb"]);    
     const [selectedTypes, setSelectedTypes] = React.useState([]);    
     const [selectedExercises, setSelectedExercises] = React.useState([]); 
 
     const { state, dispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
+
+    const CheckValidRoutineConfiguration = () : boolean => {
+        return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
+    }
 
     const OnStart = () => {
         const msg : IGenerateRequest  = {
@@ -33,8 +37,18 @@ const Generate = () => {
         }
 
         dispatch(msg)
-        navigation.navigate('Practice')
+
+        if(CheckValidRoutineConfiguration())
+            navigation.navigate('Practice')
+        else
+            setIsOpen(!isOpen)
     }
+
+    const [isOpen, setIsOpen] = React.useState(false);
+
+    const onClose = () => setIsOpen(false);
+  
+    const cancelRef = React.useRef(null);
 
     return (
         <Box flex={1} padding={5} bg="nord.background">
@@ -48,7 +62,7 @@ const Generate = () => {
                             <HStack>
                             {
                                 naturalRoots.map( (naturalRoot, i) => { return (
-                                    <Checkbox key={i} value={naturalRoot} size="md" >{naturalRoot}</Checkbox>
+                                    <Checkbox key={i} value={naturalRoot} size="md">{naturalRoot}</Checkbox>
                                 )})
                             }
                             </HStack>
@@ -98,9 +112,21 @@ const Generate = () => {
                     <Button  size="lg" width={130}>
                         Save
                     </Button>
+
                 </HStack> 
 
             </VStack>
+
+            <AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
+                <AlertDialog.Content>
+                    <AlertDialog.CloseButton />
+                    <AlertDialog.Header>Invalid Routine Configuration</AlertDialog.Header>
+                    <AlertDialog.Body>
+                        Please Select at least one option from each section!
+                    </AlertDialog.Body>
+                </AlertDialog.Content>
+            </AlertDialog>
+
         </Box>
     )
 }

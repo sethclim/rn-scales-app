@@ -33,7 +33,6 @@ const CustomTheme = extendTheme({
   });
   
   
-  
   // 2. Get the type of the CustomTheme
   type CustomThemeType = typeof CustomTheme;
   
