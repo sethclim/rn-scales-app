@@ -5,6 +5,7 @@ import {BottomTabNavigatorParamList} from './types';
 //Screens
 import Generate from '../screens/Generate';
 import PracticeRoutine from '../screens/PracticeRoutine';
+import SavedRoutines from '../screens/SavedRoutines';
 
 const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
@@ -14,6 +15,7 @@ const BottomTabs = () => {
         <BottomTab.Navigator>
             <BottomTab.Screen name="Generate" component={Generate} />
             <BottomTab.Screen name="Practice" component={PracticeRoutine} />
+            <BottomTab.Screen name="SavedRoutines" component={SavedRoutines} />
         </BottomTab.Navigator>
     )
 }
