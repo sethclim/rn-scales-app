@@ -3,13 +3,15 @@ export interface IState {
   loading: boolean;
   generatedRoutine: Array<string>;
   currentTask : string;
+  saving : any;
 }
 
 const initialState: IState = {
   error: '',
   loading: false,
   generatedRoutine: [],
-  currentTask: ""
+  currentTask: "",
+  saving: null,
 };
 
 export function GetInitialState(): IState {

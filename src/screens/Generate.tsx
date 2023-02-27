@@ -2,8 +2,8 @@ import React, { useContext } from "react"
 
 import { Box, HStack, VStack, Text, Checkbox, Button, AlertDialog } from 'native-base';
 import Context from "../state/modules/routine/context";
-import { IGenerateRequest } from "../state/modules/routine/store/actions";
-import { GENERATE_REQUEST } from "../state/modules/routine/store/types";
+import { IGenerateRequest, ISaveRoutine } from "../state/modules/routine/store/actions";
+import { GENERATE_REQUEST, SAVE_ROUTINE } from "../state/modules/routine/store/types";
 
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
@@ -30,7 +30,7 @@ const Generate = () => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
     }
 
-    const OnStart = () => {
+    const StartRoutine = () => {
         const msg : IGenerateRequest  = {
             type: GENERATE_REQUEST,
             payload: [selectedRoots, selectedTypes, selectedExercises]
@@ -42,6 +42,15 @@ const Generate = () => {
             navigation.navigate('Practice')
         else
             setIsOpen(!isOpen)
+    }
+
+    const SaveRoutine = () => {
+        const saveRoutine : ISaveRoutine  = {
+            type: SAVE_ROUTINE,
+            payload: []
+        }
+
+        dispatch(saveRoutine)
     }
 
     const [isOpen, setIsOpen] = React.useState(false);
@@ -106,10 +115,10 @@ const Generate = () => {
                 </Box>
 
                 <HStack marginTop={10} space={4} alignItems="center">
-                    <Button  size="lg" width={130} onPress={()=>OnStart()}>
+                    <Button  size="lg" width={130} onPress={() => StartRoutine()}>
                         Start
                     </Button>
-                    <Button  size="lg" width={130}>
+                    <Button  size="lg" width={130} onPress={() => SaveRoutine()}>
                         Save
                     </Button>
 

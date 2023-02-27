@@ -27,19 +27,14 @@ const Row = () => {
   );
 };
 
-const data = database.collections.get('Routines');
+const data = database.collections.get('Routine');
 
-const observabeRoutine = () => data.query().observe();
+const observabeRoutine = () => data?.query().observe();
 
 const enhanceWithRoutines = withObservables([], () => ({
   routines: observabeRoutine(),
 }));
 
-// const enhance = withObservables(['search'], ({database, search}) => ({
-//   blogs: database.collections
-//     .get('blogs')
-//     .query(Q.where('name', Q.like(`%${Q.sanitizeLikeString(search)}%`))),
-// }));
 
 export default enhanceWithRoutines(SavedRoutines);
-11;
+

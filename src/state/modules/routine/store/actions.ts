@@ -10,10 +10,10 @@ export interface IRequestTask {
   payload: Array<any>;
 }
 
-// export interface IApiError {
-//   type: types.API_ERROR;
-//   payload: string;
-// }
+export interface ISaveRoutine {
+  type: types.SAVE_ROUTINE;
+  payload: Array<any>;
+}
 
 export const generateRequest = (payload: Array<any>): IGenerateRequest => ({
   payload,
@@ -25,10 +25,10 @@ export const requestTask = (payload: Array<any>): IRequestTask => ({
   type: types.REQUEST_TASK,
 });
 
-// export const apiError = (payload: string): IApiError => ({
-//   payload,
-//   type: types.API_ERROR,
-// });
+export const saveRoutine = (payload : Array<any>): ISaveRoutine => ({
+  payload,
+  type: types.SAVE_ROUTINE,
+});
 
 export type TAction = {
   type: string;

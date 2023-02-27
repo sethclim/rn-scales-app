@@ -7,9 +7,6 @@ export const AppSchema = appSchema({
       name: 'Routine',
       columns: [
         {name: 'title', type: 'string'},
-        {name: 'body', type: 'string'},
-        {name: 'blog_id', type: 'string', isIndexed: true},
-        {name: 'is_nasty', type: 'boolean'},
       ],
     }),
   ],

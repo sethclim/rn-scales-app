@@ -2,6 +2,9 @@ import {TAction} from './actions';
 import {IState} from './initialState';
 import * as types from './types';
 
+import {database} from '../../../../data/database';
+import Routine from '../../../../data/routine.model';
+
 const reducer = (state: IState, action: TAction): IState => {
   const {type, payload} = action;
   switch (type) {
@@ -9,8 +12,8 @@ const reducer = (state: IState, action: TAction): IState => {
       return {...state, loading: true, generatedRoutine: GenerateRoutine(payload)};
     case types.REQUEST_TASK:
       return {...state, loading: false, currentTask: GetTask(state.generatedRoutine)};
-    // case types.API_ERROR:
-    //   return {...state, loading: false, error: payload};
+    case types.SAVE_ROUTINE:
+      return {...state, loading: false, saving: SaveRoutine(state.generatedRoutine)};
     default:
       return state;
   }
@@ -62,4 +65,16 @@ const GenerateRoutine = (inputOptions : Array<any>): Array<string> => {
   return results;
 }
 
-export default reducer;
+const SaveRoutine = async (routine : Array<string>) : Promise<boolean> =>{
+  //Do Watermelon logic 
+  const newRoutine = await database.write(async () => {
+    await database.get<Routine>("Routine").create((post) => {
+      post.title = 'New post'
+    })
+  })
+
+  return true;
+}
+
+
+export default reducer; 
