@@ -4,6 +4,7 @@ import * as types from './types';
 
 import {database} from '../../../../data/database';
 import Routine from '../../../../data/routine.model';
+import RoutineItem from '../../../../data/routine_item.model';
 
 const reducer = (state: IState, action: TAction): IState => {
   const {type, payload} = action;
@@ -65,15 +66,31 @@ const GenerateRoutine = (inputOptions : Array<any>): Array<string> => {
   return results;
 }
 
-const SaveRoutine = async (routine : Array<string>) : Promise<boolean> =>{
+const SaveRoutine = async  (routineData : Array<string>)=>{
   //Do Watermelon logic 
   const newRoutine = await database.write(async () => {
-    await database.get<Routine>("Routine").create((post) => {
-      post.title = 'New post'
+    const routine = await database.get<Routine>("routines").create((one) => {
+      one.title = 'New post'
+      one.createdAt = "Hello"
     })
+    .catch((error) => {
+        // Handle any errors that occur
+        console.error("MYERROR " + error);
+    });
+
+    const RoutineItems = database.get<RoutineItem>('routine_items');
+
+    for(var item in routineData)
+    {
+      RoutineItems.create((routineItems) => {
+        routineItems.item = item;
+      });
+    }
+
+    return routine;
   })
 
-  return true;
+  return newRoutine;
 }
 
 
