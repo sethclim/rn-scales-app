@@ -1,6 +1,6 @@
-import React, { useContext } from "react"
+import React, { useContext, useState } from "react"
 
-import { Box, HStack, VStack, Text, Checkbox, Button, AlertDialog } from 'native-base';
+import { Box, HStack, VStack, Text, Checkbox, Button, AlertDialog, FormControl, Input, Modal } from 'native-base';
 import Context from "../state/modules/routine/context";
 import { IGenerateRequest, ISaveRoutine } from "../state/modules/routine/store/actions";
 import { GENERATE_REQUEST, SAVE_ROUTINE } from "../state/modules/routine/store/types";
@@ -26,6 +26,8 @@ const Generate = () => {
     const { state, dispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
+    const [showModal, setShowModal] = useState(false);
+
     const CheckValidRoutineConfiguration = () : boolean => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
     }
@@ -44,13 +46,14 @@ const Generate = () => {
             setIsOpen(!isOpen)
     }
 
-    const SaveRoutine = () => {
+    const SaveRoutine = (saveName : string) => {
         const saveRoutine : ISaveRoutine  = {
             type: SAVE_ROUTINE,
-            payload: []
+            payload: [selectedRoots, selectedTypes, selectedExercises, saveName]
         }
 
-        dispatch(saveRoutine)
+        dispatch(saveRoutine) 
+        setShowModal(false);
     }
 
     const [isOpen, setIsOpen] = React.useState(false);
@@ -118,7 +121,7 @@ const Generate = () => {
                     <Button  size="lg" width={130} onPress={() => StartRoutine()}>
                         Start
                     </Button>
-                    <Button  size="lg" width={130} onPress={() => SaveRoutine()}>
+                    <Button  size="lg" width={130} onPress={() => setShowModal(true)}>
                         Save
                     </Button>
 
@@ -136,7 +139,41 @@ const Generate = () => {
                 </AlertDialog.Content>
             </AlertDialog>
 
+            <SaveModal showModal={showModal} setShowModal={setShowModal} save={SaveRoutine} />
+
         </Box>
+    )
+}
+
+const SaveModal = ({showModal, setShowModal, save}) => {
+
+    const [value, setValue] = React.useState("");
+
+    return(
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal.Content maxWidth="400px">
+        <Modal.CloseButton />
+        <Modal.Header>Save Routine</Modal.Header>
+        <Modal.Body>
+            <FormControl>
+            <FormControl.Label>Routine Name</FormControl.Label>
+            <Input onChangeText={(text) => setValue(text)} />
+            </FormControl>
+        </Modal.Body>
+        <Modal.Footer>
+            <Button.Group space={2}>
+            <Button variant="ghost" colorScheme="blueGray" onPress={() => {
+            setShowModal(false);
+            }}>
+                Cancel
+            </Button>
+            <Button onPress={() => {save(value);}}>
+                Save
+            </Button>
+            </Button.Group>
+        </Modal.Footer>
+        </Modal.Content>
+    </Modal>
     )
 }
 

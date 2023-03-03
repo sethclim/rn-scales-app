@@ -14,7 +14,7 @@ const reducer = (state: IState, action: TAction): IState => {
     case types.REQUEST_TASK:
       return {...state, loading: false, currentTask: GetTask(state.generatedRoutine)};
     case types.SAVE_ROUTINE:
-      return {...state, loading: false, saving: SaveRoutine(state.generatedRoutine)};
+      return {...state, loading: false, saving: SaveRoutine(state.generatedRoutine, payload)};
     default:
       return state;
   }
@@ -66,11 +66,22 @@ const GenerateRoutine = (inputOptions : Array<any>): Array<string> => {
   return results;
 }
 
-const SaveRoutine = async  (routineData : Array<string>)=>{
+const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>)=>{
+
+  const inputOptions = payload.slice(0,3);
+  const title = payload[3];
+
+  console.log("Save Name " + title);
+  console.log("inputOptions " + inputOptions[0].length + " " + inputOptions[1].length+ " " + inputOptions[2].length);
+
+  if(routineData.length <=0)
+    GenerateRoutine(inputOptions);
+
+
   //Do Watermelon logic 
   const newRoutine = await database.write(async () => {
     const routine = await database.get<Routine>("routines").create((one) => {
-      one.title = 'New post'
+      one.title     = title;
       one.createdAt = "Hello"
     })
     .catch((error) => {

@@ -46,7 +46,6 @@ const PracticeRoutine = () =>{
                         <Text fontSize={50}>Next</Text>
                     </TouchableOpacity>
                 </>
-            
                 : 
                 <>
                     <Text fontSize={50} color="nord.primary.1" textAlign="center">Practice Complete</Text>
@@ -54,7 +53,7 @@ const PracticeRoutine = () =>{
                         Go Back
                     </Button>
                 </>
-                }
+            }
             </Center>
         </Box>
     )

@@ -5,9 +5,12 @@ import {Box, Text, Button, ScrollView} from 'native-base';
 import withObservables from '@nozbe/with-observables';
 import {database} from '../data/database';
 import Routine from '../data/routine.model';
-const rows = ['One', 'Two', 'Three'];
 
-const SavedRoutines = ({routines}) => {
+interface SavedRoutinesProps {
+  routines: any,  
+}
+
+const SavedRoutines:  FunctionComponent<SavedRoutinesProps>  = ({routines}) => {
   return (
     <Box flex={1} padding={5} bg="nord.background">
       <ScrollView w={['100%']} h="80">
