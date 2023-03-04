@@ -71,8 +71,8 @@ const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>
   const inputOptions = payload.slice(0,3);
   const title = payload[3];
 
-  console.log("Save Name " + title);
-  console.log("inputOptions " + inputOptions[0].length + " " + inputOptions[1].length+ " " + inputOptions[2].length);
+  //console.log("Save Name " + title);
+  //console.log("inputOptions " + inputOptions[0].length + " " + inputOptions[1].length+ " " + inputOptions[2].length);
 
   if(routineData.length <=0)
     GenerateRoutine(inputOptions);
@@ -82,23 +82,28 @@ const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>
   const newRoutine = await database.write(async () => {
     const routine = await database.get<Routine>("routines").create((one) => {
       one.title     = title;
-      one.createdAt = "Hello"
+      one.createdAt = new Date().getDate().toString();
     })
     .catch((error) => {
         // Handle any errors that occur
         console.error("MYERROR " + error);
-    });
+    })
 
-    const RoutineItems = database.get<RoutineItem>('routine_items');
-
-    for(var item in routineData)
+    if(routine != null)
     {
-      RoutineItems.create((routineItems) => {
-        routineItems.item = item;
-      });
+      const RoutineItems = database.get<RoutineItem>('routine_items');
+
+      for(var i = 0; i < routineData.length; i++)
+      {
+        const item = routineData[i];
+        RoutineItems.create((routineItem) => {
+          routineItem.routine.set(routine!);
+          routineItem.item = item;
+        });
+      }
     }
 
-    return routine;
+    return routine
   })
 
   return newRoutine;
@@ -106,3 +111,4 @@ const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>
 
 
 export default reducer; 
+

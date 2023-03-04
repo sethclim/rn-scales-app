@@ -6,13 +6,9 @@ import Routine from './routine.model';
 
 export default class RoutineItem extends Model {
     static table = 'routine_items';
-  
-    static associations : Associations = {
-      routines: { type: 'belongs_to', key: 'routine_id' },
-    };
-  
+
     @field('item') item: any;
   
-    @relation('routines', 'routine_id')
+    @relation('routines', 'routineid')
     routine : Routine | any;
   }

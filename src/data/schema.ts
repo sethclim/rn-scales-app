@@ -13,7 +13,7 @@ export const AppSchema = appSchema({
     tableSchema({
       name: 'routine_items',
       columns: [
-        {name: 'routineid', type: 'number'},
+        {name: 'routineid', type: 'string'},
         {name: 'item',      type: 'string'},
       ],
     }),

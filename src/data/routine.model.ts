@@ -1,14 +1,10 @@
 import {Model} from '@nozbe/watermelondb';
-import {field, children, action} from '@nozbe/watermelondb/decorators';
+import {field, children, action, reader} from '@nozbe/watermelondb/decorators';
 import { Associations } from '@nozbe/watermelondb/Model';
 import RoutineItem from './routine_item.model';
 
 export default class Routine extends Model {
   static table = 'routines';
-
-  static associations : Associations = {
-    routineitems: { type: 'has_many', foreignKey: 'routine_id' },
-  };
 
   @field('title') title: any;
   @field('createdAt') createdAt: any;
@@ -22,4 +18,12 @@ export default class Routine extends Model {
       item.item = body;
     });
   }
+
+  @reader async getRoutineItems() {
+    return await this.routineItems.fetch()
+  }
+}
+
+export interface IRoutines {
+  routines : Routine[];
 }

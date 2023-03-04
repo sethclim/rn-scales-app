@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { FunctionComponent, useContext, useState } from "react"
 
 import { Box, HStack, VStack, Text, Checkbox, Button, AlertDialog, FormControl, Input, Modal } from 'native-base';
 import Context from "../state/modules/routine/context";
@@ -23,7 +23,7 @@ const Generate = () => {
     const [selectedTypes, setSelectedTypes] = React.useState([]);    
     const [selectedExercises, setSelectedExercises] = React.useState([]); 
 
-    const { state, dispatch } = useContext(Context);
+    const { dispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const [showModal, setShowModal] = useState(false);
@@ -145,35 +145,37 @@ const Generate = () => {
     )
 }
 
-const SaveModal = ({showModal, setShowModal, save}) => {
+interface SaveModalProps {
+    showModal: any,
+    setShowModal: any,
+    save : any  
+}
+
+const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal, save}) => {
 
     const [value, setValue] = React.useState("");
 
     return(
         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-        <Modal.Content maxWidth="400px">
-        <Modal.CloseButton />
-        <Modal.Header>Save Routine</Modal.Header>
-        <Modal.Body>
-            <FormControl>
-            <FormControl.Label>Routine Name</FormControl.Label>
-            <Input onChangeText={(text) => setValue(text)} />
-            </FormControl>
-        </Modal.Body>
-        <Modal.Footer>
-            <Button.Group space={2}>
-            <Button variant="ghost" colorScheme="blueGray" onPress={() => {
-            setShowModal(false);
-            }}>
-                Cancel
-            </Button>
-            <Button onPress={() => {save(value);}}>
-                Save
-            </Button>
-            </Button.Group>
-        </Modal.Footer>
-        </Modal.Content>
-    </Modal>
+            <Modal.Content maxWidth="400px">
+                <Modal.CloseButton />
+                <Modal.Header>Save Routine</Modal.Header>
+                <Modal.Body>
+                    <FormControl>
+                        <FormControl.Label>Routine Name</FormControl.Label>
+                        <Input onChangeText={(text) => setValue(text)} />
+                    </FormControl>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button.Group space={2}>
+                        <Button variant="ghost" colorScheme="blueGray" onPress={() => {setShowModal(false);}}>
+                            Cancel
+                        </Button>
+                        <Button onPress={() => {save(value);}}>Save</Button>
+                    </Button.Group>
+                </Modal.Footer>
+            </Modal.Content>
+        </Modal>
     )
 }
 
