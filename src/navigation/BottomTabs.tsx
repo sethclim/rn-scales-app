@@ -5,7 +5,7 @@ import {BottomTabNavigatorParamList} from './types';
 //Screens
 import Generate from '../screens/Generate';
 import PracticeRoutine from '../screens/PracticeRoutine';
-import SavedRoutines from '../screens/SavedRoutines';
+import SavedRoutines from '../screens/SavedRoutines/SavedRoutines';
 
 const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 

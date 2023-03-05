@@ -6,3 +6,6 @@ export type REQUEST_TASK = typeof REQUEST_TASK;
 
 export const SAVE_ROUTINE = 'SAVE_Routine';
 export type SAVE_ROUTINE = typeof SAVE_ROUTINE;
+
+export const RESUME_ROUTINE = 'RESUME_ROUTINE';
+export type RESUME_ROUTINE = typeof RESUME_ROUTINE;

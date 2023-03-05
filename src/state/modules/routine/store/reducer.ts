@@ -15,6 +15,8 @@ const reducer = (state: IState, action: TAction): IState => {
       return {...state, loading: false, currentTask: GetTask(state.generatedRoutine)};
     case types.SAVE_ROUTINE:
       return {...state, loading: false, saving: SaveRoutine(state.generatedRoutine, payload)};
+    case types.RESUME_ROUTINE:
+      return {...state, loading: false, generatedRoutine: ResumeRoutine(payload)};
     default:
       return state;
   }
@@ -89,6 +91,7 @@ const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>
         console.error("MYERROR " + error);
     })
 
+
     if(routine != null)
     {
       const RoutineItems = database.get<RoutineItem>('routine_items');
@@ -107,6 +110,18 @@ const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>
   })
 
   return newRoutine;
+}
+
+const ResumeRoutine = (routineItems : Array<RoutineItem>) => {
+
+  const resumeRoutineArray = Array<string>();
+
+  for(var i = 0; i < routineItems.length; i++)
+  {
+    resumeRoutineArray[i] = routineItems[i].item
+  }
+
+  return resumeRoutineArray; 
 }
 
 

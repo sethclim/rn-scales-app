@@ -6,15 +6,15 @@ export const AppSchema = appSchema({
     tableSchema({
       name: 'routines',
       columns: [
-        {name: 'title',    type: 'string'},
+        {name: 'title',     type: 'string'},
         {name: 'createdAt', type: 'string'},
       ],
     }),
     tableSchema({
       name: 'routine_items',
       columns: [
-        {name: 'routineid', type: 'string'},
-        {name: 'item',      type: 'string'},
+        {name: 'item',       type: 'string'},
+        {name: 'routine_id', type: 'string'},
       ],
     }),
   ],
