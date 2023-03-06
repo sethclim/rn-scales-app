@@ -22,12 +22,4 @@ export default class Routine extends Model {
       item.item = body;
     });
   }
-
-  @reader async getRoutineItems() {
-    return await this.routineItems.fetch()
-  }
-}
-
-export interface IRoutines {
-  routines : Routine[];
 }

@@ -19,7 +19,8 @@
     "react-native": "0.70.6",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "^3.18.2",
-    "react-native-svg": "12.1.1"
+    "react-native-svg": "12.1.1",
+    "react-native-swipe-list-view": "^3.2.9"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

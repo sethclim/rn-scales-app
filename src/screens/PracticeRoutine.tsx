@@ -24,7 +24,6 @@ const PracticeRoutine = () =>{
         }
 
         dispatch(msg);
-
     }
 
     useFocusEffect(
