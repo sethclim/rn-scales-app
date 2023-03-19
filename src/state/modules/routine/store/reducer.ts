@@ -15,6 +15,8 @@ const reducer = (state: IState, action: TAction): IState => {
       return {...state, loading: false, currentTask: GetTask(state.generatedRoutine)};
     case types.SAVE_ROUTINE:
       return {...state, loading: false, saving: SaveRoutine(state.generatedRoutine, payload)};
+    case types.DELETE_ROUTINE:
+      return {...state, loading: false, deleting: DeleteRoutine(payload)};
     case types.RESUME_ROUTINE:
       return {...state, loading: false, generatedRoutine: ResumeRoutine(payload)};
     default:
@@ -124,6 +126,13 @@ const ResumeRoutine = (routineItems : Array<RoutineItem>) => {
   return resumeRoutineArray; 
 }
 
+const DeleteRoutine = async (routine : Array<Routine>) => {
+  //const id = payload[0];
+  //Do Watermelon Delete
+  await database.write(async () => {
+    await routine[0].destroyPermanently() 
+  })
+}
 
 export default reducer; 
 

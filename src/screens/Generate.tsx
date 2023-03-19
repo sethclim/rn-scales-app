@@ -78,7 +78,6 @@ const Generate = () => {
                                 )})
                             }
                             </HStack>
-                        
                             <HStack>
                             {
                                 accidentalRoots.map( (accidentalRoot, i) => { return (
@@ -86,7 +85,6 @@ const Generate = () => {
                                     )})
                             }
                             </HStack>
-                        
                         </HStack>
                     </Checkbox.Group>
                 </Box>

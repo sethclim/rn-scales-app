@@ -22,7 +22,8 @@ const CustomTheme = extendTheme({
             2: "#79A5DB"
         }, 
         background: "#ECEFF4",
-        secondaryBackground: "#E5E9F0"
+        secondaryBackground: "#E5E9F0",
+        danger: "#BF616A"
       }
   
     },

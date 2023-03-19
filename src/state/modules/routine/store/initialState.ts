@@ -4,6 +4,7 @@ export interface IState {
   generatedRoutine: Array<string>;
   currentTask : string;
   saving : any;
+  deleting : any
 }
 
 const initialState: IState = {
@@ -12,6 +13,7 @@ const initialState: IState = {
   generatedRoutine: [],
   currentTask: "",
   saving: null,
+  deleting: null,
 };
 
 export function GetInitialState(): IState {

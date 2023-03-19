@@ -1,3 +1,4 @@
+import Routine from '../../../../data/routine.model';
 import RoutineItem from '../../../../data/routine_item.model';
 import * as types from './types';
 
@@ -14,6 +15,11 @@ export interface IRequestTask {
 export interface ISaveRoutine {
   type: types.SAVE_ROUTINE;
   payload: Array<any>;
+}
+
+export interface IDeleteRoutine {
+  type: types.DELETE_ROUTINE;
+  payload: Array<Routine>;
 }
 
 export interface IResumeRoutine {
@@ -34,6 +40,11 @@ export const requestTask = (payload: Array<any>): IRequestTask => ({
 export const saveRoutine = (payload : Array<any>): ISaveRoutine => ({
   payload,
   type: types.SAVE_ROUTINE,
+});
+
+export const deleteRoutine = (payload : Array<Routine>): IDeleteRoutine => ({
+  payload,
+  type: types.DELETE_ROUTINE,
 });
 
 export const ResumeRoutine = (payload : Array<RoutineItem>): IResumeRoutine => ({

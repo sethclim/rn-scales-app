@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-import {Box, HStack, Pressable } from 'native-base';
+import {Box, HStack, Pressable, } from 'native-base';
 
 import withObservables from '@nozbe/with-observables';
 import {database} from '../../data/database';
@@ -10,8 +10,15 @@ import { SavedRoutinesProps } from './types';
 import { EnhancedSavedRoutineRow } from './SavedRoutineRow';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { StyleSheet } from 'react-native';
+import { IDeleteRoutine, IGenerateRequest } from '../../state/modules/routine/store/actions';
+import { DELETE_ROUTINE } from '../../state/modules/routine/store/types';
+import Context from '../../state/modules/routine/context';
 
 const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
+  
+  const { dispatch } = useContext(Context);
 
   function compareDatesFn(a : Routine, b : Routine) {
     if (Date.parse(a.createdAt) > Date.parse(b.createdAt) ) {
@@ -26,55 +33,64 @@ const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
     }
   };
 
-  const deleteRow = (rowMap  : any, rowKey  : any) => {
-    // closeRow(rowMap, rowKey);
-    // const newData = [...listData];
-    // const prevIndex = listData.findIndex(item => item.key === rowKey);
-    // newData.splice(prevIndex, 1);
-    // setListData(newData);
+  const deleteRow = (routine  : any, rowKey  : any) => {
+    const msg : IDeleteRoutine  = {
+      type: DELETE_ROUTINE,
+      payload: [routine]
+    }
+    dispatch(msg)
   };
 
-  const renderHiddenItem = (data : any, rowMap  : any) => <HStack flex={1} pl={2}>
-      <Pressable px={4} ml="auto" bg="dark.500" justifyContent="center" onPress={() => closeRow(rowMap, data.item.key)} _pressed={{
-      opacity: 0.5
-    }}>
-        {/* <Icon as={<Ionicons name="close" />} color="white" /> */}
-      </Pressable>
-      <Pressable px={4} bg="red.500" justifyContent="center" onPress={() => deleteRow(rowMap, data.item.key)} _pressed={{
-      opacity: 0.5
-    }}>
-        {/* <Icon as={<MaterialIcons name="delete" />} color="white" /> */}
-      </Pressable>
-    </HStack>;
-
-    
-  const onRowDidOpen = ({rowKey} : any) => {
-    console.log('This row opened', rowKey);
-  };
-
+  const RenderHiddenItem = (routine  : any, rowMap  : any) => {
+    return(
+      <HStack flex={1} pl={2} justifyContent="flex-end">
+          <Pressable bg="nord.danger" 
+                     px={4}justifyContent="center" 
+                     onPress={() => deleteRow(rowMap, routine)} 
+                     _pressed={{ opacity: 0.5 }}>
+            <MaterialIcons name="delete" color="#fff" size={25} />
+          </Pressable>
+      </HStack>
+    )
+  }
+  
   return (
-    <Box flex={1} padding={5} bg="nord.background">
+    <Box flex={1} padding={5} >
       <SwipeListView 
         data={routines} 
         renderItem={ (data, rowMap) => (
-          <EnhancedSavedRoutineRow routine={data.item}  rowKey={data.item.id}/>
+          <EnhancedSavedRoutineRow routine={data.item}  rowKey={rowMap}/>
         )} 
-        renderHiddenItem={renderHiddenItem} 
-        rightOpenValue={-130} 
+        renderHiddenItem={ (data, rowMap) => (
+          <HStack flex={1} pl={2} justifyContent="flex-end">
+            <Pressable bg="nord.danger" 
+                      px={4}justifyContent="center" 
+                      onPress={() => deleteRow(data.item, data.item.id)} 
+                      _pressed={{ opacity: 0.5 }}>
+              <MaterialIcons name="delete" color="#fff" size={25} />
+            </Pressable>
+          </HStack>
+        )} 
+        rightOpenValue={-55} 
         previewRowKey={'0'} 
         previewOpenValue={-40} 
-        previewOpenDelay={3000} 
-        onRowDidOpen={onRowDidOpen} 
+        previewOpenDelay={3000}  
+        swipeRowStyle={styles.roundButton} 
+        disableRightSwipe={true}
+        keyExtractor={(item, index) => item.id}
+        recalculateHiddenLayout={true}
+        // onRowDidOpen={() => onRowDidOpen(data.item.id)} 
         />
-
-      {/* <ScrollView w={['100%']} h="80">
-        {routines.sort(compareDatesFn).map((routine, key) => {
-          return <EnhancedSavedRoutineRow key={key} routine={routine} index={key} />;
-        })}
-      </ScrollView> */}
     </Box>
   );
 };
+
+const styles = StyleSheet.create({
+  roundButton: {
+    backgroundColor: '#77777733',
+  },
+});
+
 
 const data = database.collections.get('routines');
 
