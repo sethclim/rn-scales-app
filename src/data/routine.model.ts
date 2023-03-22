@@ -14,7 +14,7 @@ export default class Routine extends Model {
   @field('createdAt') createdAt: any;
 
   @children('routine_items')
-  routineItems: any;
+  routineItems: RoutineItem[] = [];
 
   @action async addRoutineItem(body : RoutineItem) {
     return this.collections.get<RoutineItem>('routineitems').create((item) => {

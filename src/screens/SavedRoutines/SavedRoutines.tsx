@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
-import {Box, HStack, Pressable, } from 'native-base';
+import { Box } from 'native-base';
 
 import withObservables from '@nozbe/with-observables';
 import {database} from '../../data/database';
@@ -10,15 +10,12 @@ import { SavedRoutinesProps } from './types';
 import { EnhancedSavedRoutineRow } from './SavedRoutineRow';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { StyleSheet } from 'react-native';
-import { IDeleteRoutine, IGenerateRequest } from '../../state/modules/routine/store/actions';
-import { DELETE_ROUTINE } from '../../state/modules/routine/store/types';
-import Context from '../../state/modules/routine/context';
+
+import  SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
+import { Collection } from '@nozbe/watermelondb';
 
 const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
-  
-  const { dispatch } = useContext(Context);
 
   function compareDatesFn(a : Routine, b : Routine) {
     if (Date.parse(a.createdAt) > Date.parse(b.createdAt) ) {
@@ -33,43 +30,15 @@ const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
     }
   };
 
-  const deleteRow = (routine  : any, rowKey  : any) => {
-    const msg : IDeleteRoutine  = {
-      type: DELETE_ROUTINE,
-      payload: [routine]
-    }
-    dispatch(msg)
-  };
-
-  const RenderHiddenItem = (routine  : any, rowMap  : any) => {
-    return(
-      <HStack flex={1} pl={2} justifyContent="flex-end">
-          <Pressable bg="nord.danger" 
-                     px={4}justifyContent="center" 
-                     onPress={() => deleteRow(rowMap, routine)} 
-                     _pressed={{ opacity: 0.5 }}>
-            <MaterialIcons name="delete" color="#fff" size={25} />
-          </Pressable>
-      </HStack>
-    )
-  }
-  
   return (
-    <Box flex={1} padding={5} >
-      <SwipeListView 
+    <Box flex={1} padding={5}>
+      <SwipeListView<Routine> 
         data={routines} 
         renderItem={ (data, rowMap) => (
-          <EnhancedSavedRoutineRow routine={data.item}  rowKey={rowMap}/>
+          <EnhancedSavedRoutineRow routine={data.item} routineItems={data.item.routineItems}  rowKey={rowMap}/>
         )} 
         renderHiddenItem={ (data, rowMap) => (
-          <HStack flex={1} pl={2} justifyContent="flex-end">
-            <Pressable bg="nord.danger" 
-                      px={4}justifyContent="center" 
-                      onPress={() => deleteRow(data.item, data.item.id)} 
-                      _pressed={{ opacity: 0.5 }}>
-              <MaterialIcons name="delete" color="#fff" size={25} />
-            </Pressable>
-          </HStack>
+          <SavedRoutineHiddenItem routine={data.item} routineItems={data.item.routineItems} index={0} />
         )} 
         rightOpenValue={-55} 
         previewRowKey={'0'} 
@@ -79,7 +48,6 @@ const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
         disableRightSwipe={true}
         keyExtractor={(item, index) => item.id}
         recalculateHiddenLayout={true}
-        // onRowDidOpen={() => onRowDidOpen(data.item.id)} 
         />
     </Box>
   );
@@ -91,8 +59,7 @@ const styles = StyleSheet.create({
   },
 });
 
-
-const data = database.collections.get('routines');
+const data : Collection<Routine> = database.collections.get('routines');
 
 const observabeRoutine = () => data?.query().observe();
 

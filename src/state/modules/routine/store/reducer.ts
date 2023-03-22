@@ -78,8 +78,13 @@ const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>
   //console.log("Save Name " + title);
   //console.log("inputOptions " + inputOptions[0].length + " " + inputOptions[1].length+ " " + inputOptions[2].length);
 
+  console.log("routineData.length " + routineData.length);
+  console.log("routineData.length <=0 " + (routineData.length <=0));
   if(routineData.length <=0)
-    GenerateRoutine(inputOptions);
+  {
+    routineData = GenerateRoutine(inputOptions);
+    console.log("GenerateRoutine routineData.length " + routineData.length);
+  }
 
 
   //Do Watermelon logic 
@@ -97,6 +102,7 @@ const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>
     if(routine != null)
     {
       const RoutineItems = database.get<RoutineItem>('routine_items');
+
 
       for(var i = 0; i < routineData.length; i++)
       {
@@ -118,21 +124,28 @@ const ResumeRoutine = (routineItems : Array<RoutineItem>) => {
 
   const resumeRoutineArray = Array<string>();
 
+  
   for(var i = 0; i < routineItems.length; i++)
   {
     resumeRoutineArray[i] = routineItems[i].item
   }
+  console.log("routineItems.length " + routineItems.length)
 
   return resumeRoutineArray; 
 }
 
-const DeleteRoutine = async (routine : Array<Routine>) => {
-  //const id = payload[0];
+const DeleteRoutine = async (payload : Array<Routine>) => {
   //Do Watermelon Delete
   await database.write(async () => {
-    await routine[0].destroyPermanently() 
+
+    const routine = await database.get<Routine>('routines').find(payload[0].id)
+    const items = await routine.routineItems;
+
+    const deleted = items.map(routineItem => routineItem.prepareDestroyPermanently())
+
+    await database.batch(...deleted)
+    await routine.destroyPermanently()
   })
 }
 
 export default reducer; 
-
