@@ -16,7 +16,6 @@ import { RESUME_ROUTINE } from "../../state/modules/routine/store/types";
 import { RowProps } from "./types";
 import RoutineItem from "../../data/routine_item.model";
 import Context from "../../state/modules/routine/context";
-import Routine from "../../data/routine.model";
 
 import {database} from '../../data/database';
 
@@ -24,11 +23,8 @@ const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routin
 
     const { dispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
-  
 
     const StartSavedRoutine = (routineItems : RoutineItem[]) => {
-
-        console.log("Start + routineItems " + routineItems.length)
 
         const msg : IResumeRoutine  = {
             type: RESUME_ROUTINE,
@@ -42,9 +38,9 @@ const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routin
     return (
       <Box w="100%" h={50} bg="nord.primary.1" padding={1}>
         <HStack space={3} justifyContent="flex-start" alignItems="center">
-          <Text>{routine.title}</Text>
+          <Text marginLeft={5} fontWeight="bold">{routine.title}</Text>
           <Spacer />
-          <Button onPress={() => StartSavedRoutine(routineItems)}>Start</Button>
+          <Button bg="#FFFFFF33" _text={{color:"white"}} onPress={() => StartSavedRoutine(routineItems)}>Start</Button>
         </HStack>
       </Box>
     );

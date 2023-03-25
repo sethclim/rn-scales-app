@@ -9,7 +9,6 @@ import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
-
 const Generate = () => {
 
     //Options
@@ -64,9 +63,7 @@ const Generate = () => {
 
     return (
         <Box flex={1} padding={5} bg="nord.background">
-
             <VStack marginTop={20} alignItems="center">
-
                 <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text>
                     <Checkbox.Group onChange={setSelectedRoots} value={selectedRoots}>
@@ -82,7 +79,7 @@ const Generate = () => {
                             {
                                 accidentalRoots.map( (accidentalRoot, i) => { return (
                                     <Checkbox key={i} value={accidentalRoot} size="md" >{accidentalRoot}</Checkbox>
-                                    )})
+                                )})
                             }
                             </HStack>
                         </HStack>
@@ -155,21 +152,22 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
 
     return(
         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-            <Modal.Content maxWidth="400px">
-                <Modal.CloseButton />
-                <Modal.Header>Save Routine</Modal.Header>
-                <Modal.Body>
+            <Modal.Content bg="nord.secondaryBackground" maxWidth="400px">
+                <Modal.Header bg="nord.primary.1">Save Routine</Modal.Header>
+                <Modal.Body bg="nord.secondaryBackground">
                     <FormControl>
                         <FormControl.Label>Routine Name</FormControl.Label>
-                        <Input onChangeText={(text) => setValue(text)} />
+                        <Input color="black" onChangeText={(text) => setValue(text)} />
                     </FormControl>
                 </Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer bg="nord.secondaryBackground">
                     <Button.Group space={2}>
-                        <Button variant="ghost" colorScheme="blueGray" onPress={() => {setShowModal(false);}}>
+                        <Button w={20} onPress={() => setShowModal(false)}>
                             Cancel
                         </Button>
-                        <Button onPress={() => {save(value);}}>Save</Button>
+                        <Button w={20} onPress={() => save(value)}>
+                            Save
+                        </Button>
                     </Button.Group>
                 </Modal.Footer>
             </Modal.Content>

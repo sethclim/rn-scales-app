@@ -9,8 +9,6 @@ import { IDeleteRoutine } from "../../state/modules/routine/store/actions";
 import { DELETE_ROUTINE } from "../../state/modules/routine/store/types";
 import { RowProps } from "./types";
 
-//Watermelon
-import withObservables from '@nozbe/with-observables';
 import Routine from "../../data/routine.model";
 
 const SavedRoutineHiddenItem :  FunctionComponent<RowProps>  = ({routine, index, routineItems}) => {  
@@ -28,7 +26,8 @@ const SavedRoutineHiddenItem :  FunctionComponent<RowProps>  = ({routine, index,
     return (
         <HStack flex={1} pl={2} justifyContent="flex-end">
         <Pressable bg="nord.danger" 
-                   px={4}justifyContent="center" 
+                   px={4}
+                   justifyContent="center" 
                    onPress={() => deleteRow(routine, routineItems)} 
                    _pressed={{ opacity: 0.5 }}>
           <MaterialIcons name="delete" color="#fff" size={25} />
