@@ -14,10 +14,10 @@ import { BottomTabNavigatorParamList } from "../../navigation/types";
 import { IResumeRoutine } from "../../state/modules/routine/store/actions";
 import { RESUME_ROUTINE } from "../../state/modules/routine/store/types";
 import { RowProps } from "./types";
-import RoutineItem from "../../data/routine_item.model";
+import RoutineItem from "../../data/Database/routine_item.model";
 import Context from "../../state/modules/routine/context";
 
-import {database} from '../../data/database';
+import {database} from '../../data/Database/database';
 
 const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routineItems}) => {  
 

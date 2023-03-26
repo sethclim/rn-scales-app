@@ -3,13 +3,13 @@ import React from "react";
 import { FunctionComponent, useContext } from "react";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import RoutineItem from "../../data/routine_item.model";
+import RoutineItem from "../../data/Database/routine_item.model";
 import Context from "../../state/modules/routine/context";
 import { IDeleteRoutine } from "../../state/modules/routine/store/actions";
 import { DELETE_ROUTINE } from "../../state/modules/routine/store/types";
 import { RowProps } from "./types";
 
-import Routine from "../../data/routine.model";
+import Routine from "../../data/Database/routine.model";
 
 const SavedRoutineHiddenItem :  FunctionComponent<RowProps>  = ({routine, index, routineItems}) => {  
    

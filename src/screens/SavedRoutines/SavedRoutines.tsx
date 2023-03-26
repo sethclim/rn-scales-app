@@ -3,9 +3,9 @@ import React, { useContext, useEffect } from 'react';
 import { Box } from 'native-base';
 
 import withObservables from '@nozbe/with-observables';
-import {database} from '../../data/database';
-import Routine from '../../data/routine.model';
-import { IRoutines } from '../../data/types';
+import {database} from '../../data/Database/database';
+import Routine from '../../data/Database/routine.model';
+import { IRoutines } from '../../data/Database/types';
 import { SavedRoutinesProps } from './types';
 import { EnhancedSavedRoutineRow } from './SavedRoutineRow';
 import { SwipeListView } from 'react-native-swipe-list-view';

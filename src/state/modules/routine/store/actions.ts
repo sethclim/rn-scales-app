@@ -1,5 +1,5 @@
-import Routine from '../../../../data/routine.model';
-import RoutineItem from '../../../../data/routine_item.model';
+import Routine from '../../../../data/Database/routine.model';
+import RoutineItem from '../../../../data/Database/routine_item.model';
 import * as types from './types';
 
 export interface IGenerateRequest {

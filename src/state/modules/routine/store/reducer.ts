@@ -2,9 +2,9 @@ import {TAction} from './actions';
 import {IState} from './initialState';
 import * as types from './types';
 
-import {database} from '../../../../data/database';
-import Routine from '../../../../data/routine.model';
-import RoutineItem from '../../../../data/routine_item.model';
+import {database} from '../../../../data/Database/database';
+import Routine from '../../../../data/Database/routine.model';
+import RoutineItem from '../../../../data/Database/routine_item.model';
 
 const reducer = (state: IState, action: TAction): IState => {
   const {type, payload} = action;
