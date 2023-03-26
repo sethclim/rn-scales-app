@@ -2,15 +2,15 @@
 // import RoutineItem from '../../../../data/routine_item.model';
 import * as types from './types';
 
-// export interface IGenerateRequest {
-//   type: types.GENERATE_REQUEST;
-//   payload: Array<any>;
-// }
+export interface IRecordPracticeData {
+  type: types.RECORD_PRACTICE_DATA;
+  payload: [string, number] ;
+}
 
-// export const generateRequest = (payload: Array<any>): IGenerateRequest => ({
-//   payload,
-//   type: types.GENERATE_REQUEST,
-// });
+export const recordPracticeDataRequest = (payload: [string, number]): IRecordPracticeData => ({
+  payload,
+  type: types.RECORD_PRACTICE_DATA,
+});
 
 export type TAction = {
   type: string;

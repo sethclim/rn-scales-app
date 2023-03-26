@@ -4,10 +4,10 @@ import React, { FC, PropsWithChildren, useReducer, useState } from 'react';
 
 
 const RoutineProvider: FC<PropsWithChildren> = (props) => {
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const [practiceDataState, practiceDatadispatch] = useReducer(reducer, initialState);
 
     return (
-        <Context.Provider value={{ state, dispatch }}>
+        <Context.Provider value={{ practiceDataState, practiceDatadispatch }}>
             { props.children }
         </Context.Provider>
     );

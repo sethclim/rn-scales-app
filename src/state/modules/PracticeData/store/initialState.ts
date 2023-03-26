@@ -1,14 +1,16 @@
+import PracticeData from "../../../../data/Models/PracticeData";
+
 export interface IState {
   error: string;
   loading: boolean;
-  currentSessionPracticeData: Array<string>;
+  currentSessionPracticeData: PracticeData;
   savingPracticeData : boolean
 }
 
 const initialState: IState = {
   error: '',
   loading: false,
-  currentSessionPracticeData: [],
+  currentSessionPracticeData: new PracticeData,
   savingPracticeData : false
 };
 

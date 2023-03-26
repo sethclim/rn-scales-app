@@ -4,26 +4,36 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Text, Box, Center, Button } from "native-base"
 import { StyleSheet, TouchableOpacity } from "react-native";
 import Context from "../state/modules/routine/context";
+import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { IRequestTask } from "../state/modules/routine/store/actions";
 import { REQUEST_TASK } from "../state/modules/routine/store/types";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { IRecordPracticeData } from "../state/modules/PracticeData/store/actions";
+import { RECORD_PRACTICE_DATA } from "../state/modules/PracticeData/store/types";
 
 
 const PracticeRoutine = () =>{
 
     const { state, dispatch } = useContext(Context);
+    const { practiceDatadispatch } = useContext(PracticeContext);
 
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const Next = () => {
 
-        const msg : IRequestTask  = {
+        const requestMSG : IRequestTask  = {
             type: REQUEST_TASK,
             payload: []
         }
 
-        dispatch(msg);
+        const recordMSG : IRecordPracticeData  = {
+            type: RECORD_PRACTICE_DATA,
+            payload: [state.currentTask, 1]
+        }
+
+        dispatch(requestMSG);
+        practiceDatadispatch(recordMSG);
     }
 
     useFocusEffect(
