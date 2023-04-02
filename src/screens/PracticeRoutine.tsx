@@ -9,8 +9,8 @@ import { IRequestTask } from "../state/modules/routine/store/actions";
 import { REQUEST_TASK } from "../state/modules/routine/store/types";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { IRecordPracticeData } from "../state/modules/PracticeData/store/actions";
-import { RECORD_PRACTICE_DATA } from "../state/modules/PracticeData/store/types";
+import { IRecordPracticeData, ISavePracticeData, savePracticeDataRequest } from "../state/modules/PracticeData/store/actions";
+import { RECORD_PRACTICE_DATA, SAVE_PRACTICE_DATA } from "../state/modules/PracticeData/store/types";
 
 
 const PracticeRoutine = () =>{
@@ -29,6 +29,8 @@ const PracticeRoutine = () =>{
 
         const recordMSG : IRecordPracticeData  = {
             type: RECORD_PRACTICE_DATA,
+
+            //GOTTA BE TYPE OF EXERCSICE ONLY
             payload: [state.currentTask, 1]
         }
 
@@ -39,6 +41,14 @@ const PracticeRoutine = () =>{
     useFocusEffect(
         React.useCallback(() => {
             Next();
+            return() =>{
+                const saveMSG : ISavePracticeData  = {
+                    type: SAVE_PRACTICE_DATA,
+                    payload: null
+                }
+
+                practiceDatadispatch(saveMSG);
+            }
         }, [])
     ); 
 

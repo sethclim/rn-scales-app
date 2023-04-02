@@ -4,7 +4,7 @@ export interface IState {
   error: string;
   loading: boolean;
   currentSessionPracticeData: PracticeData;
-  savingPracticeData : boolean
+  savingPracticeData : any
 }
 
 const initialState: IState = {

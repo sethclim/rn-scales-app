@@ -1,5 +1,3 @@
-// import Routine from '../../../../data/routine.model';
-// import RoutineItem from '../../../../data/routine_item.model';
 import * as types from './types';
 
 export interface IRecordPracticeData {
@@ -7,10 +5,20 @@ export interface IRecordPracticeData {
   payload: [string, number] ;
 }
 
+export interface ISavePracticeData {
+  type: types.SAVE_PRACTICE_DATA;
+  payload: null;
+}
+
 export const recordPracticeDataRequest = (payload: [string, number]): IRecordPracticeData => ({
   payload,
   type: types.RECORD_PRACTICE_DATA,
 });
+
+export const savePracticeDataRequest =(payload : null): ISavePracticeData =>({
+  payload,
+  type: types.SAVE_PRACTICE_DATA
+})
 
 export type TAction = {
   type: string;

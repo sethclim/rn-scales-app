@@ -9,7 +9,10 @@ export default class PracticeData
 
     PracticeData()
     {
-        this.Counts['Scales'] = 0;
-        this.Counts['Octaves'] = 0;
+        this.Counts['scale']       = 0;
+        this.Counts['octave']      = 0;  
+        this.Counts['arpeggio']     = 0;
+        this.Counts['brokenChord'] = 0;
+        this.Counts['solidChord']  = 0;
     }
 }
