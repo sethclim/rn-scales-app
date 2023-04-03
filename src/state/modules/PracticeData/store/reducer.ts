@@ -5,6 +5,7 @@ import * as types from './types';
 import { database } from '../../../../data/Database/database';
 import PracticeDataModel from '../../../../data/Database/practice_data.model';
 import PracticeData from '../../../../data/Models/PracticeData';
+import { ExerciseType } from '../../../../data/Models/ExerciseType';
 
 
 const reducer = (state: IState, action: TAction): IState => {
@@ -13,16 +14,22 @@ const reducer = (state: IState, action: TAction): IState => {
     case types.RECORD_PRACTICE_DATA :
       return {...state, loading: true, currentSessionPracticeData: RecordPracticeData(payload, state.currentSessionPracticeData)};
     case types.SAVE_PRACTICE_DATA :
-      return {...state, loading: true, savingPracticeData: SavePracticeData(payload)};
+      return {...state, loading: true, savingPracticeData: SavePracticeData(state.currentSessionPracticeData)};
 
     default:
       return state;
   }
 };
 
-const RecordPracticeData = (stepData : [string, number], currentPracticeData : PracticeData): PracticeData => {
+const RecordPracticeData = (stepData : ExerciseType, currentPracticeData : PracticeData): PracticeData => {
+  
+  
+  const currentCount = currentPracticeData.Counts.get(stepData)
+  console.log("currentCount " + currentPracticeData.Counts.get(stepData))
 
-  currentPracticeData.Counts[stepData[0]] = currentPracticeData.Counts[stepData[0]] + stepData[1];
+  currentPracticeData.Counts.set(stepData, (currentCount ?? 0) + 1);
+
+    console.log("stepData " + currentPracticeData.Counts.get(stepData))
 
   return currentPracticeData
 }
@@ -31,7 +38,6 @@ const SavePracticeData = async (practiceData : PracticeData) => {
   console.log("SavePracticeData ");
 
   //Save or update!!!!
-
   const newPracitceData = await database.write(async () => {
     const practice = await database.get<PracticeDataModel>('practice_data');
 
@@ -40,11 +46,11 @@ const SavePracticeData = async (practiceData : PracticeData) => {
     
     await practice.create((practiceDataModel) => {
       practiceDataModel.date         = new Date();
-      practiceDataModel.Scale        = practiceData.Counts['scale'];
-      practiceDataModel.Octave      = practiceData.Counts['octave'];
-      practiceDataModel.Arpeggio     = practiceData.Counts['arpeggio'];
-      practiceDataModel.BrokenChord = practiceData.Counts['brokenchord'];
-      practiceDataModel.SolidChord  = practiceData.Counts['solidchord'];
+      practiceDataModel.Scale        = practiceData.Counts.get('scale');
+      practiceDataModel.Octave       = practiceData.Counts.get('octave');
+      practiceDataModel.Arpeggio     = practiceData.Counts.get('arpeggio');
+      practiceDataModel.BrokenChord  = practiceData.Counts.get('broken-chord');
+      practiceDataModel.SolidChord   = practiceData.Counts.get('solid-chord');
     })
     .catch((error) => {
         // Handle any errors that occur

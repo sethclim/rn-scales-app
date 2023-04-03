@@ -1,8 +1,10 @@
+import RoutineItem from "../../../../data/Models/RoutineItem";
+
 export interface IState {
   error: string;
   loading: boolean;
-  generatedRoutine: Array<string>;
-  currentTask : string;
+  generatedRoutine: Array<RoutineItem>;
+  currentTask : RoutineItem | null;
   saving : any;
   deleting : any
 }
@@ -11,7 +13,7 @@ const initialState: IState = {
   error: '',
   loading: false,
   generatedRoutine: [],
-  currentTask: "",
+  currentTask: null,
   saving: null,
   deleting: null,
 };

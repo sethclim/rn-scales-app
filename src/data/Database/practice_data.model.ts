@@ -1,7 +1,7 @@
 import { Model } from '@nozbe/watermelondb';
 import { field } from '@nozbe/watermelondb/decorators';
 
-export default class PracticeData extends Model {
+export default class PracticeDataModel extends Model {
   static table = 'practice_data';
 
   @field('date') date: Date | undefined;

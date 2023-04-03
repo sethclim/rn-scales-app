@@ -14,7 +14,7 @@ import { BottomTabNavigatorParamList } from "../../navigation/types";
 import { IResumeRoutine } from "../../state/modules/routine/store/actions";
 import { RESUME_ROUTINE } from "../../state/modules/routine/store/types";
 import { RowProps } from "./types";
-import RoutineItem from "../../data/Database/routine_item.model";
+import RoutineItemModel from "../../data/Database/routine_item.model";
 import Context from "../../state/modules/routine/context";
 
 import {database} from '../../data/Database/database';
@@ -24,7 +24,7 @@ const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routin
     const { dispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
-    const StartSavedRoutine = (routineItems : RoutineItem[]) => {
+    const StartSavedRoutine = (routineItems : RoutineItemModel[]) => {
 
         const msg : IResumeRoutine  = {
             type: RESUME_ROUTINE,
@@ -49,6 +49,6 @@ const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routin
 const data = database.collections.get('routine_items');
 const observabeRoutineItems = () => data?.query().observe();
 
-export const EnhancedSavedRoutineRow = withObservables<RoutineItem[], any>([], () => ({
+export const EnhancedSavedRoutineRow = withObservables<RoutineItemModel[], any>([], () => ({
   routineItems: observabeRoutineItems()
 }))(SavedRoutineRow);

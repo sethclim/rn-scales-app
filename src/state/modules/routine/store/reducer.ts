@@ -3,8 +3,11 @@ import {IState} from './initialState';
 import * as types from './types';
 
 import {database} from '../../../../data/Database/database';
-import Routine from '../../../../data/Database/routine.model';
-import RoutineItem from '../../../../data/Database/routine_item.model';
+import RoutineModel from '../../../../data/Database/routine.model';
+import RoutineItemModel from '../../../../data/Database/routine_item.model';
+import RoutineItem from '../../../../data/Models/RoutineItem';
+import { ExerciseType } from '../../../../data/Models/ExerciseType';
+import { Exercises } from '../../../../screens/Generate';
 
 const reducer = (state: IState, action: TAction): IState => {
   const {type, payload} = action;
@@ -23,25 +26,26 @@ const reducer = (state: IState, action: TAction): IState => {
       return state;
   }
 };
-
+           
 function getRandomInt(max : number) {
   return Math.floor(Math.random() * max);
 }
 
-const GetTask = (routine : Array<string>) : string => {
+const GetTask = (routine : Array<RoutineItem>) : RoutineItem => {
    const index = getRandomInt(routine.length);
    const result = routine.splice(index, 1)[0];
 
    return result;
 }
 
-const GenerateRoutine = (inputOptions : Array<any>): Array<string> => {
+const GenerateRoutine = (inputOptions : Array<any>): Array<RoutineItem> => {
 
   const roots     = inputOptions[0];
   const types     = inputOptions[1];
   const exercises = inputOptions[2];
+  //const exType    = inputOptions[3];
 
-  const results: Array<string> = [];
+  const results: Array<RoutineItem> = [];
 
   // Inputs-------
   // C  D
@@ -59,10 +63,17 @@ const GenerateRoutine = (inputOptions : Array<any>): Array<string> => {
 
         const root = roots[r];
         const type = types[t];
-        const exercise = exercises[e];
+        const exerciseType = exercises[e] as ExerciseType;
 
-        const result = `${root} ${type} ${exercise}`
-        results.push(result);
+        var exerciseDisplay = Exercises.get(exerciseType);
+
+        const result = `${root} ${type} ${exerciseDisplay}`
+
+        var routineItem : RoutineItem = new RoutineItem
+        routineItem.displayItem = result
+        routineItem.exerciseType = exerciseType
+
+        results.push(routineItem);
       }
     }
   }
@@ -70,7 +81,7 @@ const GenerateRoutine = (inputOptions : Array<any>): Array<string> => {
   return results;
 }
 
-const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>)=>{
+const SaveRoutine = async  (routineData : Array<RoutineItem>, payload : Array<string>)=>{
 
   const inputOptions = payload.slice(0,3);
   const title = payload[3];
@@ -89,7 +100,7 @@ const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>
 
   //Do Watermelon logic 
   const newRoutine = await database.write(async () => {
-    const routine = await database.get<Routine>("routines").create((one) => {
+    const routine = await database.get<RoutineModel>("routines").create((one) => {
       one.title     = title;
       one.createdAt = new Date().getDate().toString();
     })
@@ -101,15 +112,15 @@ const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>
 
     if(routine != null)
     {
-      const RoutineItems = database.get<RoutineItem>('routine_items');
-
+      const RoutineItems = database.get<RoutineItemModel>('routine_items');
 
       for(var i = 0; i < routineData.length; i++)
       {
         const item = routineData[i];
         RoutineItems.create((routineItem) => {
           routineItem.routine.set(routine!);
-          routineItem.item = item;
+          routineItem.item = item.displayItem;
+          routineItem.type = item.exerciseType;
         });
       }
     }
@@ -120,9 +131,9 @@ const SaveRoutine = async  (routineData : Array<string>, payload : Array<string>
   return newRoutine;
 }
 
-const ResumeRoutine = (routineItems : Array<RoutineItem>) => {
+const ResumeRoutine = (routineItems : Array<RoutineItemModel>) => {
 
-  const resumeRoutineArray = Array<string>();
+  const resumeRoutineArray = Array<RoutineItem>();
 
   
   for(var i = 0; i < routineItems.length; i++)
@@ -134,11 +145,11 @@ const ResumeRoutine = (routineItems : Array<RoutineItem>) => {
   return resumeRoutineArray; 
 }
 
-const DeleteRoutine = async (payload : Array<Routine>) => {
+const DeleteRoutine = async (payload : Array<RoutineModel>) => {
   //Do Watermelon Delete
   await database.write(async () => {
 
-    const routine = await database.get<Routine>('routines').find(payload[0].id)
+    const routine = await database.get<RoutineModel>('routines').find(payload[0].id)
     const items = await routine.routineItems;
 
     const deleted = items.map(routineItem => routineItem.prepareDestroyPermanently())

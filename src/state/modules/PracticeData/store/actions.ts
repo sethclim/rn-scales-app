@@ -1,8 +1,9 @@
+import { ExerciseType } from '../../../../data/Models/ExerciseType';
 import * as types from './types';
 
 export interface IRecordPracticeData {
   type: types.RECORD_PRACTICE_DATA;
-  payload: [string, number] ;
+  payload: ExerciseType;
 }
 
 export interface ISavePracticeData {
@@ -10,7 +11,7 @@ export interface ISavePracticeData {
   payload: null;
 }
 
-export const recordPracticeDataRequest = (payload: [string, number]): IRecordPracticeData => ({
+export const recordPracticeDataRequest = (payload: ExerciseType): IRecordPracticeData => ({
   payload,
   type: types.RECORD_PRACTICE_DATA,
 });

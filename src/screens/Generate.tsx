@@ -8,6 +8,15 @@ import { GENERATE_REQUEST, SAVE_ROUTINE } from "../state/modules/routine/store/t
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { ExerciseType } from "../data/Models/ExerciseType";
+
+export const Exercises = new Map<ExerciseType, string>([
+    ["scale", "Scale"],
+    ["octave", "Octaves"],
+    ["arpeggio", "Arpeggio"],
+    ["solid-chord", "Solid Chords"],
+    ["broken-chord", "Broken Chords"]
+]);
 
 const Generate = () => {
 
@@ -15,12 +24,13 @@ const Generate = () => {
     const naturalRoots    = ["C", "D", "E", "F", "G", "A", "B"]
     const accidentalRoots = ["C#", "Eb", "F#", "G#", "Bb"]
     const scaleTypes      = ["Major", "Minor", "Augmented", "Diminished"]
-    const exercises       = ["Scale", "Octaves", "Arpeggio", "Broken Chords", "Solid Chords"]
+    const exercises2       = ["Scale", "Octaves", "Arpeggio", "Broken Chords", "Solid Chords"]
+
 
     //State
     const [selectedRoots, setSelectedRoots] = React.useState(["C", "D", "E", "F", "G", "A", "B", "C#", "Eb", "F#", "G#", "Bb"]);    
     const [selectedTypes, setSelectedTypes] = React.useState([]);    
-    const [selectedExercises, setSelectedExercises] = React.useState([]); 
+    const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
 
     const { dispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
@@ -104,9 +114,9 @@ const Generate = () => {
                     <Checkbox.Group onChange={setSelectedExercises} value={selectedExercises}>
                         <HStack space={3} flexWrap={'wrap'}>
                         {
-                            exercises.map( (exercise, i) => { return (
-                                <Checkbox key={i} value={exercise} size="md">{exercise}</Checkbox>
-                            )})
+                            [...Exercises.keys()].map((exerciseType) => {
+                                  return  <Checkbox key={exerciseType} value={exerciseType} size="md">{Exercises.get(exerciseType)}</Checkbox>
+                            })
                         }
                         </HStack>
                     </Checkbox.Group>

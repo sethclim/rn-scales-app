@@ -1,5 +1,5 @@
-import Routine from "./routine.model";
+import RoutineModel from "./routine.model";
 
 export interface IRoutines {
-    routines : Routine[];
+    routines : RoutineModel[];
 }

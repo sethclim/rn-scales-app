@@ -1,5 +1,5 @@
-import Routine from '../../../../data/Database/routine.model';
-import RoutineItem from '../../../../data/Database/routine_item.model';
+import RoutineModel from '../../../../data/Database/routine.model';
+import RoutineItemModel from '../../../../data/Database/routine_item.model';
 import * as types from './types';
 
 export interface IGenerateRequest {
@@ -19,12 +19,12 @@ export interface ISaveRoutine {
 
 export interface IDeleteRoutine {
   type: types.DELETE_ROUTINE;
-  payload: Array<Routine>;
+  payload: Array<RoutineModel>;
 }
 
 export interface IResumeRoutine {
   type: types.RESUME_ROUTINE;
-  payload: Array<RoutineItem>;
+  payload: Array<RoutineItemModel>;
 }
 
 export const generateRequest = (payload: Array<any>): IGenerateRequest => ({
@@ -42,12 +42,12 @@ export const saveRoutine = (payload : Array<any>): ISaveRoutine => ({
   type: types.SAVE_ROUTINE,
 });
 
-export const deleteRoutine = (payload : Array<Routine>): IDeleteRoutine => ({
+export const deleteRoutine = (payload : Array<RoutineModel>): IDeleteRoutine => ({
   payload,
   type: types.DELETE_ROUTINE,
 });
 
-export const ResumeRoutine = (payload : Array<RoutineItem>): IResumeRoutine => ({
+export const ResumeRoutine = (payload : Array<RoutineItemModel>): IResumeRoutine => ({
   payload,
   type: types.RESUME_ROUTINE,
 });

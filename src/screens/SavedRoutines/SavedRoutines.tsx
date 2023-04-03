@@ -4,7 +4,7 @@ import { Box } from 'native-base';
 
 import withObservables from '@nozbe/with-observables';
 import {database} from '../../data/Database/database';
-import Routine from '../../data/Database/routine.model';
+import RoutineModel from '../../data/Database/routine.model';
 import { IRoutines } from '../../data/Database/types';
 import { SavedRoutinesProps } from './types';
 import { EnhancedSavedRoutineRow } from './SavedRoutineRow';
@@ -17,7 +17,7 @@ import { Collection } from '@nozbe/watermelondb';
 
 const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
 
-  function compareDatesFn(a : Routine, b : Routine) {
+  function compareDatesFn(a : RoutineModel, b : RoutineModel) {
     if (Date.parse(a.createdAt) > Date.parse(b.createdAt) ) {
       return 1;
     }
@@ -32,7 +32,7 @@ const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
 
   return (
     <Box flex={1} padding={5}>
-      <SwipeListView<Routine> 
+      <SwipeListView<RoutineModel> 
         data={routines} 
         renderItem={ (data, rowMap) => (
           <EnhancedSavedRoutineRow routine={data.item} routineItems={data.item.routineItems}  rowKey={rowMap}/>
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const data : Collection<Routine> = database.collections.get('routines');
+const data : Collection<RoutineModel> = database.collections.get('routines');
 
 const observabeRoutine = () => data?.query().observe();
 

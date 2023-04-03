@@ -1,9 +1,9 @@
 import {Model} from '@nozbe/watermelondb';
 import {field, children, action, reader} from '@nozbe/watermelondb/decorators';
 import { Associations } from '@nozbe/watermelondb/Model';
-import RoutineItem from './routine_item.model';
+import RoutineItemModel from './routine_item.model';
 
-export default class Routine extends Model {
+export default class RoutineModel extends Model {
   static table = 'routines';
 
   static associations : Associations = {
@@ -14,10 +14,10 @@ export default class Routine extends Model {
   @field('createdAt') createdAt: any;
 
   @children('routine_items')
-  routineItems: RoutineItem[] = [];
+  routineItems: RoutineItemModel[] = [];
 
-  @action async addRoutineItem(body : RoutineItem) {
-    return this.collections.get<RoutineItem>('routineitems').create((item) => {
+  @action async addRoutineItem(body : RoutineItemModel) {
+    return this.collections.get<RoutineItemModel>('routineitems').create((item) => {
       item.routine.set(this);
       item.item = body;
     });

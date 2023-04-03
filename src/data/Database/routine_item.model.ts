@@ -3,9 +3,9 @@ import { field } from '@nozbe/watermelondb/decorators';
 import { relation } from '@nozbe/watermelondb/decorators'
 import { Associations } from '@nozbe/watermelondb/Model';
 
-import Routine from './routine.model';
+import RoutineModel from './routine.model';
 
-export default class RoutineItem extends Model {
+export default class RoutineItemModel extends Model {
   static table = 'routine_items';
 
   static associations : Associations = {
@@ -13,7 +13,8 @@ export default class RoutineItem extends Model {
   }
 
   @field('item') item: any;
+  @field('type') type: any;
 
   @relation('routines', 'routine_id')
-  routine : Routine | any;
+  routine : RoutineModel | any;
 }

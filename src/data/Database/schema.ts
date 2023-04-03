@@ -14,6 +14,7 @@ export const AppSchema = appSchema({
       name: 'routine_items',
       columns: [
         {name: 'item',       type: 'string'},
+        {name: 'type',       type: 'string'},
         {name: 'routine_id', type: 'string'},
       ],
     }),

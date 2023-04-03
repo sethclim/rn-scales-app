@@ -26,16 +26,17 @@ const PracticeRoutine = () =>{
             type: REQUEST_TASK,
             payload: []
         }
-
-        const recordMSG : IRecordPracticeData  = {
-            type: RECORD_PRACTICE_DATA,
-
-            //GOTTA BE TYPE OF EXERCSICE ONLY
-            payload: [state.currentTask, 1]
-        }
-
         dispatch(requestMSG);
-        practiceDatadispatch(recordMSG);
+
+        if(state.currentTask != null)
+        {
+            const recordMSG : IRecordPracticeData  = {
+                type: RECORD_PRACTICE_DATA,
+                payload: state.currentTask.exerciseType
+            }
+    
+            practiceDatadispatch(recordMSG);
+        }
     }
 
     useFocusEffect(
@@ -58,7 +59,7 @@ const PracticeRoutine = () =>{
             {
                 state.currentTask != null ? 
                 <>
-                    <Text fontSize={50} color="nord.primary.1" textAlign="center">{state.currentTask}</Text>
+                    <Text fontSize={50} color="nord.primary.1" textAlign="center">{state.currentTask.displayItem}</Text>
                     <TouchableOpacity
                         onPress={Next}
                         style={styles.roundButton}>
