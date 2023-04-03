@@ -1,4 +1,4 @@
-import {TAction} from './actions';
+import {TAction} from '../../../types';
 import {IState} from './initialState';
 import * as types from './types';
 

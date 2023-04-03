@@ -20,8 +20,3 @@ export const savePracticeDataRequest =(payload : null): ISavePracticeData =>({
   payload,
   type: types.SAVE_PRACTICE_DATA
 })
-
-export type TAction = {
-  type: string;
-  payload: any;
-};

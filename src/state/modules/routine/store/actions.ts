@@ -52,7 +52,7 @@ export const ResumeRoutine = (payload : Array<RoutineItemModel>): IResumeRoutine
   type: types.RESUME_ROUTINE,
 });
 
-export type TAction = {
-  type: string;
-  payload: Array<any>;
-};
+// export type TAction = {
+//   type: string;
+//   payload: Array<any>;
+// };
