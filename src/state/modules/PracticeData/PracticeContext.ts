@@ -1,5 +1,5 @@
 import { createContext, Dispatch } from 'react';
-import { TAction } from './store/actions';
+import { TAction } from '../../types/index';
 import initialState, { IState } from './store/initialState';
 
 interface IContextProps {
