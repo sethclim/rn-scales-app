@@ -1,19 +1,20 @@
-import {TAction} from '../../../types';
+import {IAction} from '../../../types';
 import {IState} from './initialState';
-import * as types from './types';
+// import * as types from './types';
 
 import { database } from '../../../../data/Database/database';
 import PracticeDataModel from '../../../../data/Database/practice_data.model';
 import PracticeData from '../../../../data/Models/PracticeData';
 import { ExerciseType } from '../../../../data/Models/ExerciseType';
+import { PracticeTypes } from './actions';
 
 
-const reducer = (state: IState, action: TAction): IState => {
+const reducer = (state: IState, action: IAction): IState => {
   const {type, payload} = action;
   switch (type) {
-    case types.RECORD_PRACTICE_DATA :
+    case PracticeTypes.RECORD_PRACTICE_DATA :
       return {...state, loading: true, currentSessionPracticeData: RecordPracticeData(payload, state.currentSessionPracticeData)};
-    case types.SAVE_PRACTICE_DATA :
+    case PracticeTypes.SAVE_PRACTICE_DATA :
       return {...state, loading: true, savingPracticeData: SavePracticeData(state.currentSessionPracticeData)};
 
     default:

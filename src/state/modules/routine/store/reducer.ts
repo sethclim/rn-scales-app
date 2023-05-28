@@ -1,6 +1,5 @@
-import {TAction} from '../../../types';
 import {IState} from './initialState';
-import * as types from './types';
+import {RoutineTypes}  from './actions';
 
 import {database} from '../../../../data/Database/database';
 import RoutineModel from '../../../../data/Database/routine.model';
@@ -8,19 +7,20 @@ import RoutineItemModel from '../../../../data/Database/routine_item.model';
 import RoutineItem from '../../../../data/Models/RoutineItem';
 import { ExerciseType } from '../../../../data/Models/ExerciseType';
 import { Exercises } from '../../../../screens/Generate';
+import { IAction } from '../../../types';
 
-const reducer = (state: IState, action: TAction): IState => {
+const reducer = (state: IState, action: IAction): IState => {
   const {type, payload} = action;
   switch (type) {
-    case types.GENERATE_REQUEST:
+    case RoutineTypes.GENERATE_REQUEST:
       return {...state, loading: true, generatedRoutine: GenerateRoutine(payload)};
-    case types.REQUEST_TASK:
+    case RoutineTypes.REQUEST_TASK:
       return {...state, loading: false, currentTask: GetTask(state.generatedRoutine)};
-    case types.SAVE_ROUTINE:
+    case RoutineTypes.SAVE_ROUTINE:
       return {...state, loading: false, saving: SaveRoutine(state.generatedRoutine, payload)};
-    case types.DELETE_ROUTINE:
+    case RoutineTypes.DELETE_ROUTINE:
       return {...state, loading: false, deleting: DeleteRoutine(payload)};
-    case types.RESUME_ROUTINE:
+    case RoutineTypes.RESUME_ROUTINE:
       return {...state, loading: false, generatedRoutine: ResumeRoutine(payload)};
     default:
       return state;
@@ -39,6 +39,8 @@ const GetTask = (routine : Array<RoutineItem>) : RoutineItem => {
 }
 
 const GenerateRoutine = (inputOptions : Array<any>): Array<RoutineItem> => {
+
+  console.log("Calling GenerateRoutine")
 
   const roots     = inputOptions[0];
   const types     = inputOptions[1];
@@ -77,7 +79,7 @@ const GenerateRoutine = (inputOptions : Array<any>): Array<RoutineItem> => {
       }
     }
   }
-
+  console.log("Calling GenerateRoutine" + results.length )
   return results;
 }
 

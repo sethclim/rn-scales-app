@@ -1,5 +1,5 @@
-export type TAction = {
-    type: string;
+export interface IAction {
+    type: number;
     payload: any;
-  };
+};
   

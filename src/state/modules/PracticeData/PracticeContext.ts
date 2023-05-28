@@ -1,10 +1,10 @@
 import { createContext, Dispatch } from 'react';
-import { TAction } from '../../types/index';
+import { IAction } from '../../types/index';
 import initialState, { IState } from './store/initialState';
 
 interface IContextProps {
   practiceDataState: IState;
-  practiceDatadispatch: Dispatch<TAction>;
+  practiceDatadispatch: Dispatch<IAction>;
 }
 
 const Context = createContext<IContextProps>({

@@ -1,22 +1,29 @@
 import { ExerciseType } from '../../../../data/Models/ExerciseType';
-import * as types from './types';
+import { IAction } from '../../../types';
+// import * as types from './types';
 
-export interface IRecordPracticeData {
-  type: types.RECORD_PRACTICE_DATA;
-  payload: ExerciseType;
+
+export enum PracticeTypes{
+  RECORD_PRACTICE_DATA,
+  SAVE_PRACTICE_DATA,
 }
 
-export interface ISavePracticeData {
-  type: types.SAVE_PRACTICE_DATA;
-  payload: null;
-}
+// export interface IRecordPracticeData {
+//   type: types.RECORD_PRACTICE_DATA;
+//   payload: ExerciseType;
+// }
 
-export const recordPracticeDataRequest = (payload: ExerciseType): IRecordPracticeData => ({
+// export interface ISavePracticeData {
+//   type: types.SAVE_PRACTICE_DATA;
+//   payload: null;
+// }
+
+export const recordPracticeDataRequest = (payload: ExerciseType): IAction => ({
   payload,
-  type: types.RECORD_PRACTICE_DATA,
+  type: PracticeTypes.RECORD_PRACTICE_DATA,
 });
 
-export const savePracticeDataRequest =(payload : null): ISavePracticeData =>({
+export const savePracticeDataRequest =(payload : null): IAction =>({
   payload,
-  type: types.SAVE_PRACTICE_DATA
+  type: PracticeTypes.SAVE_PRACTICE_DATA
 })

@@ -2,8 +2,7 @@ import React, { FunctionComponent, useContext, useState } from "react"
 
 import { Box, HStack, VStack, Text, Checkbox, Button, AlertDialog, FormControl, Input, Modal } from 'native-base';
 import Context from "../state/modules/routine/context";
-import { IGenerateRequest, ISaveRoutine } from "../state/modules/routine/store/actions";
-import { GENERATE_REQUEST, SAVE_ROUTINE } from "../state/modules/routine/store/types";
+import { generateRequest,saveRoutine } from "../state/modules/routine/store/actions";
 
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
@@ -42,12 +41,10 @@ const Generate = () => {
     }
 
     const StartRoutine = () => {
-        const msg : IGenerateRequest  = {
-            type: GENERATE_REQUEST,
-            payload: [selectedRoots, selectedTypes, selectedExercises]
-        }
 
-        dispatch(msg)
+        const generateReq = generateRequest([selectedRoots, selectedTypes, selectedExercises])
+
+        dispatch(generateReq)
 
         if(CheckValidRoutineConfiguration())
             navigation.navigate('Practice')
@@ -56,12 +53,10 @@ const Generate = () => {
     }
 
     const SaveRoutine = (saveName : string) => {
-        const saveRoutine : ISaveRoutine  = {
-            type: SAVE_ROUTINE,
-            payload: [selectedRoots, selectedTypes, selectedExercises, saveName]
-        }
 
-        dispatch(saveRoutine) 
+        const saveRoutineMSG = saveRoutine([selectedRoots, selectedTypes, selectedExercises, saveName])
+        dispatch(saveRoutineMSG) 
+
         setShowModal(false);
     }
 

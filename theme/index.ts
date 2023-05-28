@@ -5,7 +5,6 @@ import  Checkbox  from "./components/CheckBoxStyle";
 const CustomTheme = extendTheme({
     components: {
         Checkbox,
-
         Button:{
             defaultProps:{
                 bg: "nord.primary.1",
@@ -25,7 +24,6 @@ const CustomTheme = extendTheme({
         secondaryBackground: "#E5E9F0",
         danger: "#BF616A"
       }
-  
     },
     config: {
       // Changing initialColorMode to 'dark'

@@ -1,16 +1,16 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext } from "react"
+import { StyleSheet, TouchableOpacity } from "react-native";
+
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { BottomTabNavigatorParamList } from "../navigation/types";
 
 import { Text, Box, Center, Button } from "native-base"
-import { StyleSheet, TouchableOpacity } from "react-native";
+
 import Context from "../state/modules/routine/context";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
-import { IRequestTask } from "../state/modules/routine/store/actions";
-import { REQUEST_TASK } from "../state/modules/routine/store/types";
-import { BottomTabNavigatorParamList } from "../navigation/types";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { IRecordPracticeData, ISavePracticeData, savePracticeDataRequest } from "../state/modules/PracticeData/store/actions";
-import { RECORD_PRACTICE_DATA, SAVE_PRACTICE_DATA } from "../state/modules/PracticeData/store/types";
+import { requestTask } from "../state/modules/routine/store/actions";
+import {  recordPracticeDataRequest, savePracticeDataRequest } from "../state/modules/PracticeData/store/actions";
 
 
 const PracticeRoutine = () =>{
@@ -22,19 +22,12 @@ const PracticeRoutine = () =>{
 
     const Next = () => {
 
-        const requestMSG : IRequestTask  = {
-            type: REQUEST_TASK,
-            payload: []
-        }
+        const requestMSG = requestTask([])
         dispatch(requestMSG);
 
         if(state.currentTask != null)
         {
-            const recordMSG : IRecordPracticeData  = {
-                type: RECORD_PRACTICE_DATA,
-                payload: state.currentTask.exerciseType
-            }
-    
+            const recordMSG = recordPracticeDataRequest(state.currentTask.exerciseType)
             practiceDatadispatch(recordMSG);
         }
     }
@@ -43,11 +36,7 @@ const PracticeRoutine = () =>{
         React.useCallback(() => {
             Next();
             return() =>{
-                const saveMSG : ISavePracticeData  = {
-                    type: SAVE_PRACTICE_DATA,
-                    payload: null
-                }
-
+                const saveMSG = savePracticeDataRequest(null)
                 practiceDatadispatch(saveMSG);
             }
         }, [])
