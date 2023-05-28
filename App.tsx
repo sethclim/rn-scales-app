@@ -1,4 +1,5 @@
 
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import React from 'react';
 
 import { NativeBaseProvider } from "native-base";
@@ -11,13 +12,15 @@ import PracticeDataProvider from './src/state/modules/PracticeData/PracticeData'
 
 const App = () => {
   return (
-    <NativeBaseProvider theme={CustomTheme}>
-      <RoutineProvider>
-        <PracticeDataProvider>
-          <RootNavigator />
-        </PracticeDataProvider>
-      </RoutineProvider>
-    </NativeBaseProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NativeBaseProvider theme={CustomTheme}>
+        <RoutineProvider>
+          <PracticeDataProvider>
+            <RootNavigator />
+          </PracticeDataProvider>
+        </RoutineProvider>
+      </NativeBaseProvider>
+    </GestureHandlerRootView>
   );
 };
 
