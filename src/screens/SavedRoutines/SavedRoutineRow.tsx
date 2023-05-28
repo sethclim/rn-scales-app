@@ -11,8 +11,8 @@ import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../../navigation/types";
 
 //Project
-import { IResumeRoutine } from "../../state/modules/routine/store/actions";
-import { RESUME_ROUTINE } from "../../state/modules/routine/store/types";
+import { resumeRoutine } from "../../state/modules/routine/store/actions";
+
 import { RowProps } from "./types";
 import RoutineItemModel from "../../data/Database/routine_item.model";
 import Context from "../../state/modules/routine/context";
@@ -25,13 +25,8 @@ const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routin
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const StartSavedRoutine = (routineItems : RoutineItemModel[]) => {
-
-        const msg : IResumeRoutine  = {
-            type: RESUME_ROUTINE,
-            payload: routineItems
-        }
-   
-        dispatch(msg)
+        const resumeMSG = resumeRoutine(routineItems)   
+        dispatch(resumeMSG)
         navigation.navigate('Practice')
     }
   

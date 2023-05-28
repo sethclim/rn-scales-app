@@ -30,7 +30,7 @@ export const deleteRoutine = (payload : Array<RoutineModel>): IAction => ({
   payload,
 });
 
-export const ResumeRoutine = (payload : Array<RoutineItemModel>): IAction => ({
+export const resumeRoutine = (payload : Array<RoutineItemModel>): IAction => ({
   type: RoutineTypes.RESUME_ROUTINE,
   payload,
 });

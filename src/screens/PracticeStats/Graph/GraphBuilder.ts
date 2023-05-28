@@ -1,8 +1,8 @@
 import { SkPath, Skia } from "@shopify/react-native-skia"
 
-import PracticeData from "../../data/Models/PracticeData"
-import { ExerciseType } from "../../data/Models/ExerciseType"
-import { Label } from "./PracticeGraph/Components/Label";
+import PracticeData from "../../../data/Models/PracticeData"
+import { ExerciseType } from "../../../data/Models/ExerciseType"
+import { Label } from "../PracticeGraph/Components/Label";
 
 class RenderPathDescriptor{
     path : SkPath;

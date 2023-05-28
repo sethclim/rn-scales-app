@@ -11,7 +11,7 @@ import {
 import { SharedValue, runOnJS, runOnUI, useSharedValue } from "react-native-reanimated";
 import Animated, { useDerivedValue, withTiming } from "react-native-reanimated";
 
-import type { Graph } from "../GraphBuilder";
+import type { Graph } from "./GraphBuilder";
 
 const buttonWidth = 50;
 const styles = StyleSheet.create({

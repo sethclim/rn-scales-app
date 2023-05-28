@@ -1,26 +1,25 @@
-import { HStack, Pressable } from "native-base";
 import React from "react";
 import { FunctionComponent, useContext } from "react";
 
+import { HStack, Pressable } from "native-base";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+
 import RoutineItemModel from "../../data/Database/routine_item.model";
+import RoutineModel from "../../data/Database/routine.model";
+
 import Context from "../../state/modules/routine/context";
-import { IDeleteRoutine } from "../../state/modules/routine/store/actions";
-import { DELETE_ROUTINE } from "../../state/modules/routine/store/types";
+import { deleteRoutine } from "../../state/modules/routine/store/actions";
+
 import { RowProps } from "./types";
 
-import RoutineModel from "../../data/Database/routine.model";
 
 const SavedRoutineHiddenItem :  FunctionComponent<RowProps>  = ({routine, index, routineItems}) => {  
    
     const { dispatch } = useContext(Context);
 
     const deleteRow = (routine  : RoutineModel, routineItems  : RoutineItemModel[]) => {
-        const msg : IDeleteRoutine  = {
-          type: DELETE_ROUTINE,
-          payload: [routine]
-        }
-        dispatch(msg)
+        const deleteMSG = deleteRoutine([routine])
+        dispatch(deleteMSG)
       };
   
     return (
