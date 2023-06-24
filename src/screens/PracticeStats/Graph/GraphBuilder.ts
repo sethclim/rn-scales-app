@@ -18,7 +18,7 @@ class RenderPathDescriptor{
 
 export type Graph = {
     ID : number,
-    pathDescriptors: RenderPathDescriptor [] | null
+    pathDescriptors: RenderPathDescriptor []
     grid: SkPath[],
     label: string
 }
@@ -48,7 +48,7 @@ const getY = (count : number, scale_y : number, height : number) => {
     return height - (count * scale_y)
 }
 
-const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number) => {
+const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number, max_x: number, max_y: number) => {
 
     const pathDescriptorMap = new Map<ExerciseType, RenderPathDescriptor>([
         ["scale",        new RenderPathDescriptor("#ed174f")],
@@ -58,14 +58,12 @@ const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number) => {
         ["broken-chord", new RenderPathDescriptor("#f8981d")],
     ]);
 
-    const [max_x, max_y] = getMax(data);
-
     const scale_X = WIDTH / max_x;
     const scale_y = HEIGHT / max_y;
 
     if(data.length <= 0)
     {
-        return null;
+        return [];
     }
 
     //Move To
@@ -75,8 +73,8 @@ const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number) => {
         const x = getX(data[0].Date, scale_X)
         const y = getY(count, scale_y, HEIGHT)
         
-        ex?.path?.moveTo(x, y);
-        ex?.dots?.addCircle(x, y, 6);
+        ex!.path?.moveTo(x, y);
+        ex!.dots?.addCircle(x, y, 6);
     }
 
     //Line To
@@ -88,23 +86,23 @@ const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number) => {
         const x = getX(data[i].Date, scale_X)
         const y = getY(count, scale_y, HEIGHT)
 
-        ex?.path?.lineTo(x,y);
-        ex?.dots?.addCircle(x, y, 6)
+        ex!.path?.lineTo(x,y);
+        ex!.dots?.addCircle(x, y, 6)
       }
     }
 
     return Array.from(pathDescriptorMap.values());
 }
 
-const buildGrid = (width: number, height: number) => {
+const buildGrid = (width: number, height: number, max_x: number, max_y: number) => {
     //top to bottow div by 7 space
 
-    const divX = 7
-    const scale_x = width / (divX - 1)
+    //const divX = 7
+    const scale_x = width / (max_x - 1)
 
     const gridLines : SkPath[] = []
     
-    for(let i = 1; i < divX - 1; i++)
+    for(let i = 1; i < max_x - 1; i++)
     {
         const path = Skia.Path.Make();
         path.moveTo(i * scale_x, 0)
@@ -112,11 +110,11 @@ const buildGrid = (width: number, height: number) => {
         gridLines.push(path);
     }
 
-    const div_y = 5
-    const scale_y = height / div_y
+    //const div_y = 5
+    const scale_y = height / max_y
 
 
-    for(let i = 1; i < div_y; i++)
+    for(let i = 1; i < max_y; i++)
     {
         const path = Skia.Path.Make();
         path.moveTo(0, i * scale_y)
@@ -128,29 +126,32 @@ const buildGrid = (width: number, height: number) => {
 }
 
 export const getGraph = (width: number, height: number, data : PracticeData[]) : Graph[] => {
+
+    const [max_x, max_y] = getMax(data);
+
     return [
         {
             ID: 0,
-            pathDescriptors : buildGraph(data, width, height),
-            grid: buildGrid(width, height),
+            pathDescriptors : buildGraph(data, width, height, 6, max_y),
+            grid: buildGrid(width, height, 24, max_y),
             label: "Day"
         },
         {
-            ID: 0,
-            pathDescriptors : buildGraph(data, width, height),
-            grid: buildGrid(width, height),
+            ID: 1,
+            pathDescriptors : buildGraph(data, width, height, 7, max_y),
+            grid: buildGrid(width, height, 7, max_y),
             label: "Week"
         },
         {
-            ID: 0,
-            pathDescriptors : buildGraph(data, width, height),
-            grid: buildGrid(width, height),
+            ID: 2,
+            pathDescriptors : buildGraph(data, width, height, 31, max_y),
+            grid: buildGrid(width, height, 31, max_y),
             label: "Month"
         },
         {
-            ID: 0,
-            pathDescriptors : buildGraph(data, width, height),
-            grid: buildGrid(width, height),
+            ID: 3,
+            pathDescriptors : buildGraph(data, width, height, 12, max_y),
+            grid: buildGrid(width, height, 12, max_y),
             label: "Year"
         },
     ]

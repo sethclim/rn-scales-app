@@ -1,7 +1,7 @@
-import React from "react";
-import { Canvas, Group, Path } from "@shopify/react-native-skia";
+import React, { useEffect, useState } from "react";
+import { Canvas,  Group,  Path,   } from "@shopify/react-native-skia";
 import { useMemo } from "react";
-import { useSharedValue } from "react-native-reanimated";
+import {  useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { getGraph } from "./GraphBuilder";
 import { Selection } from "./Selection";
 import PracticeData from "../../../data/Models/PracticeData";
@@ -18,21 +18,33 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
     
     const transition = useSharedValue(0);
     
-    const state = useSharedValue({
-      next: 0,
-      current: 0,
-    });
-  
+    const next    = useSharedValue(0);
+    const current = useSharedValue(0);
+
+    const [gIndex, setGIndex] = useState(0);
+
+    const graph = useDerivedValue(() =>{
+      console.log("Graph " + current.value + " label " + graphs[current.value].label)
+
+      return graphs[current.value];
+    },[current.value])
+
+    // useEffect(() =>{w
+    //   console.log("Graph " + graphs[state.value.current].label)
+    //   console.log("Current " + state.value.current + " next " + state.value.next)
+    // },[graph.current])
+
     return(
       <>
         <Canvas style={{ height: height, width: width, backgroundColor: "#00000055"}}>
+          {/* <Path path={path} color="#ffffff44" strokeWidth={2} style="stroke"/> */}
           {
-            graphs[0].grid.map(line => {
+            graph.value.grid.map(line => {
                 return <Path path={line} color="#ffffff44" strokeWidth={2} style="stroke"/>
             })
           }
           {
-            graphs[0].pathDescriptors?.map(pathDescriptor => {
+            graph.value.pathDescriptors?.map(pathDescriptor => {
               return (
                 <Group>
                   <Path path={pathDescriptor.path} color={pathDescriptor.color} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
@@ -42,7 +54,7 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
             })
           }
         </Canvas>
-        <Selection state={state} transition={transition} graphs={graphs} />
+        <Selection current={current} next={next} transition={transition} graphs={graphs} />
       </>
     )
   } 

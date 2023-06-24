@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Text, View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import {
   Canvas,
   Group,
   LinearGradient,
   RoundedRect,
+  SkiaValue,
   mix,
   vec,
 } from "@shopify/react-native-skia";
@@ -13,10 +14,10 @@ import Animated, { useDerivedValue, withTiming } from "react-native-reanimated";
 
 import type { Graph } from "./GraphBuilder";
 
-const buttonWidth = 50;
+const buttonWidth = 98;
 const styles = StyleSheet.create({
   root: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 0,
     paddingBottom: 16,
   },
   container: {
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
   },
-});
+}); 
 
 export interface GraphState {
   next: number;
@@ -45,31 +46,56 @@ export interface GraphState {
 }
 
 interface SelectionProps {
-  state: SharedValue<GraphState>;
+  current: SharedValue<number>;
+  next: SharedValue<number>;
   transition: SharedValue<number>;
   graphs: Graph[];
 }
 
-export const Selection = ({ state, transition, graphs }: SelectionProps) => {
+export const Selection = ({ current, next, transition, graphs }: SelectionProps) => {
 
   const translateX = useSharedValue(0);
 
   const workletMix = (value : number, current : number, next : number) => {
-    // 'worklet';
+    //console.log("value " + value + " current " + current + " next " + next)
+    "worklet";
     translateX.value = mix(value, current, next)
   }
 
-  const transform : Readonly<Animated.SharedValue<{ translateX: number; }[]>> = useDerivedValue(() => {
-    const { current, next } = state.value;
+  function someWorklet(greeting : any) {
+    'worklet';
+    console.log(greeting, 'From the UI thread');
+  }
 
-    runOnJS(workletMix)(transition.value,current * buttonWidth,  next * buttonWidth)
+  const transform = useDerivedValue(() => {
+    // console.log("current " + state.value.current + " next " + state.value.next)
+    workletMix(transition.value, current.value * buttonWidth,  next.value * buttonWidth)
+
+    console.log("CURR " + current.value)
 
     return [
       {
         translateX: translateX.value
       },
     ];
-  });
+  }, [transition.value, current.value, next.value]);
+
+
+  const onPress = (index : number) =>{
+    //onsole.log("index " + index)
+    //console.log("state.value.next " + state.value.next)
+    current.value = next.value;
+    next.value = index;
+
+    console.log("Current " + current.value)
+
+    //console.log("state.value.next " + state.value.next)
+
+    transition.value = 0;
+    transition.value = withTiming(1, {
+      duration: 750,
+    });
+  }
 
   return (
     <View style={styles.root}>
@@ -88,13 +114,7 @@ export const Selection = ({ state, transition, graphs }: SelectionProps) => {
         {graphs.map((graph, index) => (
           <TouchableWithoutFeedback
             key={index}
-            onPress={() => {
-              state.value = { current: state.value.next, next: index };
-              transition.value = 0;
-              transition.value = withTiming(1, {
-                duration: 750,
-              });
-            }}
+            onPress={() => onPress(index)}
           >
             <View style={styles.button}>
               <Text style={styles.label}>{graph.label}</Text>
