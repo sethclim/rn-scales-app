@@ -1,21 +1,6 @@
 import { SkPath, Skia } from "@shopify/react-native-skia"
 
 import PracticeData from "../../../data/Models/PracticeData"
-import { ExerciseType } from "../../../data/Models/ExerciseType"
-import { Label } from "../PracticeGraph/Components/Label";
-import { Exercises } from "../../Generate";
-
-class RenderPathDescriptor{
-    path : SkPath;
-    dots : SkPath;
-    color : string;
-
-    constructor(color : string = "#ff0000"){
-        this.path = Skia.Path.Make(),
-        this.dots = Skia.Path.Make(),
-        this.color = color
-    }
-}
 
 export type plot = {
     line: SkPath
@@ -66,40 +51,22 @@ const getY = (count : number, scale_y : number, height : number) => {
     return height - (count * scale_y)
 }
 
+const createPlot = () : plot =>{
+    return {
+        line : Skia.Path.Make(),
+        dots : Skia.Path.Make(),
+    }
+}
+
 const buildExercisePlots = (data : PracticeData[], WIDTH : number, HEIGHT : number, max_x: number, max_y: number) => {
 
-    // const pathDescriptorMap = new Map<ExerciseType, RenderPathDescriptor>([
-    //     ["scale",        new RenderPathDescriptor("#ed174f")],
-    //     ["octave",       new RenderPathDescriptor("#f4dc00")],
-    //     ["arpeggio",     new RenderPathDescriptor("#327fa6")],
-    //     ["solid-chord",  new RenderPathDescriptor("#e20177")],
-    //     ["broken-chord", new RenderPathDescriptor("#f8981d")],
-    // ]);
-
     const ex : exercises = {
-        "scale" : {
-            line : Skia.Path.Make(),
-            dots : Skia.Path.Make(),
-        },
-        "octave" : {
-            line : Skia.Path.Make(),
-            dots : Skia.Path.Make(),
-        },
-        "arpeggio" : {
-            line : Skia.Path.Make(),
-            dots : Skia.Path.Make(),
-        },
-        "solid-chord" : {
-            line : Skia.Path.Make(),
-            dots : Skia.Path.Make(),
-        },
-        "broken-chord" : {
-            line : Skia.Path.Make(),
-            dots : Skia.Path.Make(),
-        },
+        "scale"        : createPlot(),
+        "octave"       : createPlot(),
+        "arpeggio"     : createPlot(),
+        "solid-chord"  : createPlot(),
+        "broken-chord" : createPlot(),
     }
-
-    //const path : SkPath = Skia.Path.Make();
 
     const scale_X = WIDTH / max_x;
     const scale_y = HEIGHT / max_y;
@@ -112,7 +79,6 @@ const buildExercisePlots = (data : PracticeData[], WIDTH : number, HEIGHT : numb
     //Move To
     for(let [exercise, count] of data[0].Counts.entries())
     {
-        // const ex = pathDescriptorMap.get(exercise);
         const x = getX(data[0].Date, scale_X)
         const y = getY(count, scale_y, HEIGHT)
         
@@ -125,7 +91,6 @@ const buildExercisePlots = (data : PracticeData[], WIDTH : number, HEIGHT : numb
     {   
       for(let [exercise, count] of data[i].Counts.entries())
       {
-        // const ex = pathDescriptorMap.get(exercise);
         const x = getX(data[i].Date, scale_X)
         const y = getY(count, scale_y, HEIGHT)
 
@@ -137,40 +102,6 @@ const buildExercisePlots = (data : PracticeData[], WIDTH : number, HEIGHT : numb
     return ex
 }
 
-// const buildDots = (data : PracticeData[], WIDTH : number, HEIGHT : number, max_x: number, max_y: number) =>{
-//     const path : SkPath = Skia.Path.Make();
-
-//     const scale_X = WIDTH / max_x;
-//     const scale_y = HEIGHT / max_y;
-
-//     if(data.length <= 0)
-//     {
-//         return path;
-//     }
-
-//     //Move To
-//     for(let [exercise, count] of data[0].Counts.entries())
-//     {
-//         const x = getX(data[0].Date, scale_X)
-//         const y = getY(count, scale_y, HEIGHT)
-        
-//         path.addCircle(x, y, 6);
-//     }
-
-//     //Line To
-//     for(let i = 1; i < data.length; i++)
-//     {   
-//       for(let [exercise, count] of data[i].Counts.entries())
-//       {
-//         const x = getX(data[i].Date, scale_X)
-//         const y = getY(count, scale_y, HEIGHT)
-
-//         path.addCircle(x, y, 6)
-//       }
-//     }
-
-//     return path
-// }
 
 const buildGrid = (width: number, height: number, max_x: number, max_y: number) => {
     //top to bottow div by 7 space
