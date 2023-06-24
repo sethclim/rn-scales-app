@@ -19,16 +19,20 @@ class RenderPathDescriptor{
 export type Graph = {
     ID : number,
     pathDescriptors: RenderPathDescriptor []
-    grid: SkPath[],
+    grid: SkPath,
     label: string
 }
 
 const getMax = (data : PracticeData[]) => {
     let max_x = 0;
     let max_y = 0;
+
+    if(data.length <= 0)
+        max_y = 10
   
     data.map(practiceData =>{
         practiceData.Counts.forEach(count => {
+            console.log("")
             if(count  > max_y)
               max_y = count;
         })
@@ -100,26 +104,24 @@ const buildGrid = (width: number, height: number, max_x: number, max_y: number) 
     //const divX = 7
     const scale_x = width / (max_x - 1)
 
-    const gridLines : SkPath[] = []
+    const gridLines : SkPath = Skia.Path.Make();
     
     for(let i = 1; i < max_x - 1; i++)
     {
-        const path = Skia.Path.Make();
-        path.moveTo(i * scale_x, 0)
-        path.lineTo(i * scale_x, height)
-        gridLines.push(path);
+        gridLines.moveTo(i * scale_x, 0)
+        gridLines.lineTo(i * scale_x, height)
     }
 
     //const div_y = 5
     const scale_y = height / max_y
 
+    console.log("max_y " + max_y)
+
 
     for(let i = 1; i < max_y; i++)
     {
-        const path = Skia.Path.Make();
-        path.moveTo(0, i * scale_y)
-        path.lineTo(width, i * scale_y)
-        gridLines.push(path);
+        gridLines.moveTo(0, i * scale_y)
+        gridLines.lineTo(width, i * scale_y)
     }
 
     return gridLines;

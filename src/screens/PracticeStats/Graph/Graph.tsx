@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Canvas,  Group,  Path,   } from "@shopify/react-native-skia";
+import { Canvas,  Path,   } from "@shopify/react-native-skia";
 import { useMemo } from "react";
 import {  useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { getGraph } from "./GraphBuilder";
@@ -23,10 +23,10 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
 
     const [gIndex, setGIndex] = useState(0);
 
-    const graph = useDerivedValue(() =>{
+    const grid = useDerivedValue(() =>{
       console.log("Graph " + current.value + " label " + graphs[current.value].label)
 
-      return graphs[current.value];
+      return graphs[current.value].grid;
     },[current.value])
 
     // useEffect(() =>{w
@@ -37,14 +37,14 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
     return(
       <>
         <Canvas style={{ height: height, width: width, backgroundColor: "#00000055"}}>
-          {/* <Path path={path} color="#ffffff44" strokeWidth={2} style="stroke"/> */}
-          {
-            graph.value.grid.map(line => {
+          <Path path={grid} color="#ffffff44" strokeWidth={2} style="stroke"/>
+          {/* {
+            graphs[gIndex].grid.map(line => {
                 return <Path path={line} color="#ffffff44" strokeWidth={2} style="stroke"/>
             })
           }
           {
-            graph.value.pathDescriptors?.map(pathDescriptor => {
+            graphs[gIndex].pathDescriptors?.map(pathDescriptor => {
               return (
                 <Group>
                   <Path path={pathDescriptor.path} color={pathDescriptor.color} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
@@ -52,7 +52,7 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
                 </Group>
               ) 
             })
-          }
+          } */}
         </Canvas>
         <Selection current={current} next={next} transition={transition} graphs={graphs} />
       </>
