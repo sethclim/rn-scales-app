@@ -15,8 +15,10 @@ export type exercises = {
     "broken-chord" : plot
 }
 
+type GRAPH_ID = "Day" | "Week" | "Month" | "Year"
+
 export type Graph = {
-    ID : number,
+    ID : GRAPH_ID,
     exercises: exercises,
     grid: SkPath,
     label: string
@@ -25,7 +27,7 @@ export type Graph = {
 const getMaxY = (data : PracticeData[]) => {
     
     if(data.length <= 0)
-    return 10
+        return 10
     
     let max_y = 0;
     data.map(practiceData =>{
@@ -38,8 +40,8 @@ const getMaxY = (data : PracticeData[]) => {
     return max_y
 }
 
-const getX = (date : number, scale_X : number) => {
-    return date * scale_X;
+const getX = (date : number, scale_X : number, start : number) => {
+    return date * scale_X + start;
 }
   
 const getY = (count : number, scale_y : number, height : number) => {
@@ -53,7 +55,8 @@ const createPlot = () : plot =>{
     }
 }
 
-const buildExercisePlots = (data : PracticeData[], WIDTH : number, HEIGHT : number, max_x: number, max_y: number) => {
+const buildExercisePlots = (data : PracticeData[],start : number,  WIDTH : number, HEIGHT : number, max_x: number, max_y: number) => {
+
 
     const ex : exercises = {
         "scale"        : createPlot(),
@@ -72,22 +75,22 @@ const buildExercisePlots = (data : PracticeData[], WIDTH : number, HEIGHT : numb
     }
     
     const start_time  = new Date(data[0].Date.getFullYear(), data[0].Date.getMonth(),data[0].Date.getDate(),0,0,0,0);
-    console.log("max_x "  + max_x)
-    console.log("WIDTH "  + WIDTH)
+    // console.log("max_x "  + max_x)
+    // console.log("WIDTH "  + WIDTH)
 
-    console.log("start_time " + start_time.valueOf())
-    console.log("Date " + data[0].Date.valueOf())
+    // console.log("start_time " + start_time.valueOf())
+    // console.log("Date " + data[0].Date.valueOf())
 
-    console.log("DIFF " + (data[0].Date.valueOf() - start_time.valueOf()))
+    // console.log("DIFF " + (data[0].Date.valueOf() - start_time.valueOf()))
 
-    console.log("scale_X " + scale_X)
+    // console.log("scale_X " + scale_X)
 
     // console.log(start_time.valueOf())
 
     //Move To
     for(let [exercise, count] of data[0].Counts.entries())
     {
-        const x = getX(data[0].Date.valueOf() - start_time.valueOf(), scale_X)
+        const x = getX(data[0].Date.valueOf() - start_time.valueOf(), scale_X, start)
         const y = getY(count, scale_y, HEIGHT)
 
         console.log("X " + x)
@@ -101,7 +104,7 @@ const buildExercisePlots = (data : PracticeData[], WIDTH : number, HEIGHT : numb
     {   
       for(let [exercise, count] of data[i].Counts.entries())
       {
-        const x = getX(data[i].Date.valueOf() - start_time.valueOf(), scale_X)
+        const x = getX(data[i].Date.valueOf() - start_time.valueOf(), scale_X, start)
         const y = getY(count, scale_y, HEIGHT)
 
         ex[exercise].line.lineTo(x,y);
@@ -113,61 +116,96 @@ const buildExercisePlots = (data : PracticeData[], WIDTH : number, HEIGHT : numb
 }
 
 
-const buildGrid = (width: number, height: number, max_x: number, max_y: number) => {
+const buildGrid = (start : number, width: number, height: number, max_x: number, max_y: number) => {
     //top to bottow div by 7 space
 
+    console.log("Grid width " + width)
+    console.log("max_x " + max_x)
     //const divX = 7
     const scale_x = width / (max_x - 1)
-
+    console.log("scale_x " + scale_x)
+    
     const gridLines : SkPath = Skia.Path.Make();
     
-    for(let i = 1; i < max_x - 1; i++)
+    for(let i = 0; i < max_x; i++)
     {
-        gridLines.moveTo(i * scale_x, 0)
-        gridLines.lineTo(i * scale_x, height)
+        console.log("Y Width " + (i * scale_x + start))
+        gridLines.moveTo(i * scale_x + start, 0)
+        gridLines.lineTo(i * scale_x + start, height)
     }
 
     //const div_y = 5
     const scale_y = height / max_y
 
+    console.log("Start " + start)
+    console.log("width " + width)
+
     for(let i = 1; i < max_y; i++)
     {
-        gridLines.moveTo(0, i * scale_y)
-        gridLines.lineTo(width, i * scale_y)
+        gridLines.moveTo(start, i * scale_y)
+        gridLines.lineTo(width + start, i * scale_y)
     }
 
     return gridLines;
 }
 
-export const getGraph = (width: number, height: number, data : PracticeData[]) : Graph[] => {
+const PADDING = 20
+const GRID_RIGHT_MARGIN = 30
+const GRID_BOTTOM_MARGIN = 30
+
+const GRAPH_INFO = {
+    "Day" : {
+        grid_div : 24,
+        total_milli: 86400000
+    },
+    "Week" : {
+        grid_div : 7,
+        total_milli: 604800000
+    },
+    "Month" : {
+        grid_div : 31,
+        total_milli: 2628000000
+    },
+    "Year" : {
+        grid_div : 12,
+        total_milli: 31540000000
+    }
+}
+
+const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number, ID : GRAPH_ID) : Graph =>{
+
+    const grid_div    =  GRAPH_INFO[ID].grid_div
+    const total_milli =  GRAPH_INFO[ID].total_milli
+
+    
+    const pad_width   = WIDTH - PADDING
+    const inner_width = pad_width - GRID_RIGHT_MARGIN
+    const inner_start = (PADDING / 2 ) + GRID_RIGHT_MARGIN
+    
+    
+    console.log("Full Width " + WIDTH)
+    console.log("inner_width " + inner_width)
+    console.log("inner_start " + inner_start)
+
+    console.log("inner_width + pad + pad" + (inner_width + inner_start + inner_start))
 
     const max_y = getMaxY(data);
 
+    return {
+        ID:         ID,
+        exercises : buildExercisePlots(data,inner_start,inner_width, HEIGHT, total_milli, max_y),
+        grid:       buildGrid(inner_start, inner_width, HEIGHT, grid_div, max_y),
+        label:      ID
+    }
+}
+
+
+export const getGraph = (width: number, height: number, data : PracticeData[]) : Graph[] => {
 
     return [
-        {
-            ID: 0,
-            exercises : buildExercisePlots(data, width, height, 86400000, max_y),
-            grid: buildGrid(width, height, 24, max_y),
-            label: "Day"
-        },
-        {
-            ID: 1,
-            exercises : buildExercisePlots(data, width, height, 604800000, max_y),
-            grid: buildGrid(width, height, 7, max_y),
-            label: "Week"
-        },
-        {
-            ID: 2,
-            exercises : buildExercisePlots(data, width, height, 2628000000, max_y),
-            grid: buildGrid(width, height, 31, max_y),
-            label: "Month"
-        },
-        {
-            ID: 3,
-            exercises : buildExercisePlots(data, width, height, 31540000000, max_y),
-            grid: buildGrid(width, height, 12, max_y),
-            label: "Year"
-        },
+        buildGraph(data, width, height, "Day"),
+        buildGraph(data, width, height, "Week"),
+        buildGraph(data, width, height, "Month"),
+        buildGraph(data, width, height, "Year"),
     ]
 }
