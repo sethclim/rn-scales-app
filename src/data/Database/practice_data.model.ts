@@ -1,10 +1,10 @@
 import { Model } from '@nozbe/watermelondb';
-import { field } from '@nozbe/watermelondb/decorators';
+import { date, field } from '@nozbe/watermelondb/decorators';
 
 export default class PracticeDataModel extends Model {
   static table = 'practice_data';
 
-  @field('date') date: Date | undefined;
+  @date('date') date! : Date;
 
   @field('scale')    Scale: any;
   @field('octave')   Octave: any;

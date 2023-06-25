@@ -13,7 +13,7 @@ export interface IState {
 const initialState: IState = {
   error: '',
   loading: false,
-  currentSessionPracticeData: new PracticeData,
+  currentSessionPracticeData: new PracticeData(new Date()),
   savingPracticeData : false,
   practiceDatadispatch: () => {
     // Dispatch initial value

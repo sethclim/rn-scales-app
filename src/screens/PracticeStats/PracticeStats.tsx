@@ -26,7 +26,7 @@ const PracticeStats = ({practice_data }: PracticeStatsProps) => {
 
     const convertData = (practice_data : PracticeDataModel[]) : PracticeData[] => {
       return practice_data.map((data, index) => {
-        const item = new PracticeData();
+        const item = new PracticeData(data.date);
         item.Counts = new Map<ExerciseType, number>([
           ["scale", data.Scale],
           ["octave", data.Octave],
@@ -34,12 +34,12 @@ const PracticeStats = ({practice_data }: PracticeStatsProps) => {
           ["solid-chord", data.SolidChord],
           ["broken-chord", data.BrokenChord],
         ])
-        item.Date = index
         return item;
       })
     }
 
     const pd = useMemo(() => convertData(practice_data), [practice_data])
+
 
     return(
       <View style={styles.container} bg="nord.primary.1">

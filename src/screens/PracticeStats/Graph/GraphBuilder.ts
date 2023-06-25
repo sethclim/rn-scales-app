@@ -22,25 +22,20 @@ export type Graph = {
     label: string
 }
 
-const getMax = (data : PracticeData[]) => {
-    let max_x = 0;
-    let max_y = 0;
-
+const getMaxY = (data : PracticeData[]) => {
+    
     if(data.length <= 0)
-        max_y = 10
-  
+    return 10
+    
+    let max_y = 0;
     data.map(practiceData =>{
         practiceData.Counts.forEach(count => {
-            console.log("")
             if(count  > max_y)
               max_y = count;
         })
-
-        if(practiceData.Date  > max_x)
-          max_x = practiceData.Date;
     })
   
-    return[max_x, max_y]
+    return max_y
 }
 
 const getX = (date : number, scale_X : number) => {
@@ -75,12 +70,27 @@ const buildExercisePlots = (data : PracticeData[], WIDTH : number, HEIGHT : numb
     {
         return ex;
     }
+    
+    const start_time  = new Date(data[0].Date.getFullYear(), data[0].Date.getMonth(),data[0].Date.getDate(),0,0,0,0);
+    console.log("max_x "  + max_x)
+    console.log("WIDTH "  + WIDTH)
+
+    console.log("start_time " + start_time.valueOf())
+    console.log("Date " + data[0].Date.valueOf())
+
+    console.log("DIFF " + (data[0].Date.valueOf() - start_time.valueOf()))
+
+    console.log("scale_X " + scale_X)
+
+    // console.log(start_time.valueOf())
 
     //Move To
     for(let [exercise, count] of data[0].Counts.entries())
     {
-        const x = getX(data[0].Date, scale_X)
+        const x = getX(data[0].Date.valueOf() - start_time.valueOf(), scale_X)
         const y = getY(count, scale_y, HEIGHT)
+
+        console.log("X " + x)
         
         ex[exercise].line.moveTo(x, y);
         ex[exercise].dots.addCircle(x, y, 6);
@@ -91,7 +101,7 @@ const buildExercisePlots = (data : PracticeData[], WIDTH : number, HEIGHT : numb
     {   
       for(let [exercise, count] of data[i].Counts.entries())
       {
-        const x = getX(data[i].Date, scale_X)
+        const x = getX(data[i].Date.valueOf() - start_time.valueOf(), scale_X)
         const y = getY(count, scale_y, HEIGHT)
 
         ex[exercise].line.lineTo(x,y);
@@ -131,30 +141,31 @@ const buildGrid = (width: number, height: number, max_x: number, max_y: number) 
 
 export const getGraph = (width: number, height: number, data : PracticeData[]) : Graph[] => {
 
-    const [max_x, max_y] = getMax(data);
+    const max_y = getMaxY(data);
+
 
     return [
         {
             ID: 0,
-            exercises : buildExercisePlots(data, width, height, 6, max_y),
+            exercises : buildExercisePlots(data, width, height, 86400000, max_y),
             grid: buildGrid(width, height, 24, max_y),
             label: "Day"
         },
         {
             ID: 1,
-            exercises : buildExercisePlots(data, width, height, 7, max_y),
+            exercises : buildExercisePlots(data, width, height, 604800000, max_y),
             grid: buildGrid(width, height, 7, max_y),
             label: "Week"
         },
         {
             ID: 2,
-            exercises : buildExercisePlots(data, width, height, 31, max_y),
+            exercises : buildExercisePlots(data, width, height, 2628000000, max_y),
             grid: buildGrid(width, height, 31, max_y),
             label: "Month"
         },
         {
             ID: 3,
-            exercises : buildExercisePlots(data, width, height, 12, max_y),
+            exercises : buildExercisePlots(data, width, height, 31540000000, max_y),
             grid: buildGrid(width, height, 12, max_y),
             label: "Year"
         },

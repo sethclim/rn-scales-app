@@ -62,16 +62,11 @@ export const Selection = ({ current, next, transition, graphs }: SelectionProps)
     translateX.value = mix(value, current, next)
   }
 
-  function someWorklet(greeting : any) {
-    'worklet';
-    console.log(greeting, 'From the UI thread');
-  }
-
   const transform = useDerivedValue(() => {
     // console.log("current " + state.value.current + " next " + state.value.next)
     workletMix(transition.value, current.value * buttonWidth,  next.value * buttonWidth)
 
-    console.log("CURR " + current.value)
+    // console.log("next.value 2: " + next.value)
 
     return [
       {
@@ -87,7 +82,7 @@ export const Selection = ({ current, next, transition, graphs }: SelectionProps)
     current.value = next.value;
     next.value = index;
 
-    console.log("Current " + current.value)
+    // console.log("next.value " + next.value)
 
     //console.log("state.value.next " + state.value.next)
 

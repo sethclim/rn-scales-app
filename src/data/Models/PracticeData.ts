@@ -5,5 +5,9 @@ export default class PracticeData
 {
     Counts : Map<ExerciseType, number> = new Map()
     Total : number = 0
-    Date : number = 0
+    Date : Date;
+
+    constructor(Date: Date) {
+        this.Date = Date;
+    }
 }
