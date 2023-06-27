@@ -1,4 +1,4 @@
-import { SkPath, Skia } from "@shopify/react-native-skia"
+import { SkPath, SkPoint, Skia, vec } from "@shopify/react-native-skia"
 
 import PracticeData from "../../../data/Models/PracticeData"
 
@@ -17,10 +17,17 @@ export type exercises = {
 
 type GRAPH_ID = "Day" | "Week" | "Month" | "Year"
 
+type AxisLabelInfo = {
+    text : string,
+    pos : SkPoint
+}
+
 export type Graph = {
     ID : GRAPH_ID,
     exercises: exercises,
     grid: SkPath,
+    yLabels: AxisLabelInfo[],
+    xLabels: AxisLabelInfo[],
     label: string
 }
 
@@ -127,7 +134,7 @@ const buildGrid = (start_x : number, start_y : number, width: number, height: nu
     
     const gridLines : SkPath = Skia.Path.Make();
     
-    for(let i = 0; i < max_x; i++)
+    for(let i = 0; i <= max_x; i++)
     {
         console.log("Y Width " + (i * scale_x + start_x))
         gridLines.moveTo(i * scale_x + start_x, start_y)
@@ -149,13 +156,52 @@ const buildGrid = (start_x : number, start_y : number, width: number, height: nu
     return gridLines;
 }
 
+const buildYAxisLabels = (max_y : number, height : number, xStart : number, yStart : number) => {
+
+    const scale_y = height / max_y  * 0.87
+
+    const labels : AxisLabelInfo[] = []
+
+    for(let i = 0; i <= max_y; i++)
+    {
+        labels.push({
+            text : (max_y - i).toString(),
+            pos : {x: xStart, y :i * scale_y +  yStart + 28}
+        })
+    }
+
+    return labels
+}
+
+const buildAxisLabels = (ID : GRAPH_ID, width : number, max_x: number, labelY : number, startX : number) => {
+    const labels = {
+        "Day"   : [0,4,8,12,16,20,24],
+        "Week"  : ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "Month" : [1,2,3],
+        "Year"  : ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    }
+
+    const res : AxisLabelInfo[] = []
+
+    const scale_x = width / (max_x - 1)
+
+    for(let i = 0; i < max_x; i++){
+        res.push({
+            text : labels[ID][i] != null ? labels[ID][i]!.toString() : "Hi",
+            pos : {x : i * scale_x + startX, y : labelY}
+        })
+    }
+
+    return res;
+}
+
 const PADDING = 20
 const GRID_RIGHT_MARGIN = 30
-const GRID_BOTTOM_MARGIN = 30
+const GRID_BOTTOM_MARGIN = 50
 
 const GRAPH_INFO = {
     "Day" : {
-        grid_div : 24,
+        grid_div : 7,
         total_milli: 86400000
     },
     "Week" : {
@@ -163,7 +209,7 @@ const GRAPH_INFO = {
         total_milli: 604800000
     },
     "Month" : {
-        grid_div : 31,
+        grid_div : 3,
         total_milli: 2628000000
     },
     "Year" : {
@@ -180,7 +226,8 @@ const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number, ID :
     const pad_width     = WIDTH - PADDING
     const pad_height    = HEIGHT - PADDING
     const inner_width   = pad_width - GRID_RIGHT_MARGIN
-    const inner_x_start = (PADDING / 2 ) + GRID_RIGHT_MARGIN
+    const pad_x_start   = (PADDING / 2)
+    const inner_x_start = pad_x_start + GRID_RIGHT_MARGIN
     const inner_height  = pad_height - GRID_BOTTOM_MARGIN
 
     console.log("Full Width " + WIDTH)
@@ -195,6 +242,8 @@ const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number, ID :
         ID:         ID,
         exercises : buildExercisePlots(data,inner_x_start, PADDING,inner_width, inner_height, total_milli, max_y),
         grid:       buildGrid(inner_x_start,PADDING, inner_width, inner_height, grid_div, max_y),
+        yLabels:    buildYAxisLabels(max_y, pad_height, pad_x_start, pad_x_start),
+        xLabels :   buildAxisLabels(ID, WIDTH, grid_div,pad_height, inner_x_start),
         label:      ID
     }
 }

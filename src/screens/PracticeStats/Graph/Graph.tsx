@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Canvas,  Group,  Path,   } from "@shopify/react-native-skia";
+import { BlurMask, Canvas,  Drawing,  Group,  Path, Skia, Text, useFont, vec,   } from "@shopify/react-native-skia";
 import { useMemo } from "react";
 import {  useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { getGraph } from "./GraphBuilder";
 import { Selection } from "./Selection";
 import PracticeData from "../../../data/Models/PracticeData";
+import { useWindowDimensions } from "react-native";
+import { makeDecorator } from "@nozbe/watermelondb/utils/common";
 
 type GraphProps = {
   width : number,
@@ -24,48 +26,61 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
     const grid = useDerivedValue(() =>{
       console.log("NEXT " + next.value + " ID " + graphs[current.value].ID)
       return graphs[next.value].grid;
-    },[current.value])
+    },[next.value])
 
     const scale_line = useDerivedValue(() =>{
       return graphs[next.value].exercises.scale.line;
-    },[current.value])
+    },[next.value])
 
     const scale_dots = useDerivedValue(() =>{
       return  graphs[next.value].exercises.scale.dots;
-    },[current.value])
+    },[next.value])
 
     const octaves_line = useDerivedValue(() =>{
       return graphs[next.value].exercises.octave.line;
-    },[current.value])
+    },[next.value])
 
     const octaves_dots = useDerivedValue(() =>{
       return  graphs[next.value].exercises.octave.dots
-    },[current.value])
+    },[next.value])
 
     const arp_line = useDerivedValue(() =>{
       return graphs[next.value].exercises.arpeggio.line;
-    },[current.value])
+    },[next.value])
 
     const arp_dots = useDerivedValue(() =>{
       return  graphs[next.value].exercises.arpeggio.dots
-    },[current.value])
+    },[next.value])
 
     const solid_ch_line = useDerivedValue(() =>{
       return graphs[next.value].exercises["solid-chord"].line;
-    },[current.value])
+    },[next.value])
 
     const solid_ch_dots = useDerivedValue(() =>{
       return  graphs[next.value].exercises["solid-chord"].dots
-    },[current.value])
+    },[next.value])
 
     const broken_ch_line = useDerivedValue(() =>{
       return graphs[next.value].exercises["broken-chord"].line
-    },[current.value])
+    },[next.value])
 
     const broken_ch_dots = useDerivedValue(() =>{
       return  graphs[next.value].exercises["broken-chord"].dots
-    },[current.value])
+    },[next.value])
 
+    const font = useFont(require("./SF-Mono-Medium.otf"), 18);
+
+    const yLabels = useDerivedValue(() =>{
+
+      return  graphs[next.value].yLabels
+    },[next.value])
+
+    const xLabels = useDerivedValue(() =>{
+      console.log(graphs[next.value].xLabels)
+      return  graphs[next.value].xLabels
+    },[next.value])
+
+      
     return(
       <>
         <Canvas style={{ height: height, width: width, backgroundColor: "#00000055"}}>
@@ -85,6 +100,29 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
 
           <Path path={broken_ch_line} color={"#f8981d"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
           <Path path={broken_ch_dots} color={"#f8981d"} strokeWidth={5} style="fill"/>
+
+          <Group>
+            { yLabels.value.map((obj, index) => {
+              return <Text key={index} x={obj.pos.x} y={obj.pos.y} font={font} text={obj.text} color="white" />;
+            })}
+          </Group>
+
+          <Drawing
+            drawing={({ canvas, paint }) => {
+              paint.setColor(Skia.Color("white"));
+              xLabels.value.map((obj, index) => {
+                canvas.drawText(obj.text, obj.pos.x ? obj.pos.x : 150 , obj.pos.y ? obj.pos.y : 150, paint, font! )
+              })
+            }}
+          />
+          
+          {/* <Group>
+            { xLabels.value.map((obj, index) => {
+              console.log("Mappinggg....")
+              return <Text key={index} x={obj.pos.x} y={obj.pos.y} font={font} text={obj.text} color="white" />;
+            })}
+          </Group> */}
+
         </Canvas>
         <Selection current={current} next={next} transition={transition} graphs={graphs} />
       </>
