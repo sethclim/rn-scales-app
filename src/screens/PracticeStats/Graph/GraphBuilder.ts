@@ -109,6 +109,7 @@ const buildExercisePlots = (data : PracticeData[],start_x : number, start_y : nu
     return ex
 }
 
+const YlineCount = 10
 
 const buildGrid = (start_x : number, start_y : number, width: number, height: number, max_x: number, max_y: number) => {
     //top to bottow div by 7 space
@@ -126,10 +127,11 @@ const buildGrid = (start_x : number, start_y : number, width: number, height: nu
         gridLines.lineTo(i * scale_x + start_x, height + start_y)
     }
 
-    //const div_y = 5
-    const scale_y = height / max_y
 
-    for(let i = 0; i <= max_y; i++)
+    //const div_y = 5
+    const scale_y = height / YlineCount
+
+    for(let i = 0; i <= YlineCount; i++)
     {
         gridLines.moveTo(start_x, i * scale_y + start_y)
         gridLines.lineTo(width + start_x, i * scale_y + start_y)
@@ -140,14 +142,14 @@ const buildGrid = (start_x : number, start_y : number, width: number, height: nu
 
 const buildYAxisLabels = (max_y : number, height : number, xStart : number, yStart : number) => {
 
-    const scale_y = height / max_y  * 0.87
+    const scale_y = height / YlineCount  * 0.87
 
     const labels : AxisLabelInfo[] = []
 
-    for(let i = 0; i <= max_y; i++)
+    for(let i = 0; i <= YlineCount; i++)
     {
         labels.push({
-            text : (max_y - i).toString(),
+            text : (max_y - ((max_y / YlineCount) * i)).toString(),
             pos : {x: xStart, y :i * scale_y +  yStart + 28}
         })
     }
@@ -155,7 +157,7 @@ const buildYAxisLabels = (max_y : number, height : number, xStart : number, ySta
     return labels
 }
 
-const buildAxisLabels = (ID : GRAPH_ID, width : number, max_x: number, labelY : number, startX : number) => {
+const buildXAxisLabels = (ID : GRAPH_ID, width : number, max_x: number, labelY : number, startX : number) => {
     const labels = {
         "Day"   : [0,4,8,12,16,20,24],
         "Week"  : ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"],
@@ -320,14 +322,17 @@ const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number, ID :
 
     const filtered_data = filterData(ID, data);
     const group_data    = groupData(ID, filtered_data)
-    const max_y         = getMaxY(group_data);
+    let max_y         = getMaxY(group_data);
+
+    max_y =  Math.ceil(max_y / 10) * 10;
+
     
     return {
         ID:         ID,
         exercises : buildExercisePlots(group_data,inner_x_start, PADDING,inner_width, inner_height, total_milli, max_y),
         grid:       buildGrid(inner_x_start,PADDING, inner_width, inner_height, grid_div, max_y),
         yLabels:    buildYAxisLabels(max_y, pad_height, pad_x_start, pad_x_start),
-        xLabels :   buildAxisLabels(ID, WIDTH, grid_div,pad_height, inner_x_start),
+        xLabels :   buildXAxisLabels(ID, WIDTH, grid_div,pad_height, inner_x_start),
         label:      ID
     }
 }
