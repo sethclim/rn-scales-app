@@ -24,7 +24,6 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
     const current = useSharedValue(0);
 
     const grid = useDerivedValue(() =>{
-      console.log("NEXT " + next.value + " ID " + graphs[current.value].ID)
       return graphs[next.value].grid;
     },[next.value])
 
@@ -68,18 +67,19 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
       return  graphs[next.value].exercises["broken-chord"].dots
     },[next.value])
 
-    const font = useFont(require("./SF-Mono-Medium.otf"), 18);
+    const font = useFont(require("./SF-Mono-Medium.otf"), 12);
 
     const yLabels = useDerivedValue(() =>{
-
       return  graphs[next.value].yLabels
     },[next.value])
 
     const xLabels = useDerivedValue(() =>{
-      console.log(graphs[next.value].xLabels)
       return  graphs[next.value].xLabels
     },[next.value])
 
+    const path = Skia.Path.Make();
+    path.moveTo(0,0)
+    path.lineTo(10,10)
       
     return(
       <>
@@ -101,11 +101,14 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
           <Path path={broken_ch_line} color={"#f8981d"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
           <Path path={broken_ch_dots} color={"#f8981d"} strokeWidth={5} style="fill"/>
 
-          <Group>
-            { yLabels.value.map((obj, index) => {
-              return <Text key={index} x={obj.pos.x} y={obj.pos.y} font={font} text={obj.text} color="white" />;
-            })}
-          </Group>
+          <Drawing
+            drawing={({ canvas, paint }) => {
+              paint.setColor(Skia.Color("white"));
+              yLabels.value.map((obj, index) => {
+                canvas.drawText(obj.text, obj.pos.x ? obj.pos.x : 150 , obj.pos.y ? obj.pos.y : 150, paint, font! )
+              })
+            }}
+          />
 
           <Drawing
             drawing={({ canvas, paint }) => {
@@ -115,14 +118,6 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
               })
             }}
           />
-          
-          {/* <Group>
-            { xLabels.value.map((obj, index) => {
-              console.log("Mappinggg....")
-              return <Text key={index} x={obj.pos.x} y={obj.pos.y} font={font} text={obj.text} color="white" />;
-            })}
-          </Group> */}
-
         </Canvas>
         <Selection current={current} next={next} transition={transition} graphs={graphs} />
       </>

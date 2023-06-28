@@ -1,4 +1,4 @@
-import { SkPath, SkPoint, Skia, vec } from "@shopify/react-native-skia"
+import { Offset, SkPath, SkPoint, Skia, vec } from "@shopify/react-native-skia"
 
 import PracticeData from "../../../data/Models/PracticeData"
 
@@ -82,25 +82,12 @@ const buildExercisePlots = (data : PracticeData[],start_x : number, start_y : nu
     }
     
     const start_time  = new Date(data[0].Date.getFullYear(), data[0].Date.getMonth(),data[0].Date.getDate(),0,0,0,0);
-    // console.log("max_x "  + max_x)
-    // console.log("WIDTH "  + WIDTH)
-
-    // console.log("start_time " + start_time.valueOf())
-    // console.log("Date " + data[0].Date.valueOf())
-
-    // console.log("DIFF " + (data[0].Date.valueOf() - start_time.valueOf()))
-
-    // console.log("scale_X " + scale_X)
-
-    // console.log(start_time.valueOf())
 
     //Move To
     for(let [exercise, count] of data[0].Counts.entries())
     {
         const x = getX(data[0].Date.valueOf() - start_time.valueOf(), scale_X, start_x)
         const y = getY(count, scale_y, HEIGHT, start_y)
-
-        console.log("X " + x)
         
         ex[exercise].line.moveTo(x, y);
         ex[exercise].dots.addCircle(x, y, 6);
@@ -126,26 +113,21 @@ const buildExercisePlots = (data : PracticeData[],start_x : number, start_y : nu
 const buildGrid = (start_x : number, start_y : number, width: number, height: number, max_x: number, max_y: number) => {
     //top to bottow div by 7 space
 
-    console.log("Grid width " + width)
-    console.log("max_x " + max_x)
+
     //const divX = 7
     const scale_x = width / (max_x - 1)
-    console.log("scale_x " + scale_x)
+
     
     const gridLines : SkPath = Skia.Path.Make();
     
     for(let i = 0; i <= max_x; i++)
     {
-        console.log("Y Width " + (i * scale_x + start_x))
         gridLines.moveTo(i * scale_x + start_x, start_y)
         gridLines.lineTo(i * scale_x + start_x, height + start_y)
     }
 
     //const div_y = 5
     const scale_y = height / max_y
-
-    console.log("Start " + start_x)
-    console.log("width " + width)
 
     for(let i = 0; i <= max_y; i++)
     {
@@ -176,9 +158,9 @@ const buildYAxisLabels = (max_y : number, height : number, xStart : number, ySta
 const buildAxisLabels = (ID : GRAPH_ID, width : number, max_x: number, labelY : number, startX : number) => {
     const labels = {
         "Day"   : [0,4,8,12,16,20,24],
-        "Week"  : ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "Week"  : ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"],
         "Month" : [1,2,3],
-        "Year"  : ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        "Year"  : ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
     }
 
     const res : AxisLabelInfo[] = []
@@ -218,6 +200,112 @@ const GRAPH_INFO = {
     }
 }
 
+const filterData = (ID : GRAPH_ID, data : PracticeData[]) => {
+
+    const endDate = new Date()
+
+    if(ID == "Year")
+    {
+        return data;
+    }
+    else if(ID == "Month")
+    {
+        const startDate = new Date();
+        startDate.setDate(1);
+        return data.filter(a => {
+            return (a.Date >= startDate && a.Date <= endDate);
+        })
+    }
+    else if(ID == "Week")
+    {
+        const startDate = new Date();
+        startDate.setDate(endDate.getDay() - 7);
+        return data.filter(a => {
+            return (a.Date >= startDate && a.Date <= endDate);
+        })
+    }
+    else
+    {
+        const startDate = new Date()
+        startDate.setHours(0,0,0,0);
+        endDate.setHours(24, 60, 60, 10000)
+ 
+        return data.filter(a => {
+            return (a.Date >= startDate && a.Date <= endDate);
+        })
+    }
+}
+
+const getStartEndDate = (ID : GRAPH_ID, date : Date) =>{
+
+    const time_stamp = date.valueOf()
+    const startDate = date
+    if(ID == "Year")
+    {
+        startDate.setDate(1)
+        startDate.setHours(0,0,0,0)
+        time_stamp + GRAPH_INFO["Month"].total_milli
+    }
+    else if(ID == "Month")
+    {
+        startDate.setHours(0,0,0,0)
+        time_stamp + GRAPH_INFO["Week"].total_milli
+    }
+    else if(ID == "Week")
+    {
+        startDate.setHours(0,0,0,0)
+        time_stamp + GRAPH_INFO["Day"].total_milli
+    }
+    else
+    {
+        startDate.setHours(startDate.getHours(),0,0,0)
+        time_stamp + 3600000
+    }
+
+    return [startDate ,new Date(time_stamp)]
+}
+
+const groupData = (ID : GRAPH_ID, data : PracticeData[]) =>{
+    const grouped_data : PracticeData[] = []
+    let currentEnd : Date | null = null
+    let groupedPD : PracticeData | null = null
+
+    data.map((pd) =>{
+        if(currentEnd == null || pd.Date > currentEnd)
+        {
+            if(groupedPD)
+                grouped_data.push(groupedPD)
+
+
+            const [startDate, endDate] = getStartEndDate(ID, pd.Date);
+
+            groupedPD = new PracticeData(startDate);
+            currentEnd = endDate
+        }
+
+        if(groupedPD != null)
+        {
+            pd.Counts.forEach((value, key) =>{
+                console.log("groupedPD " + JSON.stringify(groupedPD))
+                const val = groupedPD!.Counts.get(key)
+
+                console.log("value " + value)
+
+                if(val != undefined)
+                {
+                    console.log("Total " + (val + value))
+                    groupedPD!.Counts.set(key, (val + value))
+                }
+            })
+        }
+
+    })
+
+ 
+
+    return grouped_data
+}
+
 const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number, ID : GRAPH_ID) : Graph =>{
 
     const grid_div    =  GRAPH_INFO[ID].grid_div
@@ -230,24 +318,19 @@ const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number, ID :
     const inner_x_start = pad_x_start + GRID_RIGHT_MARGIN
     const inner_height  = pad_height - GRID_BOTTOM_MARGIN
 
-    console.log("Full Width " + WIDTH)
-    console.log("inner_width " + inner_width)
-    console.log("inner_start " + inner_x_start)
-
-    console.log("inner_width + pad + pad" + (inner_width + inner_x_start + inner_x_start))
-
-    const max_y = getMaxY(data);
-
+    const filtered_data = filterData(ID, data);
+    const group_data    = groupData(ID, filtered_data)
+    const max_y         = getMaxY(group_data);
+    
     return {
         ID:         ID,
-        exercises : buildExercisePlots(data,inner_x_start, PADDING,inner_width, inner_height, total_milli, max_y),
+        exercises : buildExercisePlots(group_data,inner_x_start, PADDING,inner_width, inner_height, total_milli, max_y),
         grid:       buildGrid(inner_x_start,PADDING, inner_width, inner_height, grid_div, max_y),
         yLabels:    buildYAxisLabels(max_y, pad_height, pad_x_start, pad_x_start),
         xLabels :   buildAxisLabels(ID, WIDTH, grid_div,pad_height, inner_x_start),
         label:      ID
     }
 }
-
 
 export const getGraph = (width: number, height: number, data : PracticeData[]) : Graph[] => {
 
