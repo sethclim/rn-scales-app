@@ -3,7 +3,7 @@ import React, { FunctionComponent, useContext } from "react";
 import withObservables from '@nozbe/with-observables';
 
 //NativeBase
-import { Box, HStack, Spacer, Button, Text } from "native-base";
+import { Box, HStack, Spacer, Button, Text, Icon, IconButton } from "native-base";
 
 //Navigation
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
@@ -18,6 +18,8 @@ import RoutineItemModel from "../../data/Database/routine_item.model";
 import Context from "../../state/modules/routine/context";
 
 import {database} from '../../data/Database/database';
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { background } from "native-base/lib/typescript/theme/styled-system";
 
 const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routineItems}) => {  
 
@@ -35,7 +37,19 @@ const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routin
         <HStack space={3} justifyContent="flex-start" alignItems="center">
           <Text marginLeft={5} fontWeight="bold">{routine.title}</Text>
           <Spacer />
-          <Button bg="#FFFFFF33" _text={{color:"white"}} onPress={() => StartSavedRoutine(routineItems)}>Start</Button>
+          <IconButton 
+            variant="unstyled"
+            icon={<MaterialIcons name="play-arrow" color="#fff" size={20} />} 
+            borderRadius="full"
+            onPress={() => StartSavedRoutine(routineItems)}
+              _pressed={{
+                bg: "#00000000",
+                _icon: {
+                  color:"#ff0000"
+                }
+              }}
+            />
+          {/* <Button bg="#FFFFFF33" _text={{color:"white"}} onPress={() => StartSavedRoutine(routineItems)}>Start</Button> */}
         </HStack>
       </Box>
     );
