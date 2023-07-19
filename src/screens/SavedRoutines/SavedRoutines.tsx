@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 
-import { Box } from 'native-base';
+import { Box, Text } from 'native-base';
 
 import withObservables from '@nozbe/with-observables';
 import {database} from '../../data/Database/database';
@@ -14,6 +14,7 @@ import { StyleSheet } from 'react-native';
 
 import  SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
 import { Collection } from '@nozbe/watermelondb';
+
 
 const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
 
@@ -31,7 +32,7 @@ const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
   };
 
   return (
-    <Box flex={1} padding={5}>
+    <Box flex={1} margin={30}  bg="#77777733">
       <SwipeListView<RoutineModel> 
         data={routines} 
         renderItem={ (data, rowMap) => (
@@ -48,6 +49,11 @@ const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
         disableRightSwipe={true}
         keyExtractor={(item, index) => item.id}
         recalculateHiddenLayout={true}
+        ListEmptyComponent={() =>(
+          <Box   justifyContent="center" alignItems="center" height="500">
+            <Text color="#000">No Saved Routines</Text>
+          </Box>
+        )}
         />
     </Box>
   );
