@@ -1,4 +1,4 @@
-import { Offset, SkPath, SkPoint, Skia, vec } from "@shopify/react-native-skia"
+import { SkPath, SkPoint, Skia } from "@shopify/react-native-skia"
 
 import PracticeData from "../../../data/Models/PracticeData"
 
