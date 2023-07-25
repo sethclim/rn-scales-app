@@ -63,8 +63,6 @@ const createPlot = () : plot =>{
 }
 
 const buildExercisePlots = (data : PracticeData[],start_x : number, start_y : number,  WIDTH : number, HEIGHT : number, max_x: number, max_y: number) => {
-
-
     const ex : exercises = {
         "scale"        : createPlot(),
         "octave"       : createPlot(),
@@ -268,47 +266,39 @@ const getStartEndDate = (ID : GRAPH_ID, date : Date) =>{
 }
 
 const groupData = (ID : GRAPH_ID, data : PracticeData[]) =>{
+
+    if(data.length <= 0)
+        return []
+
     const grouped_data : PracticeData[] = []
-    let currentEnd : Date | null = null
-    let groupedPD : PracticeData | null = null
+    const [startDate, endDate] = getStartEndDate(ID, data[0].Date);
+    let currentEnd : Date = endDate
+    let groupedPD : PracticeData = new PracticeData(startDate);
 
     data.map((pd) =>{
-        if(currentEnd == null || pd.Date > currentEnd)
+        if(pd.Date > currentEnd)
         {
-            if(groupedPD)
-                grouped_data.push(groupedPD)
-
+            grouped_data.push(groupedPD)
 
             const [startDate, endDate] = getStartEndDate(ID, pd.Date);
-
             groupedPD = new PracticeData(startDate);
             currentEnd = endDate
         }
 
-        if(groupedPD != null)
-        {
-            pd.Counts.forEach((value, key) =>{
-                console.log("groupedPD " + JSON.stringify(groupedPD))
-                const val = groupedPD!.Counts.get(key)
-
-                console.log("value " + value)
-
-                if(val != undefined)
-                {
-                    console.log("Total " + (val + value))
-                    groupedPD!.Counts.set(key, (val + value))
-                }
-            })
-        }
-
+        pd.Counts.forEach((value, key) =>{
+            const val = groupedPD.Counts.get(key)
+            
+            if(val != undefined)
+                groupedPD.Counts.set(key, (val + value))
+        })
     })
-
- 
 
     return grouped_data
 }
 
 const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number, ID : GRAPH_ID) : Graph =>{
+
+    console.log("BUILD GRAPH ")
 
     const grid_div    =  GRAPH_INFO[ID].grid_div
     const total_milli =  GRAPH_INFO[ID].total_milli
@@ -322,11 +312,10 @@ const buildGraph = (data : PracticeData[], WIDTH : number, HEIGHT : number, ID :
 
     const filtered_data = filterData(ID, data);
     const group_data    = groupData(ID, filtered_data)
-    let max_y         = getMaxY(group_data);
 
+    let max_y         = getMaxY(group_data);
     max_y =  Math.ceil(max_y / 10) * 10;
 
-    
     return {
         ID:         ID,
         exercises : buildExercisePlots(group_data,inner_x_start, PADDING,inner_width, inner_height, total_milli, max_y),

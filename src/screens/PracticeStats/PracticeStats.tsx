@@ -25,6 +25,9 @@ const PracticeStats = ({practice_data }: PracticeStatsProps) => {
     const { width, height } = useWindowDimensions();
 
     const convertData = (practice_data : PracticeDataModel[]) : PracticeData[] => {
+
+      console.log("practice_data " + practice_data.length)
+
       return practice_data.map((data, index) => {
         const item = new PracticeData(data.date);
         item.Counts = new Map<ExerciseType, number>([

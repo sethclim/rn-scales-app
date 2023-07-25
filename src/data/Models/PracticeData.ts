@@ -14,6 +14,5 @@ export default class PracticeData
         this.Counts.set("arpeggio", 0);
         this.Counts.set("solid-chord", 0);
         this.Counts.set("solid-chord", 0);
-
     }
 }

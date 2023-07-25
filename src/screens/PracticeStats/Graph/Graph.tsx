@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { BlurMask, Canvas,  Drawing,  Group,  Path, Skia, Text, useFont, vec,   } from "@shopify/react-native-skia";
+import React from "react";
+import { Canvas,  Drawing, Path, Skia, useFont   } from "@shopify/react-native-skia";
 import { useMemo } from "react";
 import {  useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { getGraph } from "./GraphBuilder";
 import { Selection } from "./Selection";
 import PracticeData from "../../../data/Models/PracticeData";
-import { useWindowDimensions } from "react-native";
-import { makeDecorator } from "@nozbe/watermelondb/utils/common";
+
 
 type GraphProps = {
   width : number,
@@ -70,6 +69,9 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
     const font = useFont(require("./SF-Mono-Medium.otf"), 12);
 
     const yLabels = useDerivedValue(() =>{
+      console.log("GRAPH " + JSON.stringify(graphs))
+      console.log("next.value " + JSON.stringify(next.value))
+      console.log("graphs[next.value].yLabels " + JSON.stringify(graphs[next.value].yLabels))
       return  graphs[next.value].yLabels
     },[next.value])
 
@@ -82,6 +84,7 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
     path.lineTo(10,10)
       
     return(
+      graphs.length > 0 ?
       <>
         <Canvas style={{ height: height, width: width, backgroundColor: "#00000055"}}>
           <Path path={grid} color="#ffffff44" strokeWidth={2} style="stroke"/>
@@ -121,6 +124,7 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
         </Canvas>
         <Selection current={current} next={next} transition={transition} graphs={graphs} />
       </>
+      : null
     )
   } 
 
