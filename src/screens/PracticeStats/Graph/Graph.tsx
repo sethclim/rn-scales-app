@@ -69,9 +69,6 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
     const font = useFont(require("./SF-Mono-Medium.otf"), 12);
 
     const yLabels = useDerivedValue(() =>{
-      console.log("GRAPH " + JSON.stringify(graphs))
-      console.log("next.value " + JSON.stringify(next.value))
-      console.log("graphs[next.value].yLabels " + JSON.stringify(graphs[next.value].yLabels))
       return  graphs[next.value].yLabels
     },[next.value])
 
