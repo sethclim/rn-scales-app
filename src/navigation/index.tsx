@@ -14,7 +14,16 @@ const RootNavigator = () => {
       <NavigationContainer>
             <Stack.Navigator>
               <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }}/>
-              <Stack.Screen name="Practice" component={PracticeRoutine} />
+              <Stack.Screen name="Practice" component={PracticeRoutine}
+                  options={{ 
+                    headerStyle: {
+                        backgroundColor: '#5E81AC',
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    }
+                }} />
             </Stack.Navigator>
       </NavigationContainer>
     );
