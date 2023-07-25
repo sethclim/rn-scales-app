@@ -3,10 +3,19 @@ import {NavigationContainer} from '@react-navigation/native';
 
 import BottomTabs from "./BottomTabs"
 
+import PracticeRoutine from '../screens/PracticeRoutine';
+
+import { createStackNavigator } from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
+
 const RootNavigator = () => {
     return (
       <NavigationContainer>
-        <BottomTabs />
+            <Stack.Navigator>
+              <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }}/>
+              <Stack.Screen name="Practice" component={PracticeRoutine} />
+            </Stack.Navigator>
       </NavigationContainer>
     );
   };
