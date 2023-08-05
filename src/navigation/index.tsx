@@ -24,6 +24,17 @@ const RootNavigator = () => {
                         fontWeight: 'bold',
                     }
                 }} />
+                <Stack.Screen name="Settings" component={PracticeRoutine}
+                  options={{ 
+                    title:"Settings",
+                    headerStyle: {
+                        backgroundColor: '#5E81AC',
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    }
+                }} />
             </Stack.Navigator>
       </NavigationContainer>
     );

@@ -69,11 +69,11 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
     const font = useFont(require("./SF-Mono-Medium.otf"), 12);
 
     const yLabels = useDerivedValue(() =>{
-      return  graphs[next.value].yLabels
+      return  graphs[next.value].yLabels ? graphs[next.value].yLabels : []
     },[next.value])
 
     const xLabels = useDerivedValue(() =>{
-      return  graphs[next.value].xLabels
+      return  graphs[next.value].xLabels ? graphs[next.value].xLabels : []
     },[next.value])
 
     const path = Skia.Path.Make();

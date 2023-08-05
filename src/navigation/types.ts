@@ -5,6 +5,7 @@ export type BottomTabNavigatorParamList = {
     Practice: undefined;
     SavedRoutines: undefined;
     PracticeStats: undefined;
+    Settings: undefined;
   };
 
 export const defaultBottomTabNavigatorParamList: BottomTabNavigatorParamList = {
@@ -12,6 +13,7 @@ export const defaultBottomTabNavigatorParamList: BottomTabNavigatorParamList = {
   Practice: undefined,
   SavedRoutines: undefined,
   PracticeStats: undefined,
+  Settings: undefined
 };
 
 export type GenerateNavigationProp = BottomTabNavigationProp<BottomTabNavigatorParamList, 'Generate', 'BottomTabs'>;
