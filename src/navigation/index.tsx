@@ -4,6 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import BottomTabs from "./BottomTabs"
 
 import PracticeRoutine from '../screens/PracticeRoutine';
+import Settings from '../screens/Settings';
 
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -24,7 +25,7 @@ const RootNavigator = () => {
                         fontWeight: 'bold',
                     }
                 }} />
-                <Stack.Screen name="Settings" component={PracticeRoutine}
+                <Stack.Screen name="Settings" component={Settings}
                   options={{ 
                     title:"Settings",
                     headerStyle: {
