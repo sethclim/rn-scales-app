@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 
 import { Box, Text } from 'native-base';
 
-import withObservables from '@nozbe/with-observables';
+// import withObservables from '@nozbe/with-observables';
 import {database} from '../../data/Database/database';
 import RoutineModel from '../../data/Database/routine.model';
 import { IRoutines } from '../../data/Database/types';
@@ -14,7 +14,7 @@ import { StyleSheet } from 'react-native';
 
 import  SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
 import { Collection } from '@nozbe/watermelondb';
-
+import { withObservables } from '@nozbe/watermelondb/react'
 
 const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
 

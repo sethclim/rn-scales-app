@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useContext } from "react";
 //Watermelon
-import withObservables from '@nozbe/with-observables';
+import { withObservables } from '@nozbe/watermelondb/react'
 
 //NativeBase
 import { Box, HStack, Spacer, Button, Text, Icon, IconButton } from "native-base";

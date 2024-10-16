@@ -7,7 +7,7 @@ import { Collection } from "@nozbe/watermelondb";
 import PracticeDataModel from "../../data/Database/practice_data.model";
 import { database } from "../../data/Database/database";
 import { IPracticeDatas } from "../../data/Database/types";
-import withObservables from '@nozbe/with-observables';
+import { withObservables } from '@nozbe/watermelondb/react'
 
 import PracticeData from "../../data/Models/PracticeData";
 import { ExerciseType } from "../../data/Models/ExerciseType";
