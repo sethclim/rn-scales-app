@@ -36,6 +36,12 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - ExpoSQLite (14.0.6):
+    - ExpoModulesCore
+    - "sqlite3 (~> 3.45.3+1)"
+    - "sqlite3/bytecodevtab (~> 3.45.3+1)"
+    - "sqlite3/fts (~> 3.45.3+1)"
+    - "sqlite3/fts5 (~> 3.45.3+1)"
   - FBLazyVector (0.75.4)
   - fmt (9.1.0)
   - glog (0.3.5)
@@ -1688,11 +1694,16 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - simdjson (3.1.0-wmelon1)
   - SocketRocket (0.7.0)
-  - WatermelonDB (0.27.1):
-    - React
-    - simdjson
+  - "sqlite3 (3.45.3+1)":
+    - "sqlite3/common (= 3.45.3+1)"
+  - "sqlite3/bytecodevtab (3.45.3+1)":
+    - sqlite3/common
+  - "sqlite3/common (3.45.3+1)"
+  - "sqlite3/fts (3.45.3+1)":
+    - sqlite3/common
+  - "sqlite3/fts5 (3.45.3+1)":
+    - sqlite3/common
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1705,6 +1716,7 @@ DEPENDENCIES:
   - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
+  - ExpoSQLite (from `../node_modules/expo-sqlite/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
@@ -1773,13 +1785,12 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
-  - "simdjson (from `../node_modules/@nozbe/simdjson`)"
-  - "WatermelonDB (from `../node_modules/@nozbe/watermelondb`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
     - SocketRocket
+    - sqlite3
 
 EXTERNAL SOURCES:
   boost:
@@ -1800,6 +1811,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
+  ExpoSQLite:
+    :path: "../node_modules/expo-sqlite/ios"
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
   fmt:
@@ -1933,10 +1946,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
-  simdjson:
-    :path: "../node_modules/@nozbe/simdjson"
-  WatermelonDB:
-    :path: "../node_modules/@nozbe/watermelondb"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1950,6 +1959,7 @@ SPEC CHECKSUMS:
   ExpoFont: 00756e6c796d8f7ee8d211e29c8b619e75cbf238
   ExpoKeepAwake: 3b8815d9dd1d419ee474df004021c69fdd316d08
   ExpoModulesCore: b966af7729fc28ee8d5995e7bb1ec60d56d3ec52
+  ExpoSQLite: 80476d564ec75b26ffe801f3953d876377b3c9fe
   FBLazyVector: 430e10366de01d1e3d57374500b1b150fe482e6d
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: 69ef571f3de08433d766d614c73a9838a06bf7eb
@@ -2016,11 +2026,10 @@ SPEC CHECKSUMS:
   RNScreens: 19719a9c326e925498ac3b2d35c4e50fe87afc06
   RNSVG: 4590aa95758149fa27c5c83e54a6a466349a1688
   RNVectorIcons: 6382277afab3c54658e9d555ee0faa7a37827136
-  simdjson: e6bfae9ce4bcdc80452d388d593816f1ca2106f3
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
-  WatermelonDB: 842d22ba555425aa9f3ce551239a001200c539bc
+  sqlite3: 02d1f07eaaa01f80a1c16b4b31dfcbb3345ee01a
   Yoga: aa3df615739504eebb91925fc9c58b4922ea9a08
 
-PODFILE CHECKSUM: 2a018c0b3e27da784a8f773e2abe83c2bd464c19
+PODFILE CHECKSUM: adc7fa0d0818aec8cc0050eeac9091f0077d03ac
 
 COCOAPODS: 1.15.2

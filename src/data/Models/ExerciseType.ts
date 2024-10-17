@@ -1,1 +1,0 @@
-export type ExerciseType = "scale" | "octave" | "arpeggio" | 'solid-chord' | 'broken-chord';

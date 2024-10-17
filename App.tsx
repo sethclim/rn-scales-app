@@ -10,15 +10,18 @@ import RootNavigator from './src/navigation';
 import RoutineProvider from './src/state/modules/routine/routine';
 import PracticeDataProvider from './src/state/modules/PracticeData/PracticeData';
 
+
 const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NativeBaseProvider theme={CustomTheme}>
-        <RoutineProvider>
-          <PracticeDataProvider>
-            <RootNavigator />
-          </PracticeDataProvider>
-        </RoutineProvider>
+       
+          <RoutineProvider>
+            <PracticeDataProvider>
+              <RootNavigator />
+            </PracticeDataProvider>
+          </RoutineProvider>
+        
       </NativeBaseProvider>
     </GestureHandlerRootView>
   );

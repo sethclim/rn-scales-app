@@ -1,12 +1,12 @@
-import RoutineItem from "../../../../data/Models/RoutineItem";
+import {RoutineItem} from '../../../../data/Models/DataModels';
 
 export interface IState {
   error: string;
   loading: boolean;
   generatedRoutine: Array<RoutineItem>;
-  currentTask : RoutineItem | null;
-  saving : any;
-  deleting : any
+  currentTask: RoutineItem | null;
+  saving: any;
+  deleting: any;
 }
 
 const initialState: IState = {

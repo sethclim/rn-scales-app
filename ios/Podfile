@@ -6,8 +6,6 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '13.4'
 install! 'cocoapods', :deterministic_uuids => false
 
-pod 'simdjson', path: '../node_modules/@nozbe/simdjson'
-
 target 'ScalesApp' do
   use_expo_modules!
   post_integrate do |installer|

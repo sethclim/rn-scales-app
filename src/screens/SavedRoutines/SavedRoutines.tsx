@@ -1,22 +1,20 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useState }  from 'react';
 
 import { Box, Text } from 'native-base';
 
 // import withObservables from '@nozbe/with-observables';
-import {database} from '../../data/Database/database';
-import RoutineModel from '../../data/Database/routine.model';
-import { IRoutines } from '../../data/Database/types';
+import {RoutineModel} from '../../data/Models/DataModels';
 import { SavedRoutinesProps } from './types';
-import { EnhancedSavedRoutineRow } from './SavedRoutineRow';
+import { SavedRoutineRow } from './SavedRoutineRow';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native'
 
 import  SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
-import { Collection } from '@nozbe/watermelondb';
-import { withObservables } from '@nozbe/watermelondb/react'
 
-const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
+const SavedRoutines  = () => {
+
+  const [routines, setRoutines] = useState<RoutineModel[]>()
 
   function compareDatesFn(a : RoutineModel, b : RoutineModel) {
     if (Date.parse(a.createdAt) > Date.parse(b.createdAt) ) {
@@ -36,10 +34,10 @@ const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
       <SwipeListView<RoutineModel> 
         data={routines} 
         renderItem={ (data, rowMap) => (
-          <EnhancedSavedRoutineRow routine={data.item} routineItems={data.item.routineItems}  rowKey={rowMap}/>
+          <SavedRoutineRow routine={data.item} routineItems={data.item.RoutineItems} index={0}  />
         )} 
         renderHiddenItem={ (data, rowMap) => (
-          <SavedRoutineHiddenItem routine={data.item} routineItems={data.item.routineItems} index={0} />
+          <SavedRoutineHiddenItem routine={data.item} routineItems={data.item.RoutineItems} index={0} />
         )} 
         rightOpenValue={-55} 
         previewRowKey={'0'} 
@@ -65,12 +63,5 @@ const styles = StyleSheet.create({
   },
 });
 
-const data : Collection<RoutineModel> = database.collections.get('routines');
 
-const observabeRoutine = () => data?.query().observe();
-
-const enhanceWithRoutines = withObservables<IRoutines, any>([], () => ({
-  routines: observabeRoutine(),
-}));
-
-export default enhanceWithRoutines(SavedRoutines);
+export default SavedRoutines;

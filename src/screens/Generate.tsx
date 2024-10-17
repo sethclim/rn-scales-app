@@ -7,7 +7,7 @@ import { generateRequest,saveRoutine } from "../state/modules/routine/store/acti
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { ExerciseType } from "../data/Models/ExerciseType";
+import { ExerciseType } from "../data/Models/DataModels";
 
 export const Exercises = new Map<ExerciseType, string>([
     ["scale", "Scale"],
@@ -67,7 +67,7 @@ const Generate = () => {
     const cancelRef = React.useRef(null);
 
     return (
-        <Box flex={1} padding={5} bg="nord.background">
+        <Box flex={1} padding={1} bg="nord.background">
             <VStack marginTop={20} alignItems="center">
                 <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text>
