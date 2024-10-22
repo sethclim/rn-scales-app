@@ -5,7 +5,7 @@ import {RoutineTypes} from './actions';
 import {
   ExerciseType,
   RoutineItem,
-  RoutineModel,
+  Routine,
 } from '../../../../data/Models/DataModels';
 import {Exercises} from '../../../../screens/Generate';
 import {IAction} from '../../../types';
@@ -161,7 +161,7 @@ const ResumeRoutine = (routineItems: Array<RoutineItem>) => {
   return routineItems;
 };
 
-const DeleteRoutine = async (payload: Array<RoutineModel>) => {
+const DeleteRoutine = async (payload: Array<Routine>) => {
   //Do Watermelon Delete
   // await database.write(async () => {
   //   const routine = await database

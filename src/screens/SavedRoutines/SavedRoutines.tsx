@@ -1,9 +1,9 @@
-import React, { useState }  from 'react';
+import React, { useEffect, useState }  from 'react';
 
 import { Box, Text } from 'native-base';
 
 // import withObservables from '@nozbe/with-observables';
-import {RoutineModel} from '../../data/Models/DataModels';
+import {Routine} from '../../data/Models/DataModels';
 import { SavedRoutinesProps } from './types';
 import { SavedRoutineRow } from './SavedRoutineRow';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -14,9 +14,10 @@ import  SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
 
 const SavedRoutines  = () => {
 
-  const [routines, setRoutines] = useState<RoutineModel[]>()
+  const [routines, setRoutines] = useState<Routine[]>()
 
-  function compareDatesFn(a : RoutineModel, b : RoutineModel) {
+
+  function compareDatesFn(a : Routine, b : Routine) {
     if (Date.parse(a.createdAt) > Date.parse(b.createdAt) ) {
       return 1;
     }
@@ -31,7 +32,7 @@ const SavedRoutines  = () => {
 
   return (
     <Box flex={1} margin={30}  bg="#77777733">
-      <SwipeListView<RoutineModel> 
+      <SwipeListView<Routine> 
         data={routines} 
         renderItem={ (data, rowMap) => (
           <SavedRoutineRow routine={data.item} routineItems={data.item.RoutineItems} index={0}  />

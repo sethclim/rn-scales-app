@@ -20,7 +20,7 @@ export class PracticeData {
   }
 }
 
-export interface RoutineModel {
+export interface Routine {
   RoutineItems: RoutineItem[];
   createdAt: string;
   title: string;

@@ -1,11 +1,11 @@
-import {RoutineModel, RoutineItem} from '../../data/Models/DataModels';
+import {Routine, RoutineItem} from '../../data/Models/DataModels';
 
 export interface SavedRoutinesProps {
-  routines: RoutineModel[];
+  routines: Routine[];
 }
 
 export interface RowProps {
-  routine: RoutineModel;
+  routine: Routine;
   index: number;
   routineItems: RoutineItem[];
 }

@@ -1,4 +1,4 @@
-import {RoutineModel} from '../../../../data/Models/DataModels';
+import {Routine} from '../../../../data/Models/DataModels';
 import {RoutineItem} from '../../../../data/Models/DataModels';
 import {IAction} from '../../../types';
 
@@ -25,7 +25,7 @@ export const saveRoutine = (payload: Array<any>): IAction => ({
   payload,
 });
 
-export const deleteRoutine = (payload: Array<RoutineModel>): IAction => ({
+export const deleteRoutine = (payload: Array<Routine>): IAction => ({
   type: RoutineTypes.DELETE_ROUTINE,
   payload,
 });
