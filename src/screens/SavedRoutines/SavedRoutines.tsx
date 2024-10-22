@@ -1,4 +1,4 @@
-import React, { useEffect, useState }  from 'react';
+import React, { useContext, useEffect, useState }  from 'react';
 
 import { Box, Text } from 'native-base';
 
@@ -11,17 +11,33 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import { StyleSheet } from 'react-native'
 
 import  SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
+import Context from '../../state/modules/routine/context';
+import { requestAllRoutines } from '../../state/modules/routine/store/actions';
+import { useFocusEffect } from '@react-navigation/native';
 
 const SavedRoutines  = () => {
 
-  const [routines, setRoutines] = useState<Routine[]>()
+  // const [routines, setRoutines] = useState<Routine[]>()
+  const { myDispatch, state } = useContext(Context);
+
+  const DoSideEffect = () => {
+    myDispatch(requestAllRoutines())
+  }
+
+  useFocusEffect(
+    React.useCallback(() => {
+        console.log("Requesting routines"),
+        DoSideEffect();
+    }, [])
+  )
+
 
 
   function compareDatesFn(a : Routine, b : Routine) {
     if (Date.parse(a.createdAt) > Date.parse(b.createdAt) ) {
       return 1;
     }
-    return -1;
+    return -1; 
   }
 
   const closeRow = (rowMap : any, rowKey : any) => {
@@ -33,7 +49,7 @@ const SavedRoutines  = () => {
   return (
     <Box flex={1} margin={30}  bg="#77777733">
       <SwipeListView<Routine> 
-        data={routines} 
+        data={state.routines} 
         renderItem={ (data, rowMap) => (
           <SavedRoutineRow routine={data.item} routineItems={data.item.RoutineItems} index={0}  />
         )} 

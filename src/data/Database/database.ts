@@ -26,6 +26,11 @@ type RoutineItem2 = {
   exerciseType: string;
 };
 
+type Routine = {
+  id: number;
+  name: string;
+};
+
 export class Database {
   constructor() {
     this.db = null;
@@ -41,6 +46,8 @@ export class Database {
     const res = await this.db.execAsync(`
       PRAGMA journal_mode = WAL;
       CREATE TABLE IF NOT EXISTS RoutineItem (id INTEGER PRIMARY KEY NOT NULL, displayItem TEXT NOT NULL, exerciseType TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS Routine (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL);
+      INSERT INTO Routine (name) VALUES ('Hello')
       `);
 
     console.log('DB' + JSON.stringify(res));
@@ -52,7 +59,7 @@ export class Database {
       return;
     }
 
-    const res = await this.db.withExclusiveTransactionAsync(async txn => {
+    await this.db.withExclusiveTransactionAsync(async txn => {
       let source = '';
       const insert = `INSERT INTO RoutineItem (displayItem, exerciseType) VALUES `;
       const end = ';';
@@ -65,19 +72,20 @@ export class Database {
 
       // console.log('source ' + source);
 
-      const res2 = await txn.execAsync(source);
+      await txn.execAsync(source);
       // console.log('res2 ' + JSON.stringify(res2));
     });
+  }
 
-    // console.log('DB ' + JSON.stringify(res));
+  async getAllRoutines() {
+    if (this.db == null) {
+      console.log('DB not created');
+      return;
+    }
 
-    // const firstRow3 = await this.db.getAllAsync<RoutineItem2>(
-    //   'SELECT * FROM RoutineItem',
-    // );
+    const allRows = await this.db.getAllAsync<Routine>('SELECT * FROM Routine');
 
-    // for (const row of firstRow3) {
-    //   console.log(row.id, row.displayItem, row.exerciseType);
-    // }
+    return allRows;
   }
 }
 

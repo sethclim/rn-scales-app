@@ -40,6 +40,12 @@ const reducer = (state: IState, action: IAction): IState => {
         loading: false,
         generatedRoutine: ResumeRoutine(payload),
       };
+    case RoutineTypes.LOADED_ALL_ROUTINES:
+      return {
+        ...state,
+        loading: false,
+        routines: HandleLoadedAllRoutines(payload),
+      };
     default:
       return state;
   }
@@ -174,6 +180,12 @@ const DeleteRoutine = async (payload: Array<Routine>) => {
   //   await database.batch(...deleted);
   //   await routine.destroyPermanently();
   // });
+};
+
+const HandleLoadedAllRoutines = (payload: any) => {
+  if (payload == undefined) return [];
+
+  return payload;
 };
 
 export default reducer;

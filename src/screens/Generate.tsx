@@ -31,7 +31,7 @@ const Generate = () => {
     const [selectedTypes, setSelectedTypes] = React.useState([]);    
     const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
 
-    const { dispatch } = useContext(Context);
+    const { myDispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const [showModal, setShowModal] = useState(false);
@@ -44,7 +44,7 @@ const Generate = () => {
 
         const generateReq = generateRequest([selectedRoots, selectedTypes, selectedExercises])
 
-        dispatch(generateReq)
+        myDispatch(generateReq)
 
         if(CheckValidRoutineConfiguration())
             navigation.navigate('Practice')
@@ -55,7 +55,7 @@ const Generate = () => {
     const SaveRoutine = (saveName : string) => {
 
         const saveRoutineMSG = saveRoutine([selectedRoots, selectedTypes, selectedExercises, saveName])
-        dispatch(saveRoutineMSG) 
+        myDispatch(saveRoutineMSG) 
 
         setShowModal(false);
     }

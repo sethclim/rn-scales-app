@@ -15,7 +15,7 @@ import {  recordPracticeDataRequest, savePracticeDataRequest } from "../state/mo
 
 const PracticeRoutine = () =>{
 
-    const { state, dispatch } = useContext(Context);
+    const { state, myDispatch } = useContext(Context);
     const { practiceDatadispatch } = useContext(PracticeContext);
 
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
@@ -23,7 +23,7 @@ const PracticeRoutine = () =>{
     const Next = () => {
 
         const requestMSG = requestTask([])
-        dispatch(requestMSG);
+        myDispatch(requestMSG);
 
         if(state.currentTask != null)
         {

@@ -1,4 +1,4 @@
-import {RoutineItem} from '../../../../data/Models/DataModels';
+import {Routine, RoutineItem} from '../../../../data/Models/DataModels';
 
 export interface IState {
   error: string;
@@ -7,6 +7,7 @@ export interface IState {
   currentTask: RoutineItem | null;
   saving: any;
   deleting: any;
+  routines: Array<Routine>;
 }
 
 const initialState: IState = {
@@ -16,6 +17,7 @@ const initialState: IState = {
   currentTask: null,
   saving: null,
   deleting: null,
+  routines: [],
 };
 
 export function GetInitialState(): IState {
