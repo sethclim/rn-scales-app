@@ -122,7 +122,14 @@ const SaveRoutine = async (
     console.log('GenerateRoutine routineData.length ' + routineData.length);
   }
 
-  const res = await dbInstance.saveRoutines(routineData);
+  const routineToSave: Routine = {
+    id: '-1',
+    title: title,
+    RoutineItems: routineData,
+    createdAt: '99',
+  };
+
+  const res = await dbInstance.saveRoutine(routineToSave);
 
   //Do Watermelon logic
   // const newRoutine = await database.write(async () => {
@@ -182,7 +189,9 @@ const DeleteRoutine = async (payload: Array<Routine>) => {
   // });
 };
 
-const HandleLoadedAllRoutines = (payload: any) => {
+const HandleLoadedAllRoutines = (payload: Routine[]) => {
+  console.log('len payload ' + payload.length);
+
   if (payload == undefined) return [];
 
   return payload;

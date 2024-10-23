@@ -1,34 +1,11 @@
-// import {Database} from '@nozbe/watermelondb';
-// import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
-
-// import RoutineModel from './routine.model';
-// import RoutineItemModel from './routine_item.model';
-// import PracticeDataModel from './practice_data.model';
-
-// import {AppSchema as schema} from './schema';
-
-// const adapter = new SQLiteAdapter({
-//   schema,
-// });
-
-// export const database = new Database({
-//   adapter,
-//   modelClasses: [RoutineModel, RoutineItemModel, PracticeDataModel],
-// });
-
 import * as SQLite from 'expo-sqlite';
 
-import {RoutineItem} from '../Models/DataModels';
+import {Routine, RoutineItem} from '../Models/DataModels';
 
-type RoutineItem2 = {
+type DBRoutine = {
   id: number;
-  displayItem: string;
-  exerciseType: string;
-};
-
-type Routine = {
-  id: number;
-  name: string;
+  title: string;
+  createdAt: string;
 };
 
 export class Database {
@@ -40,33 +17,53 @@ export class Database {
   db: SQLite.SQLiteDatabase | null;
 
   createDatabase = async () => {
-    console.log('createDatabase...');
     this.db = await SQLite.openDatabaseAsync('databaseName');
-    console.log('DB' + JSON.stringify(this.db));
+
     const res = await this.db.execAsync(`
       PRAGMA journal_mode = WAL;
-      CREATE TABLE IF NOT EXISTS RoutineItem (id INTEGER PRIMARY KEY NOT NULL, displayItem TEXT NOT NULL, exerciseType TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS Routine (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL);
-      INSERT INTO Routine (name) VALUES ('Hello')
+      PRAGMA foreign_keys = ON;
+      CREATE TABLE IF NOT EXISTS Routine(id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, createdAt TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS RoutineItem (id INTEGER PRIMARY KEY NOT NULL, displayItem TEXT NOT NULL, exerciseType TEXT NOT NULL, routineForeignKey INTEGER NOT NULL, FOREIGN KEY(routineForeignKey) REFERENCES Routine(id));
       `);
 
     console.log('DB' + JSON.stringify(res));
   };
 
-  async saveRoutines(routineData: Array<RoutineItem>) {
+  async saveRoutine(routine: Routine) {
     if (this.db == null) {
       console.log('DB not created');
       return;
     }
 
+    console.log('routine' + JSON.stringify(routine));
+
     await this.db.withExclusiveTransactionAsync(async txn => {
+      await txn.execAsync(
+        `INSERT INTO Routine (title, createdAt) VALUES ('${routine.title}', '${routine.createdAt}')`,
+      );
+
+      type result = {
+        id: number;
+      };
+
+      const insertedRoutineIdResult = await txn.getFirstAsync<result>(
+        'SELECT id FROM ROUTINE WHERE title = $title',
+        {$title: routine.title},
+      );
+
+      if (insertedRoutineIdResult == null) return;
+
+      console.log(
+        'insertedRoutineId ' + JSON.stringify(insertedRoutineIdResult),
+      );
+
       let source = '';
-      const insert = `INSERT INTO RoutineItem (displayItem, exerciseType) VALUES `;
+      const insert = `INSERT INTO RoutineItem (displayItem, exerciseType, routineForeignKey) VALUES `;
       const end = ';';
 
-      routineData.forEach(value => {
+      routine.RoutineItems.forEach(value => {
         source += insert;
-        source += `('${value.displayItem}', '${value.exerciseType}')`;
+        source += `('${value.displayItem}', '${value.exerciseType}', '${insertedRoutineIdResult.id}')`;
         source += end;
       });
 
@@ -74,18 +71,46 @@ export class Database {
 
       await txn.execAsync(source);
       // console.log('res2 ' + JSON.stringify(res2));
+      console.log('Done save routine');
     });
   }
 
   async getAllRoutines() {
     if (this.db == null) {
       console.log('DB not created');
+      return [];
+    }
+    console.log('getAllRoutines');
+
+    const routines = await this.db.getAllAsync<DBRoutine>(
+      'SELECT * FROM Routine',
+    );
+
+    // console.log('done ' + JSON.stringify(routines));
+
+    const exportRoutines: Routine[] = routines.map(x => {
+      const r: Routine = {
+        id: x.id.toString(),
+        title: x.title,
+        createdAt: x.createdAt,
+        RoutineItems: [],
+      };
+      return r;
+    });
+
+    return exportRoutines;
+  }
+
+  async getRoutineItems(routineId: number) {
+    if (this.db == null) {
+      console.log('DB not created');
       return;
     }
 
-    const allRows = await this.db.getAllAsync<Routine>('SELECT * FROM Routine');
-
-    return allRows;
+    const allRows2 = await this.db.getAllAsync(
+      `SELECT * FROM RoutineItems WHERE routineForeignKey = $value`,
+      {$value: routineId},
+    );
   }
 }
 

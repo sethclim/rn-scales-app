@@ -60,7 +60,7 @@ const Generate = () => {
         setShowModal(false);
     }
 
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = React.useState(false); 
 
     const onClose = () => setIsOpen(false);
   
