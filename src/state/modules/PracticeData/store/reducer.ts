@@ -12,11 +12,11 @@ const reducer = (state: IState, action: IAction): IState => {
     case PracticeTypes.RECORD_PRACTICE_DATA:
       return {
         ...state,
-        loading: true,
-        currentSessionPracticeData: RecordPracticeData(
-          payload,
-          state.currentSessionPracticeData,
-        ),
+        loading: false,
+        // currentSessionPracticeData: RecordPracticeData(
+        //   payload,
+        //   state.currentSessionPracticeData,
+        // ),
       };
     case PracticeTypes.SAVE_PRACTICE_DATA:
       return {
@@ -25,24 +25,36 @@ const reducer = (state: IState, action: IAction): IState => {
         savingPracticeData: SavePracticeData(state.currentSessionPracticeData),
       };
 
+    case PracticeTypes.RECEIVED_PRACTICE_DATA:
+      return {
+        ...state,
+        loading: true,
+        practiceData: HandleLoadedPracticeData(payload),
+      };
+
     default:
       return state;
   }
 };
 
-const RecordPracticeData = (
-  stepData: ExerciseType,
-  currentPracticeData: PracticeData,
-): PracticeData => {
-  const currentCount = currentPracticeData.Counts.get(stepData);
-  console.log('currentCount ' + currentPracticeData.Counts.get(stepData));
+// const RecordPracticeData = (
+//   stepData: ExerciseType,
+//   currentPracticeData: PracticeData,
+// ): PracticeData => {
+//   const cloneCurrentPracticeData = {...currentPracticeData};
 
-  currentPracticeData.Counts.set(stepData, (currentCount ?? 0) + 1);
+//   const currentCount = currentPracticeData.Counts.get(stepData);
+//   console.log('RecordPracticeData currentCount ' + currentCount);
 
-  console.log('stepData ' + currentPracticeData.Counts.get(stepData));
+//   cloneCurrentPracticeData.Counts.set(stepData, (currentCount ?? 0) + 1);
 
-  return currentPracticeData;
-};
+//   console.log(
+//     'RecordPracticeData cloneCurrentPracticeData ' +
+//       JSON.stringify(cloneCurrentPracticeData),
+//   );
+
+//   return cloneCurrentPracticeData;
+// };
 
 const SavePracticeData = async (practiceData: PracticeData) => {
   console.log('SavePracticeData ');
@@ -71,6 +83,14 @@ const SavePracticeData = async (practiceData: PracticeData) => {
   // });
 
   //return newPracitceData;
+};
+
+const HandleLoadedPracticeData = (payload: PracticeData) => {
+  console.log('payload ' + payload);
+
+  // if (payload == undefined) return [];
+
+  return payload;
 };
 
 export default reducer;

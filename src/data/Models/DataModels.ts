@@ -6,17 +6,16 @@ export type ExerciseType =
   | 'broken-chord';
 
 export class PracticeData {
-  Counts: Map<ExerciseType, number> = new Map();
   Total: number = 0;
   Date: Date;
+  scale: number = 0;
+  octave: number = 0;
+  arpeggio: number = 0;
+  solidChord: number = 0;
+  brokenChord: number = 0;
 
   constructor(Date: Date) {
     this.Date = Date;
-    this.Counts.set('scale', 0);
-    this.Counts.set('octave', 0);
-    this.Counts.set('arpeggio', 0);
-    this.Counts.set('solid-chord', 0);
-    this.Counts.set('solid-chord', 0);
   }
 }
 

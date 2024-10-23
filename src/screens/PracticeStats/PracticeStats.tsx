@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import { StyleSheet, useWindowDimensions } from "react-native";
 
 import { View } from "native-base"
@@ -8,6 +8,9 @@ import { View } from "native-base"
 import {PracticeData, ExerciseType} from "../../data/Models/DataModels";
 
 import Graph from './Graph/Graph';
+import PracticeContext from '../../state/modules/PracticeData/PracticeContext';
+import { getPracticeDataRequest } from '../../state/modules/PracticeData/store/actions';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Padding = 10;
 
@@ -21,7 +24,26 @@ const PracticeStats = () => {
 
     const pd = null;
 
-    // const convertData = (practice_data : PracticeData[]) : PracticeData[] => {
+    const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
+
+    const fetchPracticeData = () => {
+      practiceDatadispatch(getPracticeDataRequest())
+    }
+    
+    useFocusEffect(
+      React.useCallback(() => {
+        fetchPracticeData();
+      }, [])
+    ); 
+
+    useEffect(() => {
+      console.log("PD " + JSON.stringify(practiceDataState.practiceData))
+    }, [practiceDataState.practiceData])
+
+    // const convertData = (practice_data : PracticeData[] | null) : PracticeData[] => {
+
+    //   if( practice_data == null)
+    //     return;
 
     //   console.log("practice_data " + practice_data.length)
 
@@ -38,7 +60,7 @@ const PracticeStats = () => {
     //   })
     // }
 
-    // const pd = useMemo(() => convertData(practice_data), [practice_data])
+    // const pd = useMemo(() => convertData(practiceDataState.practiceData), [practiceDataState.practice_data])
 
 
     return(

@@ -1,6 +1,11 @@
 import * as SQLite from 'expo-sqlite';
 
-import {Routine, RoutineItem} from '../Models/DataModels';
+import {
+  ExerciseType,
+  PracticeData,
+  Routine,
+  RoutineItem,
+} from '../Models/DataModels';
 
 type DBRoutine = {
   id: number;
@@ -24,9 +29,17 @@ export class Database {
       PRAGMA foreign_keys = ON;
       CREATE TABLE IF NOT EXISTS Routine(id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, createdAt TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS RoutineItem (id INTEGER PRIMARY KEY NOT NULL, displayItem TEXT NOT NULL, exerciseType TEXT NOT NULL, routineForeignKey INTEGER NOT NULL, FOREIGN KEY(routineForeignKey) REFERENCES Routine(id));
+      CREATE TABLE IF NOT EXISTS PracticeData 
+      (
+        id INTEGER PRIMARY KEY NOT NULL, 
+        date TEXT NOT NULL, 
+        scale Integer NOT NULL, 
+        octave Integer NOT NULL, 
+        arpeggio Integer NOT NULL, 
+        solidChord Integer NOT NULL, 
+        brokenChord Integer NOT NULL 
+      );
       `);
-
-    console.log('DB' + JSON.stringify(res));
   };
 
   async saveRoutine(routine: Routine) {
@@ -111,6 +124,34 @@ export class Database {
       `SELECT * FROM RoutineItems WHERE routineForeignKey = $value`,
       {$value: routineId},
     );
+  }
+
+  async savePracticedata(practiceData: PracticeData) {
+    if (this.db == null) {
+      console.log('DB not created');
+      return;
+    }
+
+    console.log('savePracticedata ' + JSON.stringify(practiceData));
+
+    await this.db.execAsync(
+      `INSERT INTO 
+        PracticeData (date, scale, octave, arpeggio, solidChord, brokenChord) 
+        VALUES ('${practiceData.Date}', '${practiceData.scale}', '${practiceData.octave}', '${practiceData.arpeggio}', '${practiceData.solidChord}', '${practiceData.brokenChord}')`,
+    );
+  }
+
+  async getPracticeData() {
+    if (this.db == null) {
+      console.log('DB not created');
+      return [];
+    }
+
+    const practiceData = await this.db.getAllAsync<PracticeData>(
+      'SELECT * FROM PracticeData',
+    );
+
+    return practiceData;
   }
 }
 

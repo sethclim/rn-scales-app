@@ -8,6 +8,7 @@ export interface IState {
   currentSessionPracticeData: PracticeData;
   savingPracticeData: any;
   practiceDatadispatch: Dispatch<IAction>;
+  practiceData: PracticeData | null;
 }
 
 const initialState: IState = {
@@ -18,6 +19,7 @@ const initialState: IState = {
   practiceDatadispatch: () => {
     // Dispatch initial value
   },
+  practiceData: null,
 };
 
 export function GetInitialState(): IState {

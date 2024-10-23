@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -11,14 +11,46 @@ import Context from "../state/modules/routine/context";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { requestTask } from "../state/modules/routine/store/actions";
 import {  recordPracticeDataRequest, savePracticeDataRequest } from "../state/modules/PracticeData/store/actions";
+import { ExerciseType, PracticeData } from "../data/Models/DataModels";
 
+const updatePracticeData = (pd : PracticeData, ex : ExerciseType) =>
+{
+    const clonedPD = {...pd}
+    if(ex == "scale")
+    {
+        clonedPD.scale += 1;
+    }
+    else if(ex == "octave")
+    {
+        clonedPD.octave += 1;
+    }
+    else if(ex == "arpeggio")
+    {
+        clonedPD.arpeggio += 1;
+    }
+    else if(ex == "solid-chord")
+    {
+        clonedPD.solidChord += 1;
+    }
+    else if(ex == "broken-chord")
+    {
+        clonedPD.brokenChord += 1;
+    }
+    return clonedPD;
+}
 
 const PracticeRoutine = () =>{
 
+    const [practiceData, setPracticeData] = useState<PracticeData>(new PracticeData(new Date()))
+
     const { state, myDispatch } = useContext(Context);
-    const { practiceDatadispatch } = useContext(PracticeContext);
+    const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
 
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
+
+    useEffect(()=>{
+        console.log("practiceDataState " + JSON.stringify(practiceDataState))
+    }, [practiceDataState])
 
     const Next = () => {
 
@@ -27,8 +59,12 @@ const PracticeRoutine = () =>{
 
         if(state.currentTask != null)
         {
-            const recordMSG = recordPracticeDataRequest(state.currentTask.exerciseType)
-            practiceDatadispatch(recordMSG);
+            // const recordMSG = recordPracticeDataRequest(state.currentTask.exerciseType)
+            // practiceDatadispatch(recordMSG);
+            console.log("practiceData " + JSON.stringify(practiceData))
+            const newPD = updatePracticeData(practiceData, state.currentTask.exerciseType);
+            setPracticeData(newPD)
+            console.log("newPD " + JSON.stringify(newPD))
         }
     }
 
@@ -36,10 +72,11 @@ const PracticeRoutine = () =>{
         React.useCallback(() => {
             Next();
             return() =>{
-                const saveMSG = savePracticeDataRequest(null)
+                console.log("triggering save of pd!! " + JSON.stringify(practiceData))
+                const saveMSG = savePracticeDataRequest(practiceData)
                 practiceDatadispatch(saveMSG);
             }
-        }, [])
+        }, [practiceData])
     ); 
 
     return(
