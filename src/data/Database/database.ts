@@ -1,16 +1,33 @@
 import * as SQLite from 'expo-sqlite';
 
-import {
-  ExerciseType,
-  PracticeData,
-  Routine,
-  RoutineItem,
-} from '../Models/DataModels';
+import {PracticeData, Routine} from '../Models/DataModels';
+import {dateToString, stringToDate} from '../../utils/date_utils';
+import {GRAPH_ID} from '../../screens/PracticeStats/Graph/GraphBuilder';
 
 type DBRoutine = {
   id: number;
   title: string;
   createdAt: string;
+};
+
+export type DBPracticeDataGrouped = {
+  id: number;
+  date_month_year: string;
+  scale_count: number;
+  octave_count: number;
+  arpeggio_count: number;
+  solidChord_count: number;
+  brokenChord_count: number;
+};
+
+export type DBPracticeData = {
+  id: number;
+  date: string;
+  scale: number;
+  octave: number;
+  arpeggio: number;
+  solidChord: number;
+  brokenChord: number;
 };
 
 export class Database {
@@ -24,21 +41,21 @@ export class Database {
   createDatabase = async () => {
     this.db = await SQLite.openDatabaseAsync('databaseName');
 
-    const res = await this.db.execAsync(`
-      PRAGMA journal_mode = WAL;
-      PRAGMA foreign_keys = ON;
-      CREATE TABLE IF NOT EXISTS Routine(id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, createdAt TEXT NOT NULL);
-      CREATE TABLE IF NOT EXISTS RoutineItem (id INTEGER PRIMARY KEY NOT NULL, displayItem TEXT NOT NULL, exerciseType TEXT NOT NULL, routineForeignKey INTEGER NOT NULL, FOREIGN KEY(routineForeignKey) REFERENCES Routine(id));
-      CREATE TABLE IF NOT EXISTS PracticeData 
-      (
-        id INTEGER PRIMARY KEY NOT NULL, 
-        date TEXT NOT NULL, 
-        scale Integer NOT NULL, 
-        octave Integer NOT NULL, 
-        arpeggio Integer NOT NULL, 
-        solidChord Integer NOT NULL, 
-        brokenChord Integer NOT NULL 
-      );
+    await this.db.execAsync(`
+        PRAGMA journal_mode = WAL;
+        PRAGMA foreign_keys = ON;
+        CREATE TABLE IF NOT EXISTS Routine(id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, createdAt TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS RoutineItem (id INTEGER PRIMARY KEY NOT NULL, displayItem TEXT NOT NULL, exerciseType TEXT NOT NULL, routineForeignKey INTEGER NOT NULL, FOREIGN KEY(routineForeignKey) REFERENCES Routine(id));
+        CREATE TABLE IF NOT EXISTS PracticeData 
+        (
+          id INTEGER PRIMARY KEY NOT NULL, 
+          date TEXT NOT NULL, 
+          scale INTEGER NOT NULL, 
+          octave INTEGER NOT NULL, 
+          arpeggio INTEGER NOT NULL, 
+          solidChord INTEGER NOT NULL, 
+          brokenChord INTEGER NOT NULL 
+        );
       `);
   };
 
@@ -47,8 +64,6 @@ export class Database {
       console.log('DB not created');
       return;
     }
-
-    console.log('routine' + JSON.stringify(routine));
 
     await this.db.withExclusiveTransactionAsync(async txn => {
       await txn.execAsync(
@@ -80,10 +95,7 @@ export class Database {
         source += end;
       });
 
-      // console.log('source ' + source);
-
       await txn.execAsync(source);
-      // console.log('res2 ' + JSON.stringify(res2));
       console.log('Done save routine');
     });
   }
@@ -93,13 +105,10 @@ export class Database {
       console.log('DB not created');
       return [];
     }
-    console.log('getAllRoutines');
 
     const routines = await this.db.getAllAsync<DBRoutine>(
       'SELECT * FROM Routine',
     );
-
-    // console.log('done ' + JSON.stringify(routines));
 
     const exportRoutines: Routine[] = routines.map(x => {
       const r: Routine = {
@@ -132,26 +141,138 @@ export class Database {
       return;
     }
 
-    console.log('savePracticedata ' + JSON.stringify(practiceData));
+    const string_date = dateToString(practiceData.getDate());
 
-    await this.db.execAsync(
-      `INSERT INTO 
-        PracticeData (date, scale, octave, arpeggio, solidChord, brokenChord) 
-        VALUES ('${practiceData.Date}', '${practiceData.scale}', '${practiceData.octave}', '${practiceData.arpeggio}', '${practiceData.solidChord}', '${practiceData.brokenChord}')`,
+    // const time_stamp = Math.round(practiceData.getDate().valueOf() / 1000);
+
+    const res = await this.db.getFirstAsync<DBPracticeDataGrouped>(
+      'SELECT * FROM PracticeData WHERE date = $d',
+      {
+        $d: string_date,
+      },
     );
+
+    if (res == null) {
+      await this.db.execAsync(
+        `INSERT INTO 
+          PracticeData (date, scale, octave, arpeggio, solidChord, brokenChord) 
+          VALUES ('${string_date}', '${practiceData.scale}', '${practiceData.octave}', '${practiceData.arpeggio}', '${practiceData.solidChord}', '${practiceData.brokenChord}')`,
+      );
+    } else {
+      console.log('updating row ');
+      //
+      const updateRes = await this.db.runAsync(
+        'UPDATE PracticeData SET scale = $1, octave = $2, arpeggio = $3, solidChord = $4, brokenChord = $5 WHERE date = $d',
+        {
+          $1: practiceData.scale,
+          $2: practiceData.octave,
+          $3: practiceData.arpeggio,
+          $4: practiceData.solidChord,
+          $5: practiceData.brokenChord,
+          $d: string_date,
+        },
+      );
+
+      console.log('updateRes ' + JSON.stringify(updateRes));
+    }
   }
 
-  async getPracticeData() {
+  async getAllPracticeData(
+    today: Date,
+  ): Promise<Map<GRAPH_ID, PracticeData[]>> {
     if (this.db == null) {
       console.log('DB not created');
-      return [];
+      return new Map([['Year', []]]);
     }
 
-    const practiceData = await this.db.getAllAsync<PracticeData>(
-      'SELECT * FROM PracticeData',
+    const startOfYear = dateToString(new Date(today.getFullYear(), 0, 1, 0, 0));
+    const endOfYear = dateToString(
+      new Date(today.getFullYear(), 11, 31, 23, 59),
     );
 
-    return practiceData;
+    // const startOfYearTS = Math.round(startOfYear.valueOf() / 1000);
+    // const endOfYearTS = Math.round(endOfYear.valueOf() / 1000);
+
+    const practiceDataYear = await this.db.getAllAsync<DBPracticeDataGrouped>(
+      `SELECT id, STRFTIME('%m-%Y', date) AS date_month_year, 
+      SUM(scale) AS scale_count,
+      SUM(octave) AS octave_count,
+      SUM(arpeggio) AS arpeggio_count,
+      SUM(solidChord) AS solidChord_count,
+      SUM(brokenChord) AS brokenChord_count
+      FROM PracticeData WHERE date BETWEEN $d1 AND $d2 GROUP BY STRFTIME('%m-%Y', date_month_year)`,
+      {
+        $d1: startOfYear,
+        $d2: endOfYear,
+      },
+    );
+
+    //WHERE date BETWEEN $d1 AND $d2
+
+    //GROUP BY STRFTIME('%m-%Y', date_month_year)
+
+    //SUM(scale) AS scale_count
+    // SUM(octave) AS octave_count,
+    // SUM(arpeggio) AS arpeggio_count,
+    // SUM(solidChord) AS solidChord_count,
+    // SUM(brokenChord) AS brokenChord_count
+
+    console.log(
+      '101 practiceData practiceData ' + JSON.stringify(practiceDataYear),
+    );
+
+    const exportPracticeDataYear: PracticeData[] = practiceDataYear.map(x => {
+      const date = new Date(x.date_month_year);
+      date.setFullYear(
+        parseInt(x.date_month_year.split('-')[1]),
+        parseInt(x.date_month_year.split('-')[0]) - 1,
+        1,
+      );
+
+      console.log('Date ' + date);
+
+      const pd = new PracticeData(date);
+      pd.scale = x.scale_count;
+      pd.octave = x.octave_count;
+      pd.arpeggio = x.arpeggio_count;
+      pd.solidChord = x.solidChord_count;
+      pd.brokenChord = x.brokenChord_count;
+      return pd;
+    });
+
+    return new Map([['Year', exportPracticeDataYear]]);
+  }
+
+  async getTodaysPracticeData(todaysDate: Date) {
+    if (this.db == null) {
+      console.log('DB not created');
+      return null;
+    }
+
+    const string_date = dateToString(todaysDate);
+
+    console.log('getTodaysPracticeData string_date' + string_date);
+
+    const practiceData = await this.db.getFirstAsync<DBPracticeData>(
+      'SELECT * FROM PracticeData  WHERE date = $d',
+      {$d: string_date},
+    );
+
+    console.log(
+      'getTodaysPracticeData practiceData' + JSON.stringify(practiceData),
+    );
+
+    const pd = new PracticeData(todaysDate);
+
+    if (practiceData == null) return pd;
+
+    pd.scale = practiceData.scale;
+    pd.octave = practiceData.octave;
+    pd.arpeggio = practiceData.arpeggio;
+    pd.solidChord = practiceData.solidChord;
+    pd.brokenChord = practiceData.brokenChord;
+
+    return pd;
   }
 }
 

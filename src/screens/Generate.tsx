@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useContext, useState } from "react"
+import React, { FunctionComponent, useContext, useEffect, useState } from "react"
 
 import { Box, HStack, VStack, Text, Checkbox, Button, AlertDialog, FormControl, Input, Modal } from 'native-base';
 import Context from "../state/modules/routine/context";
@@ -8,7 +8,13 @@ import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { ExerciseType } from "../data/Models/DataModels";
+import PracticeContext from "../state/modules/PracticeData/PracticeContext";
+import { getTodaysPracticeDataRequest } from "../state/modules/PracticeData/store/actions";
 
+//Options
+const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
+const ACCIDENTAL_ROOTS = ["C#", "Eb", "F#", "G#", "Bb"]
+const SCALE_TYPES      = ["Major", "Minor", "Augmented", "Diminished"]
 export const Exercises = new Map<ExerciseType, string>([
     ["scale", "Scale"],
     ["octave", "Octaves"],
@@ -16,14 +22,10 @@ export const Exercises = new Map<ExerciseType, string>([
     ["solid-chord", "Solid Chords"],
     ["broken-chord", "Broken Chords"]
 ]);
+// const exercises2       = ["Scale", "Octaves", "Arpeggio", "Broken Chords", "Solid Chords"]
 
 const Generate = () => {
 
-    //Options
-    const naturalRoots    = ["C", "D", "E", "F", "G", "A", "B"]
-    const accidentalRoots = ["C#", "Eb", "F#", "G#", "Bb"]
-    const scaleTypes      = ["Major", "Minor", "Augmented", "Diminished"]
-    const exercises2       = ["Scale", "Octaves", "Arpeggio", "Broken Chords", "Solid Chords"]
 
 
     //State
@@ -32,6 +34,7 @@ const Generate = () => {
     const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
 
     const { myDispatch } = useContext(Context);
+    const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const [showModal, setShowModal] = useState(false);
@@ -39,6 +42,10 @@ const Generate = () => {
     const CheckValidRoutineConfiguration = () : boolean => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
     }
+
+    useEffect(() => {
+        practiceDatadispatch(getTodaysPracticeDataRequest(new Date()))
+    }, [])
 
     const StartRoutine = () => {
 
@@ -75,14 +82,14 @@ const Generate = () => {
                         <HStack space={3} flexWrap={'wrap'}>
                             <HStack>
                             {
-                                naturalRoots.map( (naturalRoot, i) => { return (
+                                NATURAL_ROOTS.map( (naturalRoot, i) => { return (
                                     <Checkbox key={i} value={naturalRoot} size="md">{naturalRoot}</Checkbox>
                                 )})
                             }
                             </HStack>
                             <HStack>
                             {
-                                accidentalRoots.map( (accidentalRoot, i) => { return (
+                                ACCIDENTAL_ROOTS.map( (accidentalRoot, i) => { return (
                                     <Checkbox key={i} value={accidentalRoot} size="md" >{accidentalRoot}</Checkbox>
                                 )})
                             }
@@ -96,7 +103,7 @@ const Generate = () => {
                     <Checkbox.Group onChange={setSelectedTypes} value={selectedTypes}>
                         <HStack space={3} flexWrap={'wrap'}>
                         {
-                            scaleTypes.map( (scaleType, i) => { return (
+                            SCALE_TYPES.map( (scaleType, i) => { return (
                                 <Checkbox key={i} value={scaleType} size="md" >{scaleType}</Checkbox>
                             )})
                         }

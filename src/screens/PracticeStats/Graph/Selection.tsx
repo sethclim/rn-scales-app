@@ -5,12 +5,11 @@ import {
   Group,
   LinearGradient,
   RoundedRect,
-  SkiaValue,
   mix,
   vec,
 } from "@shopify/react-native-skia";
 import { SharedValue, runOnJS, runOnUI, useSharedValue } from "react-native-reanimated";
-import Animated, { useDerivedValue, withTiming } from "react-native-reanimated";
+import  { useDerivedValue, withTiming } from "react-native-reanimated";
 
 import type { Graph } from "./GraphBuilder";
 

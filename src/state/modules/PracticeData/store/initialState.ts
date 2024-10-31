@@ -1,6 +1,7 @@
 import {Dispatch} from 'react';
 import {PracticeData} from '../../../../data/Models/DataModels';
 import {IAction} from '../../../types';
+import {GRAPH_ID} from '../../../../screens/PracticeStats/Graph/GraphBuilder';
 
 export interface IState {
   error: string;
@@ -8,7 +9,7 @@ export interface IState {
   currentSessionPracticeData: PracticeData;
   savingPracticeData: any;
   practiceDatadispatch: Dispatch<IAction>;
-  practiceData: PracticeData | null;
+  practiceData: Map<GRAPH_ID, PracticeData[]>;
 }
 
 const initialState: IState = {
@@ -19,7 +20,7 @@ const initialState: IState = {
   practiceDatadispatch: () => {
     // Dispatch initial value
   },
-  practiceData: null,
+  practiceData: new Map(),
 };
 
 export function GetInitialState(): IState {

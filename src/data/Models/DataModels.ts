@@ -7,7 +7,7 @@ export type ExerciseType =
 
 export class PracticeData {
   Total: number = 0;
-  Date: Date;
+  private _date: Date;
   scale: number = 0;
   octave: number = 0;
   arpeggio: number = 0;
@@ -15,7 +15,41 @@ export class PracticeData {
   brokenChord: number = 0;
 
   constructor(Date: Date) {
-    this.Date = Date;
+    this._date = Date;
+  }
+
+  getDate() {
+    return this._date;
+  }
+
+  getCounts = (): Map<ExerciseType, number> => {
+    return new Map([
+      ['scale', this.scale],
+      ['octave', this.octave],
+      ['arpeggio', this.arpeggio],
+      ['solid-chord', this.solidChord],
+      ['broken-chord', this.brokenChord],
+    ]);
+  };
+
+  updateValues(ex: ExerciseType, amt: number) {
+    switch (ex) {
+      case 'scale':
+        this.scale += amt;
+        break;
+      case 'octave':
+        this.octave += amt;
+        break;
+      case 'arpeggio':
+        this.arpeggio += amt;
+        break;
+      case 'solid-chord':
+        this.solidChord += amt;
+        break;
+      case 'broken-chord':
+        this.brokenChord += amt;
+        break;
+    }
   }
 }
 

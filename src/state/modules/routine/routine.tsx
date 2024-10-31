@@ -9,7 +9,6 @@ const RoutineProvider: FC<PropsWithChildren> = (props) => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     const myDispatch: Dispatch<IAction> = (action : IAction) => {
-        useAsyncMiddlewareInResponseToAction(dispatch, action)
         if(!useAsyncMiddlewareInResponseToAction(dispatch, action))
             dispatch(action)
     }

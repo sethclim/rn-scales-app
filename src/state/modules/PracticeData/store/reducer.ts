@@ -5,6 +5,7 @@ import {IState} from './initialState';
 //import {database} from '../../../../data/Database/database';
 import {PracticeData, ExerciseType} from '../../../../data/Models/DataModels';
 import {PracticeTypes} from './actions';
+import {GRAPH_ID} from '../../../../screens/PracticeStats/Graph/GraphBuilder';
 
 const reducer = (state: IState, action: IAction): IState => {
   const {type, payload} = action;
@@ -13,10 +14,10 @@ const reducer = (state: IState, action: IAction): IState => {
       return {
         ...state,
         loading: false,
-        // currentSessionPracticeData: RecordPracticeData(
-        //   payload,
-        //   state.currentSessionPracticeData,
-        // ),
+        currentSessionPracticeData: RecordPracticeData(
+          payload,
+          state.currentSessionPracticeData,
+        ),
       };
     case PracticeTypes.SAVE_PRACTICE_DATA:
       return {
@@ -25,11 +26,18 @@ const reducer = (state: IState, action: IAction): IState => {
         savingPracticeData: SavePracticeData(state.currentSessionPracticeData),
       };
 
-    case PracticeTypes.RECEIVED_PRACTICE_DATA:
+    case PracticeTypes.RECEIVED_ALL_PRACTICE_DATA:
       return {
         ...state,
         loading: true,
         practiceData: HandleLoadedPracticeData(payload),
+      };
+
+    case PracticeTypes.RECEIVED_TODAYS_PRACTICE_DATA:
+      return {
+        ...state,
+        loading: true,
+        currentSessionPracticeData: HandleLoadedTodaysPracticeData(payload),
       };
 
     default:
@@ -37,24 +45,32 @@ const reducer = (state: IState, action: IAction): IState => {
   }
 };
 
-// const RecordPracticeData = (
-//   stepData: ExerciseType,
-//   currentPracticeData: PracticeData,
-// ): PracticeData => {
-//   const cloneCurrentPracticeData = {...currentPracticeData};
+const RecordPracticeData = (
+  stepData: ExerciseType,
+  currentPracticeData: PracticeData,
+): PracticeData => {
+  const cloneCurrentPracticeData = new PracticeData(
+    currentPracticeData.getDate(),
+  );
 
-//   const currentCount = currentPracticeData.Counts.get(stepData);
-//   console.log('RecordPracticeData currentCount ' + currentCount);
+  currentPracticeData.getCounts().forEach((value, key) => {
+    cloneCurrentPracticeData.updateValues(key, value);
+  });
 
-//   cloneCurrentPracticeData.Counts.set(stepData, (currentCount ?? 0) + 1);
+  cloneCurrentPracticeData.updateValues(stepData, 1);
 
-//   console.log(
-//     'RecordPracticeData cloneCurrentPracticeData ' +
-//       JSON.stringify(cloneCurrentPracticeData),
-//   );
+  // const currentCount = currentPracticeData.Counts.get(stepData);
+  // console.log('RecordPracticeData currentCount ' + currentCount);
 
-//   return cloneCurrentPracticeData;
-// };
+  // cloneCurrentPracticeData.Counts.set(stepData, (currentCount ?? 0) + 1);
+
+  console.log(
+    'RecordPracticeData cloneCurrentPracticeData ' +
+      JSON.stringify(cloneCurrentPracticeData),
+  );
+
+  return cloneCurrentPracticeData;
+};
 
 const SavePracticeData = async (practiceData: PracticeData) => {
   console.log('SavePracticeData ');
@@ -85,11 +101,12 @@ const SavePracticeData = async (practiceData: PracticeData) => {
   //return newPracitceData;
 };
 
-const HandleLoadedPracticeData = (payload: PracticeData) => {
-  console.log('payload ' + payload);
+const HandleLoadedPracticeData = (payload: Map<GRAPH_ID, PracticeData[]>) => {
+  return payload;
+};
 
-  // if (payload == undefined) return [];
-
+const HandleLoadedTodaysPracticeData = (payload: PracticeData) => {
+  console.log('HandleLoadedTodaysPracticeData' + JSON.stringify(payload));
   return payload;
 };
 

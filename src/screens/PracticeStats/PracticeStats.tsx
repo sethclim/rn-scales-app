@@ -11,6 +11,7 @@ import Graph from './Graph/Graph';
 import PracticeContext from '../../state/modules/PracticeData/PracticeContext';
 import { getPracticeDataRequest } from '../../state/modules/PracticeData/store/actions';
 import { useFocusEffect } from '@react-navigation/native';
+import { Text } from 'react-native-svg';
 
 const Padding = 10;
 
@@ -35,10 +36,6 @@ const PracticeStats = () => {
         fetchPracticeData();
       }, [])
     ); 
-
-    useEffect(() => {
-      console.log("PD " + JSON.stringify(practiceDataState.practiceData))
-    }, [practiceDataState.practiceData])
 
     // const convertData = (practice_data : PracticeData[] | null) : PracticeData[] => {
 
@@ -65,8 +62,12 @@ const PracticeStats = () => {
 
     return(
       <View style={styles.container} bg="nord.primary.1">
-
-        {/* <Graph width={width - Padding * 2 } height={height * 0.5 - 50} practiceData={pd}/> */}
+        {
+          practiceDataState.practiceData !== null ? 
+          
+            <Graph width={width - Padding * 2 } height={height * 0.5 - 50} practiceData={practiceDataState.practiceData}/> : <Text>no data</Text>
+          
+        }
       </View>
     )
 }
