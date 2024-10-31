@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 
 import {PracticeData, Routine} from '../Models/DataModels';
-import {dateToString, stringToDate} from '../../utils/date_utils';
+import {dateToString} from '../../utils/date_utils';
 import {GRAPH_ID} from '../../screens/PracticeStats/Graph/GraphBuilder';
 
 type DBRoutine = {
@@ -185,6 +185,26 @@ export class Database {
       return new Map([['Year', []]]);
     }
 
+    const startOfWeek = dateToString(
+      new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - today.getDay(),
+        0,
+        0,
+      ),
+    );
+
+    const endOfWeek = dateToString(
+      new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() + (7 - today.getDay()),
+        23,
+        59,
+      ),
+    );
+
     const startOfYear = dateToString(new Date(today.getFullYear(), 0, 1, 0, 0));
     const endOfYear = dateToString(
       new Date(today.getFullYear(), 11, 31, 23, 59),
@@ -192,6 +212,38 @@ export class Database {
 
     // const startOfYearTS = Math.round(startOfYear.valueOf() / 1000);
     // const endOfYearTS = Math.round(endOfYear.valueOf() / 1000);
+
+    const practiceDataWeek = await this.db.getAllAsync<DBPracticeDataGrouped>(
+      `SELECT id, date AS date_month_year, 
+      SUM(scale) AS scale_count,
+      SUM(octave) AS octave_count,
+      SUM(arpeggio) AS arpeggio_count,
+      SUM(solidChord) AS solidChord_count,
+      SUM(brokenChord) AS brokenChord_count
+      FROM PracticeData WHERE date_month_year BETWEEN $d1 AND $d2`,
+      {
+        $d1: startOfWeek,
+        $d2: endOfWeek,
+      },
+    );
+
+    console.log(
+      '100 practiceData practiceData ' + JSON.stringify(practiceDataWeek),
+    );
+
+    const exportPracticeDataWeek: PracticeData[] = practiceDataWeek.map(x => {
+      const date = new Date(x.date_month_year);
+
+      console.log('Date ' + date);
+
+      const pd = new PracticeData(date);
+      pd.scale = x.scale_count;
+      pd.octave = x.octave_count;
+      pd.arpeggio = x.arpeggio_count;
+      pd.solidChord = x.solidChord_count;
+      pd.brokenChord = x.brokenChord_count;
+      return pd;
+    });
 
     const practiceDataYear = await this.db.getAllAsync<DBPracticeDataGrouped>(
       `SELECT id, STRFTIME('%m-%Y', date) AS date_month_year, 
@@ -240,7 +292,10 @@ export class Database {
       return pd;
     });
 
-    return new Map([['Year', exportPracticeDataYear]]);
+    return new Map([
+      ['Week', exportPracticeDataWeek],
+      ['Year', exportPracticeDataYear],
+    ]);
   }
 
   async getTodaysPracticeData(todaysDate: Date) {

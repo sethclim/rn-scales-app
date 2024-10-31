@@ -64,6 +64,7 @@ const createPlot = (): plot => {
 };
 
 const buildExercisePlots = (
+  ID: GRAPH_ID,
   data: PracticeData[],
   start_x: number,
   start_y: number,
@@ -87,40 +88,36 @@ const buildExercisePlots = (
     return ex;
   }
 
-  const start_time = new Date(
-    data[0].getDate().getFullYear(),
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
-  );
-
-  //Move To
-  for (let [exercise, count] of data[0].getCounts()) {
-    const x = getX(
-      data[0].getDate().valueOf() - start_time.valueOf(),
-      scale_X,
-      start_x,
+  let start_time = null;
+  if (ID == 'Year') {
+    start_time = new Date(data[0].getDate().getFullYear(), 0, 1, 0, 0, 0, 0);
+  } else if (ID == 'Week') {
+    start_time = new Date(
+      data[0].getDate().getFullYear(),
+      data[0].getDate().getMonth(),
+      data[0].getDate().getDate() - data[0].getDate().getDay(),
+      0,
+      0,
+      0,
+      0,
     );
-    const y = getY(count, scale_y, HEIGHT, start_y);
-
-    ex[exercise].line.moveTo(x, y);
-    ex[exercise].dots.addCircle(x, y, 6);
   }
 
   //Line To
-  for (let i = 1; i < data.length; i++) {
+  for (let i = 0; i < data.length; i++) {
     for (let [exercise, count] of data[i].getCounts()) {
       const x = getX(
-        data[i].getDate().valueOf() - start_time.valueOf(),
+        data[i].getDate().valueOf() - start_time!.valueOf(),
         scale_X,
         start_x,
       );
       const y = getY(count, scale_y, HEIGHT, start_y);
 
-      ex[exercise].line.lineTo(x, y);
+      if (i == 0) {
+        ex[exercise].line.moveTo(x, y);
+      } else {
+        ex[exercise].line.lineTo(x, y);
+      }
       ex[exercise].dots.addCircle(x, y, 6);
     }
   }
@@ -375,6 +372,7 @@ const buildGraph = (
     return {
       ID: ID,
       exercises: buildExercisePlots(
+        ID,
         [],
         inner_x_start,
         PADDING,
@@ -411,6 +409,7 @@ const buildGraph = (
   return {
     ID: ID,
     exercises: buildExercisePlots(
+      ID,
       data_group,
       inner_x_start,
       PADDING,
@@ -438,11 +437,9 @@ export const getGraph = (
   height: number,
   data: Map<GRAPH_ID, PracticeData[]>,
 ): Graph[] => {
-  const graphs = [];
-
-  // const gWeek = buildGraph(data, width, height, 'Week');
+  const gWeek = buildGraph(data, width, height, 'Week');
   // const gMonth = buildGraph(data, width, height, 'Month');
   const gYear = buildGraph(data, width, height, 'Year');
 
-  return [gYear];
+  return [gWeek, gYear];
 };
