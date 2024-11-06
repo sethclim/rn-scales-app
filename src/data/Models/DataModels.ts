@@ -2,8 +2,8 @@ export type ExerciseType =
   | 'scale'
   | 'octave'
   | 'arpeggio'
-  | 'solid-chord'
-  | 'broken-chord';
+  | 'solidChord'
+  | 'brokenChord';
 
 export class PracticeData {
   Total: number = 0;
@@ -27,8 +27,8 @@ export class PracticeData {
       ['scale', this.scale],
       ['octave', this.octave],
       ['arpeggio', this.arpeggio],
-      ['solid-chord', this.solidChord],
-      ['broken-chord', this.brokenChord],
+      ['solidChord', this.solidChord],
+      ['brokenChord', this.brokenChord],
     ]);
   };
 
@@ -43,10 +43,10 @@ export class PracticeData {
       case 'arpeggio':
         this.arpeggio += amt;
         break;
-      case 'solid-chord':
+      case 'solidChord':
         this.solidChord += amt;
         break;
-      case 'broken-chord':
+      case 'brokenChord':
         this.brokenChord += amt;
         break;
     }

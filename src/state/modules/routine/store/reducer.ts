@@ -63,7 +63,7 @@ const GetTask = (routine: Array<RoutineItem>): RoutineItem => {
 };
 
 const GenerateRoutine = (inputOptions: Array<any>): Array<RoutineItem> => {
-  console.log('Calling GenerateRoutine');
+  //console.log('Calling GenerateRoutine');
 
   const roots = inputOptions[0];
   const types = inputOptions[1];
@@ -101,7 +101,7 @@ const GenerateRoutine = (inputOptions: Array<any>): Array<RoutineItem> => {
       }
     }
   }
-  console.log('Calling GenerateRoutine' + results.length);
+  //console.log('Calling GenerateRoutine' + results.length);
   return results;
 };
 
@@ -115,11 +115,11 @@ const SaveRoutine = async (
   //console.log("Save Name " + title);
   //console.log("inputOptions " + inputOptions[0].length + " " + inputOptions[1].length+ " " + inputOptions[2].length);
 
-  console.log('routineData.length ' + routineData.length);
-  console.log('routineData.length <=0 ' + (routineData.length <= 0));
+  // console.log('routineData.length ' + routineData.length);
+  // console.log('routineData.length <=0 ' + (routineData.length <= 0));
   if (routineData.length <= 0) {
     routineData = GenerateRoutine(inputOptions);
-    console.log('GenerateRoutine routineData.length ' + routineData.length);
+    //console.log('GenerateRoutine routineData.length ' + routineData.length);
   }
 
   const routineToSave: Routine = {
@@ -190,7 +190,7 @@ const DeleteRoutine = async (payload: Array<Routine>) => {
 };
 
 const HandleLoadedAllRoutines = (payload: Routine[]) => {
-  console.log('len payload ' + payload.length);
+  //console.log('len payload ' + payload.length);
 
   if (payload == undefined) return [];
 

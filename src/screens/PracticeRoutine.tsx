@@ -36,7 +36,7 @@ const PracticeRoutine = () =>{
         React.useCallback(() => {
             Next();
             return() =>{
-                console.log("triggering save of pd!! ")
+                //console.log("triggering save of pd!! ")
                 const saveMSG = savePracticeDataRequest()
                 practiceDatadispatch(saveMSG);
             }

@@ -14,7 +14,7 @@ const RoutineProvider: FC<PropsWithChildren> = (props) => {
     }
 
     useEffect(() => {
-        console.log("PD STATE" + JSON.stringify(practiceDataState, null, 2))
+        //console.log("PD STATE" + JSON.stringify(practiceDataState, null, 2))
     }, [practiceDataState])
 
     return (

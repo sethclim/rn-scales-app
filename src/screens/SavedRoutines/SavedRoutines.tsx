@@ -26,7 +26,6 @@ const SavedRoutines  = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-        console.log("Requesting routines"),
         DoSideEffect();
     }, [])
   )

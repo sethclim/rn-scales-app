@@ -81,9 +81,9 @@ export class Database {
 
       if (insertedRoutineIdResult == null) return;
 
-      console.log(
-        'insertedRoutineId ' + JSON.stringify(insertedRoutineIdResult),
-      );
+      // console.log(
+      //   'insertedRoutineId ' + JSON.stringify(insertedRoutineIdResult),
+      // );
 
       let source = '';
       const insert = `INSERT INTO RoutineItem (displayItem, exerciseType, routineForeignKey) VALUES `;
@@ -96,7 +96,7 @@ export class Database {
       });
 
       await txn.execAsync(source);
-      console.log('Done save routine');
+      //console.log('Done save routine');
     });
   }
 
@@ -173,7 +173,7 @@ export class Database {
         },
       );
 
-      console.log('updateRes ' + JSON.stringify(updateRes));
+      //console.log('updateRes ' + JSON.stringify(updateRes));
     }
   }
 
@@ -234,7 +234,7 @@ export class Database {
     const exportPracticeDataWeek: PracticeData[] = practiceDataWeek.map(x => {
       const date = new Date(x.date_month_year);
 
-      console.log('Date ' + date);
+      //console.log('Date ' + date);
 
       const pd = new PracticeData(date);
       pd.scale = x.scale_count;
@@ -281,7 +281,7 @@ export class Database {
         1,
       );
 
-      console.log('Date ' + date);
+      //console.log('Date ' + date);
 
       const pd = new PracticeData(date);
       pd.scale = x.scale_count;
@@ -306,16 +306,16 @@ export class Database {
 
     const string_date = dateToString(todaysDate);
 
-    console.log('getTodaysPracticeData string_date' + string_date);
+    //console.log('getTodaysPracticeData string_date' + string_date);
 
     const practiceData = await this.db.getFirstAsync<DBPracticeData>(
       'SELECT * FROM PracticeData  WHERE date = $d',
       {$d: string_date},
     );
 
-    console.log(
-      'getTodaysPracticeData practiceData' + JSON.stringify(practiceData),
-    );
+    // console.log(
+    //   'getTodaysPracticeData practiceData' + JSON.stringify(practiceData),
+    // );
 
     const pd = new PracticeData(todaysDate);
 

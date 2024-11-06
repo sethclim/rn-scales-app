@@ -64,23 +64,20 @@ const RecordPracticeData = (
 
   // cloneCurrentPracticeData.Counts.set(stepData, (currentCount ?? 0) + 1);
 
-  console.log(
-    'RecordPracticeData cloneCurrentPracticeData ' +
-      JSON.stringify(cloneCurrentPracticeData),
-  );
+  // console.log(
+  //   'RecordPracticeData cloneCurrentPracticeData ' +
+  //     JSON.stringify(cloneCurrentPracticeData),
+  // );
 
   return cloneCurrentPracticeData;
 };
 
 const SavePracticeData = async (practiceData: PracticeData) => {
-  console.log('SavePracticeData ');
-
+  //console.log('SavePracticeData ');
   //Save or update!!!!
   // const newPracitceData = await database.write(async () => {
   //   const practice = await database.get<PracticeDataModel>('practice_data');
-
   //   console.log('Practice ' + practice);
-
   //   await practice
   //     .create(practiceDataModel => {
   //       practiceDataModel.date = new Date();
@@ -97,7 +94,6 @@ const SavePracticeData = async (practiceData: PracticeData) => {
   //     });
   //   return practice;
   // });
-
   //return newPracitceData;
 };
 
@@ -106,7 +102,7 @@ const HandleLoadedPracticeData = (payload: Map<GRAPH_ID, PracticeData[]>) => {
 };
 
 const HandleLoadedTodaysPracticeData = (payload: PracticeData) => {
-  console.log('HandleLoadedTodaysPracticeData' + JSON.stringify(payload));
+  //console.log('HandleLoadedTodaysPracticeData' + JSON.stringify(payload));
   return payload;
 };
 

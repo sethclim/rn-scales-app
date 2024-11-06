@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Canvas,  createPicture, Path, Picture, Skia, useFont   } from "@shopify/react-native-skia";
 import { useMemo } from "react";
 import {  useDerivedValue, useSharedValue } from "react-native-reanimated";
@@ -6,6 +6,7 @@ import {  useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Selection } from "./Selection";
 import { PracticeData } from "../../../data/Models/DataModels";
 import { getGraph, GRAPH_ID } from "./GraphBuilder";
+import { Text } from "native-base";
 
 type GraphProps = {
   width : number,
@@ -13,66 +14,33 @@ type GraphProps = {
   practiceData :  Map<GRAPH_ID, PracticeData[]>
 }
 
+
 const Graph = ({width, height, practiceData}: GraphProps)  => {
-    const graphs = useMemo(() => getGraph(width, height, practiceData), [width, height, practiceData]);
-    
+    // const g = useMemo(() => getGraph(width, height, practiceData), [width, height, practiceData])
+    const graphs = useSharedValue(getGraph(width, height, practiceData));
+
+    useEffect(() => {
+      console.log("Updating graph")
+      graphs.value = getGraph(width, height, practiceData);
+
+      console.log("Updating graph " + graphs.value.length)
+    },[width, height, practiceData])
+
     const transition = useSharedValue(0);
     
     const next    = useSharedValue(0);
     const current = useSharedValue(0);
 
-    const grid = useDerivedValue(() =>{
-      return graphs[next.value].grid;
-    },[next.value])
-
-    const scale_line = useDerivedValue(() =>{
-      return graphs[next.value].exercises.scale.line;
-    },[next.value])
-
-    const scale_dots = useDerivedValue(() =>{
-      return  graphs[next.value].exercises?.scale.dots;
-    },[next.value])
-
-    const octaves_line = useDerivedValue(() =>{
-      return graphs[next.value].exercises?.octave.line;
-    },[next.value])
-
-    const octaves_dots = useDerivedValue(() =>{
-      return  graphs[next.value].exercises?.octave.dots
-    },[next.value])
-
-    const arp_line = useDerivedValue(() =>{
-      return graphs[next.value].exercises?.arpeggio.line;
-    },[next.value])
-
-    const arp_dots = useDerivedValue(() =>{
-      return  graphs[next.value].exercises?.arpeggio.dots
-    },[next.value])
-
-    const solid_ch_line = useDerivedValue(() =>{
-      return graphs[next.value].exercises["solid-chord"].line;
-    },[next.value])
-
-    const solid_ch_dots = useDerivedValue(() =>{
-      return  graphs[next.value].exercises["solid-chord"].dots
-    },[next.value])
-
-    const broken_ch_line = useDerivedValue(() =>{
-      return graphs[next.value].exercises["broken-chord"].line
-    },[next.value])
-
-    const broken_ch_dots = useDerivedValue(() =>{
-      return  graphs[next.value].exercises["broken-chord"].dots
-    },[next.value])
 
     const font = useFont(require("./SF-Mono-Medium.otf"), 12);
 
     const yLabels = useDerivedValue(() =>{
-      return  graphs[next.value].yLabels ? graphs[next.value].yLabels : []
+      console.log("shared value changed " + next.value + " " + graphs.value.length)
+      return  graphs.value[next.value].yLabels ? graphs.value[next.value].yLabels : []
     },[next.value])
 
     const xLabels = useDerivedValue(() => {
-      return  graphs[next.value].xLabels ? graphs[next.value].xLabels : []
+      return  graphs.value[next.value].xLabels ? graphs.value[next.value].xLabels : []
     },[next.value])
 
     const path = Skia.Path.Make();
@@ -109,33 +77,33 @@ const Graph = ({width, height, practiceData}: GraphProps)  => {
     ), [xLabels.value]);
       
     return(
-      graphs.length > 0 ?
+      graphs.value.length > 0 ?
       <>
         <Canvas style={{ height: height, width: width, backgroundColor: "#00000055"}}>
-          <Path path={grid} color="#ffffff44" strokeWidth={2} style="stroke"/>
+          <Path path={graphs.value[next.value].grid} color="#ffffff44" strokeWidth={2} style="stroke"/>
 
-          <Path path={scale_line} color={"#ed174f"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-          <Path path={scale_dots} color={"#ed174f"} strokeWidth={5} style="fill"/>
+          <Path path={graphs.value[next.value].exercises.scale.line} color={"#ed174f"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
+          <Path path={graphs.value[next.value].exercises.scale.dots} color={"#ed174f"} strokeWidth={5} style="fill"/>
 
-          <Path path={octaves_line} color={"#f4dc00"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-          <Path path={octaves_dots} color={"#f4dc00"} strokeWidth={5} style="fill"/>
+          <Path path={graphs.value[next.value].exercises.octave.line} color={"#f4dc00"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
+          <Path path={graphs.value[next.value].exercises.octave.dots} color={"#f4dc00"} strokeWidth={5} style="fill"/>
 
-          <Path path={arp_line} color={"#327fa6"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-          <Path path={arp_dots} color={"#327fa6"} strokeWidth={5} style="fill"/>
+          <Path path={graphs.value[next.value].exercises.arpeggio.line} color={"#327fa6"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
+          <Path path={graphs.value[next.value].exercises.octave.dots} color={"#327fa6"} strokeWidth={5} style="fill"/>
 
-          <Path path={solid_ch_line} color={"#e20177"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-          <Path path={solid_ch_dots} color={"#e20177"} strokeWidth={5} style="fill"/>
+          <Path path={graphs.value[next.value].exercises.solidChord.line} color={"#e20177"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
+          <Path path={graphs.value[next.value].exercises.solidChord.dots} color={"#e20177"} strokeWidth={5} style="fill"/>
 
-          <Path path={broken_ch_line} color={"#f8981d"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-          <Path path={broken_ch_dots} color={"#f8981d"} strokeWidth={5} style="fill"/>  
+          <Path path={graphs.value[next.value].exercises.brokenChord.line} color={"#f8981d"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
+          <Path path={graphs.value[next.value].exercises.brokenChord.dots} color={"#f8981d"} strokeWidth={5} style="fill"/>  
 
           <Picture picture={ylabelsPicture}  />
           <Picture picture={xLabelsPicture}  />
 
         </Canvas>
-        <Selection current={current} next={next} transition={transition} graphs={graphs} />
+        <Selection current={current} next={next} transition={transition} graphs={graphs.value} />
       </>
-      : null
+      : <Text>No Graphs</Text>
     )
   } 
 

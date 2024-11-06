@@ -9,7 +9,7 @@ export const useAsyncMiddlewareInResponseToAction = (dispatch : Dispatch<IAction
         const fetchData = async () => {
             dispatch({ type: PracticeTypes.SAVING_PRACTICE_DATA,  payload: null});
             try {
-                console.log("[Middleware] savePracticedata " + JSON.stringify(currentState.currentSessionPracticeData))
+                //console.log("[Middleware] savePracticedata " + JSON.stringify(currentState.currentSessionPracticeData))
                 const res = await dbInstance.savePracticedata(currentState.currentSessionPracticeData);
                 dispatch({ type: PracticeTypes.SAVED_PRACTICE_DATA,  payload: res});
             } catch (error) {
@@ -20,7 +20,7 @@ export const useAsyncMiddlewareInResponseToAction = (dispatch : Dispatch<IAction
         return true
     }
     else if ( action.type === PracticeTypes.GET_ALL_PRACTICE_DATA) {
-        console.log("[Middleware] GET_ALL PRACTICE_DATA")
+        //console.log("[Middleware] GET_ALL PRACTICE_DATA")
         const fetchData = async () => {
             dispatch({ type: PracticeTypes.GETTING_ALL_PRACTICE_DATA,  payload: null});
             try {
@@ -35,13 +35,13 @@ export const useAsyncMiddlewareInResponseToAction = (dispatch : Dispatch<IAction
         return true
     }
     else if ( action.type === PracticeTypes.GET_TODAYS_PRACTICE_DATA) {
-        console.log("[Middleware] GET_TODAYS PRACTICE_DATA")
+        //console.log("[Middleware] GET_TODAYS PRACTICE_DATA")
         const fetchData = async () => {
             dispatch({ type: PracticeTypes.GETTING_TODAYS_PRACTICE_DATA,  payload: null});
             try {
                 const res = await dbInstance.getTodaysPracticeData(action.payload);
 
-                console.log("[Middleware] GET_TODAYS PRACTICE_DATA" + JSON.stringify(res))
+                //console.log("[Middleware] GET_TODAYS PRACTICE_DATA" + JSON.stringify(res))
 
                 dispatch({ type: PracticeTypes.RECEIVED_TODAYS_PRACTICE_DATA,  payload: res});
             } catch (error) {

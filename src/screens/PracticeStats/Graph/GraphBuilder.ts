@@ -10,11 +10,31 @@ export type exercises = {
   scale: plot;
   octave: plot;
   arpeggio: plot;
-  'solid-chord': plot;
-  'broken-chord': plot;
+  solidChord: plot;
+  brokenChord: plot;
 };
 
 export type GRAPH_ID = 'Day' | 'Week' | 'Month' | 'Year';
+
+const LABELS = {
+  Day: [0, 4, 8, 12, 16, 20, 24],
+  Week: ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'],
+  Month: [1, 2, 3],
+  Year: [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sept',
+    'Oct',
+    'Nov',
+    'Dec',
+  ],
+};
 
 type AxisLabelInfo = {
   text: string;
@@ -43,8 +63,16 @@ const getMaxY = (data: PracticeData[]) => {
   return max_y;
 };
 
-const getX = (date: number, scale_X: number, start: number) => {
-  return date * scale_X + start;
+const getX = (
+  dateXPositionMap: {[id: number]: number},
+  ID: GRAPH_ID,
+  date: Date,
+) => {
+  if (ID == 'Year') {
+    return dateXPositionMap[date.getMonth()];
+  }
+
+  return dateXPositionMap[date.getMonth()];
 };
 
 const getY = (
@@ -72,19 +100,21 @@ const buildExercisePlots = (
   HEIGHT: number,
   max_x: number,
   max_y: number,
+  dateXPositionMap: {[id: number]: number},
 ) => {
   const ex: Record<ExerciseType, plot> = {
     scale: createPlot(),
     octave: createPlot(),
     arpeggio: createPlot(),
-    'solid-chord': createPlot(),
-    'broken-chord': createPlot(),
+    solidChord: createPlot(),
+    brokenChord: createPlot(),
   };
 
   const scale_X = WIDTH / max_x;
   const scale_y = HEIGHT / max_y;
 
   if (data.length <= 0) {
+    console.log('No data');
     return ex;
   }
 
@@ -106,12 +136,10 @@ const buildExercisePlots = (
   //Line To
   for (let i = 0; i < data.length; i++) {
     for (let [exercise, count] of data[i].getCounts()) {
-      const x = getX(
-        data[i].getDate().valueOf() - start_time!.valueOf(),
-        scale_X,
-        start_x,
-      );
+      const x = getX(dateXPositionMap, ID, data[i].getDate());
       const y = getY(count, scale_y, HEIGHT, start_y);
+
+      console.log('SETH X ' + x + ' y ' + y);
 
       if (i == 0) {
         ex[exercise].line.moveTo(x, y);
@@ -134,17 +162,18 @@ const buildGrid = (
   height: number,
   max_x: number,
   max_y: number,
+  xPositions: number[],
 ) => {
   //top to bottow div by 7 space
 
   //const divX = 7
-  const scale_x = width / (max_x - 1);
+  // const scale_x = width / (max_x - 1);
 
   const gridLines: SkPath = Skia.Path.Make();
 
-  for (let i = 0; i <= max_x; i++) {
-    gridLines.moveTo(i * scale_x + start_x, start_y);
-    gridLines.lineTo(i * scale_x + start_x, height + start_y);
+  for (let i = 0; i < xPositions.length; i++) {
+    gridLines.moveTo(xPositions[i], start_y);
+    gridLines.lineTo(xPositions[i], height + start_y);
   }
 
   //const div_y = 5
@@ -185,33 +214,13 @@ const buildXAxisLabels = (
   labelY: number,
   startX: number,
 ) => {
-  const labels = {
-    Day: [0, 4, 8, 12, 16, 20, 24],
-    Week: ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'],
-    Month: [1, 2, 3],
-    Year: [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sept',
-      'Oct',
-      'Nov',
-      'Dec',
-    ],
-  };
-
   const res: AxisLabelInfo[] = [];
 
   const scale_x = width / (max_x + 0.6);
 
   for (let i = 0; i < max_x; i++) {
     res.push({
-      text: labels[ID][i] != null ? labels[ID][i]!.toString() : 'Hi',
+      text: LABELS[ID][i] != null ? LABELS[ID][i]!.toString() : 'Hi',
       pos: {x: i * scale_x + startX, y: labelY},
     });
   }
@@ -365,8 +374,19 @@ const buildGraph = (
   const inner_height = pad_height - GRID_BOTTOM_MARGIN;
 
   const data_group = data.get(ID);
+  var dateXPositionMap: {[id: number]: number} = {};
+  var xPositions: number[] = [];
 
-  console.log('data_group YOOOOOO' + JSON.stringify(data_group));
+  const scale_x = inner_width / (grid_div - 1);
+
+  for (let i = 0; i < grid_div; i++) {
+    if (ID == 'Year') {
+      dateXPositionMap[i] = parseFloat(
+        (i * scale_x + inner_x_start).toFixed(2),
+      );
+    }
+    xPositions.push(parseFloat((i * scale_x + inner_x_start).toFixed(2)));
+  }
 
   if (data_group == undefined)
     return {
@@ -380,6 +400,7 @@ const buildGraph = (
         inner_height,
         total_milli,
         10,
+        dateXPositionMap,
       ),
       grid: buildGrid(
         inner_x_start,
@@ -388,23 +409,19 @@ const buildGraph = (
         inner_height,
         grid_div,
         10,
+        xPositions,
       ),
       yLabels: buildYAxisLabels(10, pad_height, pad_x_start, pad_x_start),
       xLabels: buildXAxisLabels(ID, WIDTH, grid_div, pad_height, inner_x_start),
       label: ID,
     };
 
-  // console.log('data_group ' + JSON.stringify(data_group));
-
-  // const filtered_data = filterData(ID, data_group);
-
-  // console.log('filtered_data ' + JSON.stringify(filtered_data));
-  // const group_data = groupData(ID, filtered_data);
-
-  // console.log('group_data ' + JSON.stringify(group_data));
-
   let max_y = getMaxY(data_group);
   max_y = Math.ceil(max_y / 10) * 10;
+
+  console.log('max_y ' + max_y);
+
+  console.log('dateXPositionMap ' + JSON.stringify(dateXPositionMap));
 
   return {
     ID: ID,
@@ -417,6 +434,7 @@ const buildGraph = (
       inner_height,
       total_milli,
       max_y,
+      dateXPositionMap,
     ),
     grid: buildGrid(
       inner_x_start,
@@ -425,6 +443,7 @@ const buildGraph = (
       inner_height,
       grid_div,
       max_y,
+      xPositions,
     ),
     yLabels: buildYAxisLabels(max_y, pad_height, pad_x_start, pad_x_start),
     xLabels: buildXAxisLabels(ID, WIDTH, grid_div, pad_height, inner_x_start),
@@ -437,9 +456,9 @@ export const getGraph = (
   height: number,
   data: Map<GRAPH_ID, PracticeData[]>,
 ): Graph[] => {
-  const gWeek = buildGraph(data, width, height, 'Week');
+  // const gWeek = buildGraph(data, width, height, 'Week');
   // const gMonth = buildGraph(data, width, height, 'Month');
   const gYear = buildGraph(data, width, height, 'Year');
 
-  return [gWeek, gYear];
+  return [gYear];
 };
