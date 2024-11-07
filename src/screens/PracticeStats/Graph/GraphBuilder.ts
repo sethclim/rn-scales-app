@@ -6,7 +6,7 @@ export type PathSet = {
   dots: SkPath;
 };
 
-export type Exercises = Map<ExerciseType, PathSet[]>;
+export type ExercisesPathSetMap = Map<ExerciseType, PathSet[]>;
 export type GRAPH_ID = 'Day' | 'Week' | 'Month' | 'Year';
 
 const LABELS = [
@@ -33,7 +33,7 @@ type AxisLabelInfo = {
 };
 
 export type GraphData = {
-  exercises: Exercises;
+  exercises: ExercisesPathSetMap;
   grids: SkPath[];
   titles: string[];
   labels: Labels[];
@@ -128,11 +128,15 @@ export class GraphGenerator {
   dateXPositionMap: {[id: number]: number} = {};
   xPositions: number[] = [];
 
-  ex: Exercises = new Map();
+  ex: ExercisesPathSetMap = new Map();
   grids: SkPath[] = [];
   labels: Labels[] = [];
 
   getGridXPositions = () => {
+    //reset this for next iteration of the loop
+    this.dateXPositionMap = {};
+    this.xPositions = [];
+
     for (let i = 0; i < this.grid_div; i++) {
       this.dateXPositionMap[i] = parseFloat(
         (i * this.scale_x + this.inner_x_start).toFixed(2),

@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Canvas,  createPicture, Path, Picture, Skia, useFont, SkPath } from "@shopify/react-native-skia";
-
 import {  SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Selection } from "./Selection";
-import { Exercises, GraphGenerator, Labels, PathSet } from "./GraphBuilder";
+import { ExercisesPathSetMap, GraphGenerator, Labels, PathSet } from "./GraphBuilder";
 import PracticeContext from "../../../state/modules/PracticeData/PracticeContext";
 import { getPracticeDataRequest } from "../../../state/modules/PracticeData/store/actions";
 import { useFocusEffect } from "@react-navigation/native";
@@ -47,7 +46,7 @@ const RenderExercisePathSet = ({ plots, index } : RenderExercisePathSetProps) =>
 }
 
 type RenderExercisesProps = {
-  exercises : Exercises,
+  exercises : ExercisesPathSetMap,
   index : SharedValue<number>
 }
 
@@ -56,8 +55,8 @@ const RenderExercises = ({exercises, index} : RenderExercisesProps) => {
   return(
     <>
     {
-      [...exercises.entries()].map(entry => {
-        return <RenderExercisePathSet plots={entry[1]} index={index} />
+      [...exercises.entries()].map((entry, i) => {
+        return <RenderExercisePathSet plots={entry[1]} index={index} key={i} />
       })
     }
     </>

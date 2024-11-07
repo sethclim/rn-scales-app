@@ -19,15 +19,11 @@ export const Exercises = new Map<ExerciseType, string>([
     ["scale", "Scale"],
     ["octave", "Octaves"],
     ["arpeggio", "Arpeggio"],
-    ["solid-chord", "Solid Chords"],
-    ["broken-chord", "Broken Chords"]
+    ["solidChord", "Solid Chords"],
+    ["brokenChord", "Broken Chords"]
 ]);
-// const exercises2       = ["Scale", "Octaves", "Arpeggio", "Broken Chords", "Solid Chords"]
 
 const Generate = () => {
-
-
-
     //State
     const [selectedRoots, setSelectedRoots] = React.useState(["C", "D", "E", "F", "G", "A", "B", "C#", "Eb", "F#", "G#", "Bb"]);    
     const [selectedTypes, setSelectedTypes] = React.useState([]);    
@@ -75,7 +71,7 @@ const Generate = () => {
 
     return (
         <Box flex={1} padding={1} bg="nord.background">
-            <VStack marginTop={20} alignItems="center">
+            <VStack marginTop={5} alignItems="center">
                 <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text>
                     <Checkbox.Group onChange={setSelectedRoots} value={selectedRoots}>
