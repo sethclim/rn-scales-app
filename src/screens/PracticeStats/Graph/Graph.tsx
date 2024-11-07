@@ -21,13 +21,7 @@ type RenderExercisePathSetProps = {
 }
 
 const RenderExercisePathSet = ({ plots, index } : RenderExercisePathSetProps) => {
-
-  // Save current and next paths (initially the same)
   const paths = useSharedValue(plots);
-  //const currentDotPath = useSharedValue(plot.dots);
-
-  // Progress value drives the animation
-  //const index = useSharedValue(0);
 
   const animatedPath = useDerivedValue(
     () =>{
@@ -145,9 +139,9 @@ const RenderLabels = ({labels, index} : RenderLabelsProps) => {
 
   return(
     <>
-    <Picture picture={ylabelsPicture}  />
-    <Picture picture={xLabelsPicture}  />
-  </>
+      <Picture picture={ylabelsPicture}  />
+      <Picture picture={xLabelsPicture}  />
+    </>
   )
 }
 
@@ -170,35 +164,9 @@ const Graph = ({width, height}: GraphProps)  => {
       GG.getGraph(width, height, practiceDataState.practiceData)
     );
 
-    //const graphs = useSharedValue(getGraph(width, height, practiceDataState.practiceData));
-
     const transition = useSharedValue(0);
     const next    = useSharedValue(0);
     const current = useSharedValue(0);
-
-    // useEffect(() => {
-    //   console.log("next value!! " + next.value)
-    //     setCurrentGraph(buildGraph(practiceDataState.practiceData, width, height, "Year"));
-    // }, [height, width, practiceDataState.practiceData, next.value]);
-  
-    // const g = useMemo(() => getGraph(width, height, practiceData), [width, height, practiceData])
-
-    // const graph = useDerivedValue(() => {
-    //   return  graphs.value[next.value]
-    // })
-
-    // useEffect(() => {
-    //   console.log("Updating graph " + JSON.stringify(practiceDataState.practiceData))
-    //   graphs.value = getGraph(width, height, practiceDataState.practiceData);
-
-    //   console.log("Updating graph " + graphs.value.length)
-    // },[width, height, practiceDataState.practiceData])
-
-    // useEffect(() => {
-    //   console.log("practiceData change " + JSON.stringify(practiceDataState.practiceData))
-    // }, [practiceDataState.practiceData])
-
-
 
     useEffect(() => {
 
