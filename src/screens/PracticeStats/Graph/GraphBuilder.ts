@@ -203,8 +203,9 @@ export class GraphGenerator {
   GetAllExercises = (pd: PracticeData, index: number) => {
     const scale_y = this.HEIGHT / this.max_y;
     for (let [exercise, count] of pd.getCounts()) {
-      if (count <= 0) continue;
+      // if (count <= 0) continue;
 
+      //could early return here
       if (this.ex.get(exercise) === undefined) {
         this.ex.set(exercise, []);
       }
@@ -262,6 +263,8 @@ export class GraphGenerator {
         this.GetAllExercises(pd, j);
       }
     }
+
+    console.log('this.ex ' + JSON.stringify([...this.ex.entries()], null, 2));
 
     return {
       titles: ['Week', 'Year'],
