@@ -17,11 +17,29 @@ export type Exercises = Map<ExerciseType, PathSet[]>;
 
 export type GRAPH_ID = 'Day' | 'Week' | 'Month' | 'Year';
 
-const LABELS = {
-  Day: [0, 4, 8, 12, 16, 20, 24],
-  Week: ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'],
-  Month: [1, 2, 3],
-  Year: [
+// const LABELS = {
+//   Day: [0, 4, 8, 12, 16, 20, 24],
+//   Week: ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'],
+//   Month: [1, 2, 3],
+//   Year: [
+//     'Jan',
+//     'Feb',
+//     'Mar',
+//     'Apr',
+//     'May',
+//     'Jun',
+//     'Jul',
+//     'Aug',
+//     'Sept',
+//     'Oct',
+//     'Nov',
+//     'Dec',
+//   ],
+// };
+
+const LABELS = [
+  ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'],
+  [
     'Jan',
     'Feb',
     'Mar',
@@ -35,7 +53,7 @@ const LABELS = {
     'Nov',
     'Dec',
   ],
-};
+];
 
 type AxisLabelInfo = {
   text: string;
@@ -45,10 +63,11 @@ type AxisLabelInfo = {
 export type GraphData = {
   //ID: GRAPH_ID;
   exercises: Exercises;
-  // grid: SkPath;
+  grids: SkPath[];
   // yLabels: AxisLabelInfo[];
   // xLabels: AxisLabelInfo[];
   titles: string[];
+  labels: Labels[];
 };
 
 const getMaxY = (data: PracticeData[]) => {
@@ -69,7 +88,7 @@ const getX = (
   index: number,
   date: Date,
 ) => {
-  console.log(`Datex ${JSON.stringify(dateXPositionMap)} ${index} ${date}`);
+  console.log(`Datex ${JSON.stringify(dateXPositionMap[0])} ${index} ${date}`);
 
   if (index == 1) {
     return dateXPositionMap[date.getMonth()];
@@ -86,6 +105,17 @@ const getY = (
   height: number,
   start: number,
 ) => {
+  console.log(
+    'count ' +
+      count +
+      'scale_y ' +
+      scale_y +
+      ' height ' +
+      height +
+      ' start ' +
+      start,
+  );
+
   return height - (count * scale_y - start);
 };
 
@@ -213,7 +243,7 @@ const buildYAxisLabels = (
 };
 
 const buildXAxisLabels = (
-  ID: GRAPH_ID,
+  index: number,
   width: number,
   max_x: number,
   labelY: number,
@@ -225,7 +255,7 @@ const buildXAxisLabels = (
 
   for (let i = 0; i < max_x; i++) {
     res.push({
-      text: LABELS[ID][i] != null ? LABELS[ID][i]!.toString() : 'Hi',
+      text: LABELS[index][i] != null ? LABELS[index][i]!.toString() : 'Hi',
       pos: {x: i * scale_x + startX, y: labelY},
     });
   }
@@ -393,6 +423,11 @@ const orderPracticeDataArrys = (dataMap: Map<GRAPH_ID, PracticeData[]>) => {
 //   return gd;
 // };
 
+export type Labels = {
+  xLabels: AxisLabelInfo[];
+  yLabels: AxisLabelInfo[];
+};
+
 const GRID_DIVS = [7, 12];
 
 export class GraphGenerator {
@@ -402,20 +437,21 @@ export class GraphGenerator {
   grid_div = -1;
   //total_milli = GRAPH_INFO[ID].total_milli;
 
-  pad_width = this.WIDTH - PADDING;
-  pad_height = this.HEIGHT - PADDING;
-  inner_width = this.pad_width - GRID_RIGHT_MARGIN;
-  pad_x_start = PADDING / 2;
-  inner_x_start = this.pad_x_start + GRID_RIGHT_MARGIN;
-  inner_height = this.pad_height - GRID_BOTTOM_MARGIN;
+  pad_width = -1;
+  pad_height = -1;
+  inner_width = -1;
+  pad_x_start = -1;
+  inner_x_start = -1;
+  inner_height = -1;
   scale_x = -1;
-
   max_y = -1;
 
   dateXPositionMap: {[id: number]: number} = {};
   xPositions: number[] = [];
 
   ex: Exercises = new Map();
+  grids: SkPath[] = [];
+  labels: Labels[] = [];
 
   getGridXPositions = () => {
     for (let i = 0; i < this.grid_div; i++) {
@@ -430,8 +466,18 @@ export class GraphGenerator {
   };
 
   GetAllExercises = (pd: PracticeData, index: number) => {
+    console.log(`this.HEIGHT ${this.HEIGHT} this.max_y ${this.max_y}`);
+
     const scale_y = this.HEIGHT / this.max_y;
     for (let [exercise, count] of pd.getCounts()) {
+      if (count <= 0) continue;
+
+      if (this.ex.get(exercise) === undefined) {
+        this.ex.set(exercise, []);
+      }
+
+      console.log(`exercise exercise ${exercise} count ${count}`);
+
       const x = getX(this.dateXPositionMap, index, pd.getDate());
       const y = getY(count, scale_y, this.HEIGHT, PADDING);
 
@@ -454,6 +500,13 @@ export class GraphGenerator {
     this.WIDTH = width;
     this.HEIGHT = height;
 
+    this.pad_width = this.WIDTH - PADDING;
+    this.pad_height = this.HEIGHT - PADDING;
+    this.inner_width = this.pad_width - GRID_RIGHT_MARGIN;
+    this.pad_x_start = PADDING / 2;
+    this.inner_x_start = this.pad_x_start + GRID_RIGHT_MARGIN;
+    this.inner_height = this.pad_height - GRID_BOTTOM_MARGIN;
+
     const practiceDataArrayOfArray = orderPracticeDataArrys(data);
 
     //Each Grouping of data
@@ -463,8 +516,38 @@ export class GraphGenerator {
       this.grid_div = GRID_DIVS[i];
       this.scale_x = this.inner_width / (this.grid_div - 1);
 
+      this.getGridXPositions();
       let max_y = getMaxY(practiceDatas);
       this.max_y = Math.ceil(max_y / 10) * 10;
+
+      this.grids.push(
+        buildGrid(
+          this.inner_x_start,
+          PADDING,
+          this.inner_width,
+          this.inner_height,
+          this.grid_div,
+          this.max_y,
+          this.xPositions,
+        ),
+      );
+
+      const xL = buildXAxisLabels(
+        i,
+        this.WIDTH,
+        this.grid_div,
+        this.pad_height,
+        this.inner_x_start,
+      );
+      const yL = buildYAxisLabels(
+        10,
+        this.pad_height,
+        this.pad_x_start,
+        this.pad_x_start,
+      );
+
+      this.labels.push({xLabels: xL, yLabels: yL});
+
       //Each entry in group
       for (let j = 0; j < practiceDatas.length; j++) {
         const pd = practiceDatas[j];
@@ -475,6 +558,8 @@ export class GraphGenerator {
     const gd: GraphData = {
       titles: ['Week', 'Year'],
       exercises: this.ex,
+      grids: this.grids,
+      labels: this.labels,
     };
 
     return gd;

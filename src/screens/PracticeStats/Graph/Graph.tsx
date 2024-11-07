@@ -5,7 +5,7 @@ import {  SharedValue, useDerivedValue, useSharedValue } from "react-native-rean
 // import { getGraph } from "./GraphBuilder";
 import { Selection } from "./Selection";
 import { PracticeData } from "../../../data/Models/DataModels";
-import { GraphGenerator, PathSet as Plot } from "./GraphBuilder";
+import { Exercises, GraphGenerator, Labels, PathSet } from "./GraphBuilder";
 import PracticeContext from "../../../state/modules/PracticeData/PracticeContext";
 import { getPracticeDataRequest } from "../../../state/modules/PracticeData/store/actions";
 import { useFocusEffect } from "@react-navigation/native";
@@ -16,7 +16,7 @@ type GraphProps = {
 }
 
 type RenderExercisePathSetProps = {
-  plots : Plot[]
+  plots : PathSet[]
   index : SharedValue<number>
 }
 
@@ -53,6 +53,104 @@ const RenderExercisePathSet = ({ plots, index } : RenderExercisePathSetProps) =>
   )
 }
 
+type RenderExercisesProps = {
+  exercises : Exercises,
+  index : SharedValue<number>
+}
+
+const RenderExercises = ({exercises, index} : RenderExercisesProps) => {
+
+  useEffect(() => {
+    console.log("RenderExercises exercises " + exercises.size)
+  }, [])
+
+  return(
+    <>
+    {
+      [...exercises.entries()].map(entry => {
+        return <RenderExercisePathSet plots={entry[1]} index={index} />
+      })
+    }
+    </>
+  )
+}
+
+type RenderGridProps = {
+  grids : SkPath[],
+  index : SharedValue<number> 
+}
+
+const RenderGrid = ({ grids, index } : RenderGridProps) => {
+   // Save current and next paths (initially the same)
+   const paths = useSharedValue(grids);
+ 
+   const animatedGrid = useDerivedValue(
+     () =>{
+       "worklet"
+       return paths.value[index.value]
+     },
+     [index, paths]
+   );
+   return(
+      <Path path={animatedGrid} color="#ffffff44" strokeWidth={2} style="stroke"/>
+   )
+}
+
+type RenderLabelsProps = {
+  labels : Labels[]
+  index : SharedValue<number>
+}
+
+const RenderLabels = ({labels, index} : RenderLabelsProps) => {
+
+  const font = useFont(require("./SF-Mono-Medium.otf"), 12);
+
+  const yLabels = useDerivedValue(() =>{
+    // console.log("shared value changed " + next.value + " " + graphs.value.length)
+    return  labels[index.value].yLabels
+  },[index.value])
+
+  const xLabels = useDerivedValue(() => {
+    return labels[index.value].xLabels ? labels[index.value].xLabels : []
+  })
+
+  const ylabelsPicture = useDerivedValue(() => createPicture(
+    (canvas) => {
+      if(yLabels.value == null || yLabels.value.length <= 0 || font == null)
+        return
+
+      const paint = Skia.Paint();
+
+      paint.setColor(Skia.Color("white"));
+      yLabels.value.map((obj, index) => {
+          canvas.drawText(obj.text, obj.pos.x ? obj.pos.x : 150 , obj.pos.y ? obj.pos.y : 150, paint, font)
+      })
+    }
+  ), [yLabels.value]);
+
+  const xLabelsPicture = useDerivedValue(() => createPicture(
+    (canvas) => {
+      if(xLabels.value == null || xLabels.value.length <= 0 || font == null)
+        return
+
+      const paint = Skia.Paint();
+
+      paint.setColor(Skia.Color("white"));
+      xLabels.value.map(info => {
+        canvas.drawText(info.text, info.pos.x ? info.pos.x : 150 , info.pos.y ? info.pos.y : 150, paint, font)
+        canvas.drawTextBlob
+      })
+    }
+  ), [xLabels.value]);
+
+  return(
+    <>
+    <Picture picture={ylabelsPicture}  />
+    <Picture picture={xLabelsPicture}  />
+  </>
+  )
+}
+
 const Graph = ({width, height}: GraphProps)  => {
 
   const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
@@ -71,6 +169,7 @@ const Graph = ({width, height}: GraphProps)  => {
     const [currentGraph, setCurrentGraph] = useState(() =>
       GG.getGraph(width, height, practiceDataState.practiceData)
     );
+
     //const graphs = useSharedValue(getGraph(width, height, practiceDataState.practiceData));
 
     const transition = useSharedValue(0);
@@ -99,97 +198,28 @@ const Graph = ({width, height}: GraphProps)  => {
     //   console.log("practiceData change " + JSON.stringify(practiceDataState.practiceData))
     // }, [practiceDataState.practiceData])
 
-    const font = useFont(require("./SF-Mono-Medium.otf"), 12);
-
-    // const yLabels = useDerivedValue(() =>{
-    //   console.log("shared value changed " + next.value + " " + graphs.value.length)
-    //   return  graphs.value[next.value].yLabels ? graphs.value[next.value].yLabels : []
-    // },[next.value])
-
-    // const xLabels = useDerivedValue(() => {
-    //   return  graph.value.xLabels ? graph.value.xLabels : []
-    // })
 
 
     useEffect(() => {
-      console.log("BABABABABA  " + GG.getGraph(width, height, practiceDataState.practiceData))
+
       setCurrentGraph(GG.getGraph(width, height, practiceDataState.practiceData))
     }, [practiceDataState.practiceData])
 
-    const path = Skia.Path.Make();
-    path.moveTo(0,0)
-    path.lineTo(width, height)
-
-    const path2 = Skia.Path.Make();
-    path2.moveTo(0,height)
-    path2.lineTo(width, 0)
-
-    const plot : Plot = {
-      line: path,
-      dots: path
-    }
-
-    const plot2 : Plot = {
-      line: path2,
-      dots: path2
-    }
-
-    const plots : Plot[] = [plot, plot2]
-
-    // const ylabelsPicture = useDerivedValue(() => createPicture(
-    //   (canvas) => {
-    //     if(yLabels.value == null || yLabels.value.length <= 0 || font == null)
-    //       return
-
-    //     const paint = Skia.Paint();
-
-    //     paint.setColor(Skia.Color("white"));
-    //     yLabels.value.map((obj, index) => {
-    //         canvas.drawText(obj.text, obj.pos.x ? obj.pos.x : 150 , obj.pos.y ? obj.pos.y : 150, paint, font)
-    //     })
-    //   }
-    // ), [yLabels.value]);
-
-    // const xLabelsPicture = useDerivedValue(() => createPicture(
-    //   (canvas) => {
-    //     if(xLabels.value == null || xLabels.value.length <= 0 || font == null)
-    //       return
-
-    //     const paint = Skia.Paint();
-
-    //     paint.setColor(Skia.Color("white"));
-    //     xLabels.value.map(info => {
-    //       canvas.drawText(info.text, info.pos.x ? info.pos.x : 150 , info.pos.y ? info.pos.y : 150, paint, font)
-    //       canvas.drawTextBlob
-    //     })
-    //   }
-    // ), [xLabels.value]);
-      
     return(
       <>
         <Canvas style={{ height: height, width: width, backgroundColor: "#00000055"}}>
-
-          {/* <Path path={currentGraph.grid} color="#ffffff44" strokeWidth={2} style="stroke"/> */}
-
-          <RenderExercisePathSet plots={plots} index={next} />
-
-          {/* <Path path={graphs.value[next.value].exercises.octave.line} color={"#f4dc00"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-          <Path path={graphs.value[next.value].exercises.octave.dots} color={"#f4dc00"} strokeWidth={5} style="fill"/>
-
-          <Path path={graphs.value[next.value].exercises.arpeggio.line} color={"#327fa6"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-          <Path path={graphs.value[next.value].exercises.octave.dots} color={"#327fa6"} strokeWidth={5} style="fill"/>
-
-          <Path path={graphs.value[next.value].exercises.solidChord.line} color={"#e20177"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-          <Path path={graphs.value[next.value].exercises.solidChord.dots} color={"#e20177"} strokeWidth={5} style="fill"/>
-
-          <Path path={graphs.value[next.value].exercises.brokenChord.line} color={"#f8981d"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-          <Path path={graphs.value[next.value].exercises.brokenChord.dots} color={"#f8981d"} strokeWidth={5} style="fill"/>  
-
-          <Picture picture={ylabelsPicture}  />
-          <Picture picture={xLabelsPicture}  /> */}
-
+          {
+            currentGraph.grids.length > 0 ?
+              <RenderGrid grids={currentGraph.grids} index={next} /> : null
+          }
+          <RenderExercises index={next} exercises={currentGraph.exercises}  />
+          {
+            currentGraph.labels.length > 0 ?
+              <RenderLabels labels={currentGraph.labels} index={next} />
+              : null
+          }
         </Canvas>
-        {/* <Selection current={current} next={next} transition={transition} graphs={graphs.value} /> */}
+        <Selection current={current} next={next} transition={transition} graphData={currentGraph} />
       </>
     )
   } 
