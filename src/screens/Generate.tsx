@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useContext, useState } from "react"
+import React, { FunctionComponent, useContext, useEffect, useState } from "react"
 
 import { Box, HStack, VStack, Text, Checkbox, Button, AlertDialog, FormControl, Input, Modal } from 'native-base';
 import Context from "../state/modules/routine/context";
@@ -7,31 +7,30 @@ import { generateRequest,saveRoutine } from "../state/modules/routine/store/acti
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { ExerciseType } from "../data/Models/ExerciseType";
+import { ExerciseType } from "../data/Models/DataModels";
+import PracticeContext from "../state/modules/PracticeData/PracticeContext";
+import { getTodaysPracticeDataRequest } from "../state/modules/PracticeData/store/actions";
 
+//Options
+const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
+const ACCIDENTAL_ROOTS = ["C#", "Eb", "F#", "G#", "Bb"]
+const SCALE_TYPES      = ["Major", "Minor", "Augmented", "Diminished"]
 export const Exercises = new Map<ExerciseType, string>([
     ["scale", "Scale"],
     ["octave", "Octaves"],
     ["arpeggio", "Arpeggio"],
-    ["solid-chord", "Solid Chords"],
-    ["broken-chord", "Broken Chords"]
+    ["solidChord", "Solid Chords"],
+    ["brokenChord", "Broken Chords"]
 ]);
 
 const Generate = () => {
-
-    //Options
-    const naturalRoots    = ["C", "D", "E", "F", "G", "A", "B"]
-    const accidentalRoots = ["C#", "Eb", "F#", "G#", "Bb"]
-    const scaleTypes      = ["Major", "Minor", "Augmented", "Diminished"]
-    const exercises2       = ["Scale", "Octaves", "Arpeggio", "Broken Chords", "Solid Chords"]
-
-
     //State
     const [selectedRoots, setSelectedRoots] = React.useState(["C", "D", "E", "F", "G", "A", "B", "C#", "Eb", "F#", "G#", "Bb"]);    
     const [selectedTypes, setSelectedTypes] = React.useState([]);    
     const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
 
-    const { dispatch } = useContext(Context);
+    const { myDispatch } = useContext(Context);
+    const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const [showModal, setShowModal] = useState(false);
@@ -40,11 +39,15 @@ const Generate = () => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
     }
 
+    useEffect(() => {
+        practiceDatadispatch(getTodaysPracticeDataRequest(new Date()))
+    }, [])
+
     const StartRoutine = () => {
 
         const generateReq = generateRequest([selectedRoots, selectedTypes, selectedExercises])
 
-        dispatch(generateReq)
+        myDispatch(generateReq)
 
         if(CheckValidRoutineConfiguration())
             navigation.navigate('Practice')
@@ -55,34 +58,34 @@ const Generate = () => {
     const SaveRoutine = (saveName : string) => {
 
         const saveRoutineMSG = saveRoutine([selectedRoots, selectedTypes, selectedExercises, saveName])
-        dispatch(saveRoutineMSG) 
+        myDispatch(saveRoutineMSG) 
 
         setShowModal(false);
     }
 
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = React.useState(false); 
 
     const onClose = () => setIsOpen(false);
   
     const cancelRef = React.useRef(null);
 
     return (
-        <Box flex={1} padding={5} bg="nord.background">
-            <VStack marginTop={20} alignItems="center">
+        <Box flex={1} padding={1} bg="nord.background">
+            <VStack marginTop={5} alignItems="center">
                 <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text>
                     <Checkbox.Group onChange={setSelectedRoots} value={selectedRoots}>
                         <HStack space={3} flexWrap={'wrap'}>
                             <HStack>
                             {
-                                naturalRoots.map( (naturalRoot, i) => { return (
+                                NATURAL_ROOTS.map( (naturalRoot, i) => { return (
                                     <Checkbox key={i} value={naturalRoot} size="md">{naturalRoot}</Checkbox>
                                 )})
                             }
                             </HStack>
                             <HStack>
                             {
-                                accidentalRoots.map( (accidentalRoot, i) => { return (
+                                ACCIDENTAL_ROOTS.map( (accidentalRoot, i) => { return (
                                     <Checkbox key={i} value={accidentalRoot} size="md" >{accidentalRoot}</Checkbox>
                                 )})
                             }
@@ -96,7 +99,7 @@ const Generate = () => {
                     <Checkbox.Group onChange={setSelectedTypes} value={selectedTypes}>
                         <HStack space={3} flexWrap={'wrap'}>
                         {
-                            scaleTypes.map( (scaleType, i) => { return (
+                            SCALE_TYPES.map( (scaleType, i) => { return (
                                 <Checkbox key={i} value={scaleType} size="md" >{scaleType}</Checkbox>
                             )})
                         }

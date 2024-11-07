@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -10,20 +10,20 @@ import { Text, Box, Center, Button } from "native-base"
 import Context from "../state/modules/routine/context";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { requestTask } from "../state/modules/routine/store/actions";
-import {  recordPracticeDataRequest, savePracticeDataRequest } from "../state/modules/PracticeData/store/actions";
-
+import { recordPracticeDataRequest, savePracticeDataRequest } from "../state/modules/PracticeData/store/actions";
+import { ExerciseType, PracticeData } from "../data/Models/DataModels";
 
 const PracticeRoutine = () =>{
-
-    const { state, dispatch } = useContext(Context);
-    const { practiceDatadispatch } = useContext(PracticeContext);
+    const { state, myDispatch } = useContext(Context);
+    const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
 
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
+
 
     const Next = () => {
 
         const requestMSG = requestTask([])
-        dispatch(requestMSG);
+        myDispatch(requestMSG);
 
         if(state.currentTask != null)
         {
@@ -36,7 +36,8 @@ const PracticeRoutine = () =>{
         React.useCallback(() => {
             Next();
             return() =>{
-                const saveMSG = savePracticeDataRequest(null)
+                //console.log("triggering save of pd!! ")
+                const saveMSG = savePracticeDataRequest()
                 practiceDatadispatch(saveMSG);
             }
         }, [])

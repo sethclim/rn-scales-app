@@ -14,7 +14,6 @@ import { useNavigation } from '@react-navigation/native';
 
 const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
-
 const BottomTabs = () => {
     
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();

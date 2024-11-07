@@ -1,28 +1,42 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState }  from 'react';
 
 import { Box, Text } from 'native-base';
 
-import withObservables from '@nozbe/with-observables';
-import {database} from '../../data/Database/database';
-import RoutineModel from '../../data/Database/routine.model';
-import { IRoutines } from '../../data/Database/types';
+// import withObservables from '@nozbe/with-observables';
+import {Routine} from '../../data/Models/DataModels';
 import { SavedRoutinesProps } from './types';
-import { EnhancedSavedRoutineRow } from './SavedRoutineRow';
+import { SavedRoutineRow } from './SavedRoutineRow';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native'
 
 import  SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
-import { Collection } from '@nozbe/watermelondb';
+import Context from '../../state/modules/routine/context';
+import { requestAllRoutines } from '../../state/modules/routine/store/actions';
+import { useFocusEffect } from '@react-navigation/native';
+
+const SavedRoutines  = () => {
+
+  // const [routines, setRoutines] = useState<Routine[]>()
+  const { myDispatch, state } = useContext(Context);
+
+  const DoSideEffect = () => {
+    myDispatch(requestAllRoutines())
+  }
+
+  useFocusEffect(
+    React.useCallback(() => {
+        DoSideEffect();
+    }, [])
+  )
 
 
-const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
 
-  function compareDatesFn(a : RoutineModel, b : RoutineModel) {
+  function compareDatesFn(a : Routine, b : Routine) {
     if (Date.parse(a.createdAt) > Date.parse(b.createdAt) ) {
       return 1;
     }
-    return -1;
+    return -1; 
   }
 
   const closeRow = (rowMap : any, rowKey : any) => {
@@ -33,13 +47,13 @@ const SavedRoutines  = ({routines} : SavedRoutinesProps) => {
 
   return (
     <Box flex={1} margin={30}  bg="#77777733">
-      <SwipeListView<RoutineModel> 
-        data={routines} 
+      <SwipeListView<Routine> 
+        data={state.routines} 
         renderItem={ (data, rowMap) => (
-          <EnhancedSavedRoutineRow routine={data.item} routineItems={data.item.routineItems}  rowKey={rowMap}/>
+          <SavedRoutineRow routine={data.item} routineItems={data.item.RoutineItems} index={0}  />
         )} 
         renderHiddenItem={ (data, rowMap) => (
-          <SavedRoutineHiddenItem routine={data.item} routineItems={data.item.routineItems} index={0} />
+          <SavedRoutineHiddenItem routine={data.item} routineItems={data.item.RoutineItems} index={0} />
         )} 
         rightOpenValue={-55} 
         previewRowKey={'0'} 
@@ -65,12 +79,5 @@ const styles = StyleSheet.create({
   },
 });
 
-const data : Collection<RoutineModel> = database.collections.get('routines');
 
-const observabeRoutine = () => data?.query().observe();
-
-const enhanceWithRoutines = withObservables<IRoutines, any>([], () => ({
-  routines: observabeRoutine(),
-}));
-
-export default enhanceWithRoutines(SavedRoutines);
+export default SavedRoutines;

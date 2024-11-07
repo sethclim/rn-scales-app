@@ -1,9 +1,8 @@
 import React, { FunctionComponent, useContext } from "react";
 //Watermelon
-import withObservables from '@nozbe/with-observables';
 
 //NativeBase
-import { Box, HStack, Spacer, Button, Text, Icon, IconButton } from "native-base";
+import { Box, HStack, Spacer, Text, IconButton } from "native-base";
 
 //Navigation
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
@@ -14,19 +13,17 @@ import { BottomTabNavigatorParamList } from "../../navigation/types";
 import { resumeRoutine } from "../../state/modules/routine/store/actions";
 
 import { RowProps } from "./types";
-import RoutineItemModel from "../../data/Database/routine_item.model";
+import {RoutineItem} from "../../data/Models/DataModels";
 import Context from "../../state/modules/routine/context";
 
-import {database} from '../../data/Database/database';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { background } from "native-base/lib/typescript/theme/styled-system";
 
-const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routineItems}) => {  
+export const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routineItems}) => {  
 
     const { dispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
-    const StartSavedRoutine = (routineItems : RoutineItemModel[]) => {
+    const StartSavedRoutine = (routineItems : RoutineItem[]) => {
         const resumeMSG = resumeRoutine(routineItems)   
         dispatch(resumeMSG)
         navigation.navigate('Practice')
@@ -54,10 +51,3 @@ const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routin
       </Box>
     );
   };
-
-const data = database.collections.get('routine_items');
-const observabeRoutineItems = () => data?.query().observe();
-
-export const EnhancedSavedRoutineRow = withObservables<RoutineItemModel[], any>([], () => ({
-  routineItems: observabeRoutineItems()
-}))(SavedRoutineRow);

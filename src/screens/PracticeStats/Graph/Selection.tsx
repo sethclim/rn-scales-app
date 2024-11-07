@@ -5,14 +5,13 @@ import {
   Group,
   LinearGradient,
   RoundedRect,
-  SkiaValue,
   mix,
   vec,
 } from "@shopify/react-native-skia";
 import { SharedValue, runOnJS, runOnUI, useSharedValue } from "react-native-reanimated";
-import Animated, { useDerivedValue, withTiming } from "react-native-reanimated";
+import  { useDerivedValue, withTiming } from "react-native-reanimated";
 
-import type { Graph } from "./GraphBuilder";
+import type { GraphData } from "./GraphBuilder";
 
 const buttonWidth = 98;
 const styles = StyleSheet.create({
@@ -49,10 +48,10 @@ interface SelectionProps {
   current: SharedValue<number>;
   next: SharedValue<number>;
   transition: SharedValue<number>;
-  graphs: Graph[];
+  graphData: GraphData;
 }
 
-export const Selection = ({ current, next, transition, graphs }: SelectionProps) => {
+export const Selection = ({ current, next, transition, graphData }: SelectionProps) => {
 
   const translateX = useSharedValue(0);
 
@@ -106,13 +105,13 @@ export const Selection = ({ current, next, transition, graphs }: SelectionProps)
             </RoundedRect>
           </Group>
         </Canvas>
-        {graphs.map((graph, index) => (
+        {graphData.titles.map((title, index) => (
           <TouchableWithoutFeedback
             key={index}
             onPress={() => onPress(index)}
           >
             <View style={styles.button}>
-              <Text style={styles.label}>{graph.label}</Text>
+              <Text style={styles.label}>{title}</Text>
             </View>
           </TouchableWithoutFeedback>
         ))}

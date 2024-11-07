@@ -3,13 +3,10 @@ import { FunctionComponent, useContext } from "react";
 
 import { HStack, Pressable } from "native-base";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-
-import RoutineItemModel from "../../data/Database/routine_item.model";
-import RoutineModel from "../../data/Database/routine.model";
+import {RoutineItem, Routine} from "../../data/Models/DataModels";
 
 import Context from "../../state/modules/routine/context";
 import { deleteRoutine } from "../../state/modules/routine/store/actions";
-
 import { RowProps } from "./types";
 
 
@@ -17,7 +14,7 @@ const SavedRoutineHiddenItem :  FunctionComponent<RowProps>  = ({routine, index,
    
     const { dispatch } = useContext(Context);
 
-    const deleteRow = (routine  : RoutineModel, routineItems  : RoutineItemModel[]) => {
+    const deleteRow = (routine  : Routine, routineItems  : RoutineItem[]) => {
         const deleteMSG = deleteRoutine([routine])
         dispatch(deleteMSG)
       };
