@@ -23,19 +23,6 @@ const PracticeStats = () => {
 
     const { width, height } = useWindowDimensions();
 
-    const pd = null;
-
-    const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
-
-    const fetchPracticeData = () => {
-      practiceDatadispatch(getPracticeDataRequest())
-    }
-    
-    useFocusEffect(
-      React.useCallback(() => {
-        fetchPracticeData();
-      }, [])
-    ); 
 
     // const convertData = (practice_data : PracticeData[] | null) : PracticeData[] => {
 
@@ -62,12 +49,7 @@ const PracticeStats = () => {
 
     return(
       <View style={styles.container} bg="nord.primary.1">
-        {
-          practiceDataState.practiceData !== null ? 
-          
-            <Graph width={width - Padding * 2 } height={height * 0.5 - 50} practiceData={practiceDataState.practiceData}/> : <Text>no data</Text>
-          
-        }
+        <Graph width={width - Padding * 2 } height={height * 0.5 - 50}/>
       </View>
     )
 }
