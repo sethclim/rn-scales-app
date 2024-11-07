@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Canvas,  createPicture, Path, Picture, Skia, useFont, Text, SkPath   } from "@shopify/react-native-skia";
-import { useMemo } from "react";
+import { Canvas,  createPicture, Path, Picture, Skia, useFont, SkPath } from "@shopify/react-native-skia";
+
 import {  SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
-// import { getGraph } from "./GraphBuilder";
 import { Selection } from "./Selection";
-import { PracticeData } from "../../../data/Models/DataModels";
 import { Exercises, GraphGenerator, Labels, PathSet } from "./GraphBuilder";
 import PracticeContext from "../../../state/modules/PracticeData/PracticeContext";
 import { getPracticeDataRequest } from "../../../state/modules/PracticeData/store/actions";
@@ -21,6 +19,7 @@ type RenderExercisePathSetProps = {
 }
 
 const RenderExercisePathSet = ({ plots, index } : RenderExercisePathSetProps) => {
+
   const paths = useSharedValue(plots);
 
   const animatedPath = useDerivedValue(
@@ -53,10 +52,6 @@ type RenderExercisesProps = {
 }
 
 const RenderExercises = ({exercises, index} : RenderExercisesProps) => {
-
-  useEffect(() => {
-    console.log("RenderExercises exercises " + exercises.size)
-  }, [])
 
   return(
     <>
