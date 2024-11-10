@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useContext, useEffect, useState } from "react"
 
-import { Box, HStack, VStack, Text, Checkbox, Button, AlertDialog, FormControl, Input, Modal } from 'native-base';
+import { HStack, VStack, Text, Checkbox, Button, AlertDialog, FormControl, Input, Modal } from 'native-base';
 import Context from "../state/modules/routine/context";
 import { generateRequest,saveRoutine } from "../state/modules/routine/store/actions";
 
@@ -10,6 +10,9 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { ExerciseType } from "../data/Models/DataModels";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { getTodaysPracticeDataRequest } from "../state/modules/PracticeData/store/actions";
+import { Box } from "../native_blocks/primatives/Box";
+import { StyleSheet } from "react-native";
+import { CheckBox, StyledCheckBox } from "../native_blocks/buttons/CheckBox";
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -70,9 +73,12 @@ const Generate = () => {
     const cancelRef = React.useRef(null);
 
     return (
-        <Box flex={1} padding={1} bg="nord.background">
-            <VStack marginTop={5} alignItems="center">
-                <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
+        <Box flexMain={true} p={1} style={style.bg}>
+
+            <StyledCheckBox titles="Hello" onPress={() => console.log("pressed")} />
+
+            {/* <VStack marginTop={5} alignItems="center">
+                <Box flexMain={false} align="flex-start" mAll={{t: 5}} style={style.bg2} p={4} width={375}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text>
                     <Checkbox.Group onChange={setSelectedRoots} value={selectedRoots}>
                         <HStack space={3} flexWrap={'wrap'}>
@@ -94,7 +100,7 @@ const Generate = () => {
                     </Checkbox.Group>
                 </Box>
 
-                <Box marginTop={5}bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
+                <Box flexMain={false} align="flex-start" mAll={{t: 50}} style={style.bg2} py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Type</Text>
                     <Checkbox.Group onChange={setSelectedTypes} value={selectedTypes}>
                         <HStack space={3} flexWrap={'wrap'}>
@@ -107,7 +113,7 @@ const Generate = () => {
                     </Checkbox.Group>
                 </Box>
 
-                <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
+                <Box flexMain={false} align="flex-start" mAll={{t: 50}} style={style.bg2} py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Exercise</Text>
                     <Checkbox.Group onChange={setSelectedExercises} value={selectedExercises}>
                         <HStack space={3} flexWrap={'wrap'}>
@@ -142,7 +148,7 @@ const Generate = () => {
                 </AlertDialog.Content>
             </AlertDialog>
 
-            <SaveModal showModal={showModal} setShowModal={setShowModal} save={SaveRoutine} />
+            <SaveModal showModal={showModal} setShowModal={setShowModal} save={SaveRoutine} /> */}
 
         </Box>
     )
@@ -182,5 +188,16 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
         </Modal>
     )
 }
+
+const style = StyleSheet.create({
+    bg:{
+        backgroundColor: "#ECEFF4", //nord.background
+    },
+    bg2:{
+        backgroundColor: "#E5E9F0", //"nord.secondaryBackground"
+        elevation: 8,
+        borderRadius: 5,
+    }
+})
 
 export default Generate;
