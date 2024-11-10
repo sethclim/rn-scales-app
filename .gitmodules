@@ -1,0 +1,6 @@
+[submodule "src/native_blocks"]
+	path = src/native_blocks
+	url = git@github.com:Tenwall-Development/native-blocks-internal.git
+[submodule "src/native_design"]
+	path = src/native_design
+	url = git@github.com:Tenwall-Development/native-design.git
