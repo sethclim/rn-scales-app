@@ -14,6 +14,8 @@ import { Box } from "../native_blocks/primatives/Box";
 import { StyleSheet } from "react-native";
 import { CheckBox, StyledCheckBox } from "../native_blocks/buttons/CheckBox";
 
+import check from "../assets/check.svg"
+
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
 const ACCIDENTAL_ROOTS = ["C#", "Eb", "F#", "G#", "Bb"]
@@ -75,32 +77,32 @@ const Generate = () => {
     return (
         <Box flexMain={true} p={1} style={style.bg}>
 
-            <StyledCheckBox titles="Hello" onPress={() => console.log("pressed")} />
+            <StyledCheckBox titles="Hello" onPress={() => console.log("pressed")} check={check} checked={false} />
 
-            {/* <VStack marginTop={5} alignItems="center">
+            <VStack marginTop={5} alignItems="center">
                 <Box flexMain={false} align="flex-start" mAll={{t: 5}} style={style.bg2} p={4} width={375}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text>
-                    <Checkbox.Group onChange={setSelectedRoots} value={selectedRoots}>
+                    {/* /\<Checkbox.Group onChange={setSelectedRoots} value={selectedRoots}> */}
                         <HStack space={3} flexWrap={'wrap'}>
                             <HStack>
                             {
                                 NATURAL_ROOTS.map( (naturalRoot, i) => { return (
-                                    <Checkbox key={i} value={naturalRoot} size="md">{naturalRoot}</Checkbox>
+                                    <StyledCheckBox key={i} value={naturalRoot} size="md">{naturalRoot}</StyledCheckBox>
                                 )})
                             }
                             </HStack>
                             <HStack>
                             {
                                 ACCIDENTAL_ROOTS.map( (accidentalRoot, i) => { return (
-                                    <Checkbox key={i} value={accidentalRoot} size="md" >{accidentalRoot}</Checkbox>
+                                    <StyledCheckBox key={i} value={accidentalRoot} titles={accidentalRoot} />
                                 )})
                             }
                             </HStack>
                         </HStack>
-                    </Checkbox.Group>
+                    {/* </Checkbox.Group> */}
                 </Box>
 
-                <Box flexMain={false} align="flex-start" mAll={{t: 50}} style={style.bg2} py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
+                {/* <Box flexMain={false} align="flex-start" mAll={{t: 50}} style={style.bg2} py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Type</Text>
                     <Checkbox.Group onChange={setSelectedTypes} value={selectedTypes}>
                         <HStack space={3} flexWrap={'wrap'}>
@@ -111,9 +113,9 @@ const Generate = () => {
                         }
                         </HStack>
                     </Checkbox.Group>
-                </Box>
+                </Box> */}
 
-                <Box flexMain={false} align="flex-start" mAll={{t: 50}} style={style.bg2} py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
+                {/* <Box flexMain={false} align="flex-start" mAll={{t: 50}} style={style.bg2} py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Exercise</Text>
                     <Checkbox.Group onChange={setSelectedExercises} value={selectedExercises}>
                         <HStack space={3} flexWrap={'wrap'}>
@@ -124,9 +126,9 @@ const Generate = () => {
                         }
                         </HStack>
                     </Checkbox.Group>
-                </Box>
+                </Box> */}
 
-                <HStack marginTop={10} space={4} alignItems="center">
+                {/* <HStack marginTop={10} space={4} alignItems="center">
                     <Button  size="lg" width={130} onPress={() => StartRoutine()}>
                         Start
                     </Button>
@@ -134,7 +136,7 @@ const Generate = () => {
                         Save
                     </Button>
 
-                </HStack> 
+                </HStack>  */}
 
             </VStack>
 
@@ -148,7 +150,7 @@ const Generate = () => {
                 </AlertDialog.Content>
             </AlertDialog>
 
-            <SaveModal showModal={showModal} setShowModal={setShowModal} save={SaveRoutine} /> */}
+            <SaveModal showModal={showModal} setShowModal={setShowModal} save={SaveRoutine} />
 
         </Box>
     )

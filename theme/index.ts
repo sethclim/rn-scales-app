@@ -40,7 +40,7 @@ declare module 'native-base' {
 }
 
 export const lighttheme = {
-  primary: '#AAD2BA',
+  primary: '#5E81AC',
   secondary: '#6B8F71',
   background: '#1D1E18',
 };
