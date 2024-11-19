@@ -10165,6 +10165,11 @@ native-base@^3.4.25:
     tinycolor2 "^1.4.2"
     use-sync-external-store "^1.2.0"
 
+native-blocks-core@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/native-blocks-core/-/native-blocks-core-1.0.0.tgz#bb4e02e263399905fec7f65b61dfeeda6d7ea106"
+  integrity sha512-ifnETjeyveqzmLlJuuVvKSpUxuqvUM8J4HLZX8EE5AHmsz3UP4SfkSiXM2xoyaHHFQjW9P+fQW2n5wPxAPE1VQ==
+
 natural-compare-lite@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare-lite/-/natural-compare-lite-1.4.0.tgz#17b09581988979fddafe0201e931ba933c96cbb4"
