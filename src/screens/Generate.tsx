@@ -147,24 +147,35 @@ const Generate = () => {
             <VStack marginTop={5} alignItems="center">
                 <Box flexMain={false} align="flex-start" mAll={{t: 5}} style={style.bg2} p={4} width={375}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text>
-                    {/* /\<Checkbox.Group onChange={setSelectedRoots} value={selectedRoots}> */}
                         <HStack space={3} flexWrap={'wrap'}>
                             <HStack>
                             {
                                 NATURAL_ROOTS.map( (naturalRoot, i) => { return (
-                                    <CheckBox iconSize={20} checked={manageRoots[i]} checkMark={check} key={i} onPress={() => onClickNaturalRoot(i, naturalRoot)} titles={naturalRoot} />
+                                    <CheckBox 
+                                        iconColor="white" 
+                                        iconSize={20} 
+                                        checked={manageRoots[i]} 
+                                        checkMark={check} key={i} 
+                                        onPress={() => onClickNaturalRoot(i, naturalRoot)} 
+                                        title={naturalRoot} />
                                 )})
                             }
                             </HStack>
                             <HStack>
                             {
                                 ACCIDENTAL_ROOTS.map( (accidentalRoot, i) => { return (
-                                    <CheckBox iconSize={20} checked={manageRoots[i + 7]} checkMark={check} key={i} onPress={() => onClickNaturalRoot(i + 7, accidentalRoot)} titles={accidentalRoot} />
+                                    <CheckBox 
+                                        iconColor="white" 
+                                        iconSize={20} 
+                                        checked={manageRoots[i + 7]} 
+                                        checkMark={check} 
+                                        key={i} 
+                                        onPress={() => onClickNaturalRoot(i + 7, accidentalRoot)} 
+                                        title={accidentalRoot} />
                                 )})
                             }
                             </HStack>
                         </HStack>
-                    {/* </Checkbox.Group> */}
                 </Box>
 
                 <Box flexMain={false} align="flex-start" mAll={{t: 50}} style={style.bg2} py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
@@ -172,7 +183,14 @@ const Generate = () => {
                         <HStack space={3} flexWrap={'wrap'}>
                         {
                             SCALE_TYPES.map( (scaleType, i) => { return (
-                                <CheckBox checkMark={check} iconSize={20} key={i} onPress={() => onClickSelectType(i, scaleType)} checked={manageTypes[i]} titles={scaleType} />
+                                <CheckBox 
+                                    checkMark={check} 
+                                    iconSize={20} 
+                                    iconColor="white" 
+                                    key={i} 
+                                    onPress={() => onClickSelectType(i, scaleType)} 
+                                    checked={manageTypes[i]} 
+                                    title={scaleType} />
                             )})
                         }
                         </HStack>
@@ -183,7 +201,13 @@ const Generate = () => {
                         <HStack space={3} flexWrap={'wrap'}>
                         {
                             [...Exercises.keys()].map((exerciseType, i) => {
-                                  return  <CheckBox checkMark={check} iconSize={20} onPress={() => onClickSelectExercise(i, exerciseType)}  checked={manageExercise[i]}   titles={Exercises.get(exerciseType)!} />
+                                  return  <CheckBox 
+                                            iconColor="white" 
+                                            checkMark={check} 
+                                            iconSize={20} 
+                                            onPress={() => onClickSelectExercise(i, exerciseType)}  
+                                            checked={manageExercise[i]}   
+                                            title={Exercises.get(exerciseType)!} />
                             })
                         }
                         </HStack>

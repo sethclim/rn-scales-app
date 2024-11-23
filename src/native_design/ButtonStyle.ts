@@ -29,6 +29,7 @@ export const primary = {
 
 export const square = {
   ...buttonCore.center,
-  ...padding(12, 12),
+  height: 24,
+  width: 24,
   backgroundColor: colors.danger_red,
 };

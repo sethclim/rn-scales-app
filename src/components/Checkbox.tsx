@@ -6,12 +6,19 @@ const makeStyle = (theme: any) => {
     return {
       style: {
         ...ButtonStyle.square,
-        backgroundColor: "#11111100",
+        backgroundColor: "white",
         borderWidth: 1,
         borderRadius: 2,
       },
+      checkedBtnstyle:{
+        ...ButtonStyle.square,
+        backgroundColor: "#5E81AC",
+        borderWidth: 1,
+        borderRadius: 2,
+        ZStack: 1
+      },
       textStyle: {
-        ...MyTextStyle.h2,
+        ...MyTextStyle.h3,
         color: theme.primary,
         margin: 4
       },
