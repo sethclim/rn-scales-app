@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useContext, useEffect, useState } from "react"
 
-import { Box, HStack, VStack, Text, Checkbox, Button, AlertDialog, FormControl, Input, Modal } from 'native-base';
+import { HStack, VStack, Text, Button, AlertDialog, FormControl, Input, Modal } from 'native-base';
 import Context from "../state/modules/routine/context";
 import { generateRequest,saveRoutine } from "../state/modules/routine/store/actions";
 
@@ -10,6 +10,12 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { ExerciseType } from "../data/Models/DataModels";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { getTodaysPracticeDataRequest } from "../state/modules/PracticeData/store/actions";
+import { Box } from "../native_blocks/primatives/Box";
+import { StyleSheet } from "react-native";
+
+
+import check from "../assets/check.svg"
+import { CheckBox } from "../components/Checkbox";
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -25,8 +31,8 @@ export const Exercises = new Map<ExerciseType, string>([
 
 const Generate = () => {
     //State
-    const [selectedRoots, setSelectedRoots] = React.useState(["C", "D", "E", "F", "G", "A", "B", "C#", "Eb", "F#", "G#", "Bb"]);    
-    const [selectedTypes, setSelectedTypes] = React.useState([]);    
+    const [selectedRoots, setSelectedRoots] = React.useState(["C", "D", "E", "F", "G", "A", "B"]);    
+    const [selectedTypes, setSelectedTypes] = React.useState<string []>([]);    
     const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
 
     const { myDispatch } = useContext(Context);
@@ -44,6 +50,8 @@ const Generate = () => {
     }, [])
 
     const StartRoutine = () => {
+
+        console.log("WERID " + JSON.stringify([selectedRoots, selectedTypes, selectedExercises]))
 
         const generateReq = generateRequest([selectedRoots, selectedTypes, selectedExercises])
 
@@ -69,55 +77,140 @@ const Generate = () => {
   
     const cancelRef = React.useRef(null);
 
+    const [manageRoots, setManageRoots] = useState([true, true, true, true, true, true, true, false, false, false, false, false])
+    const [manageTypes, setManageTypes] = useState([false, false, false, false])
+    const [manageExercise, setManageExercise] = useState([false, false, false, false, false])
+
+    const onClickNaturalRoot = (index : number, root : string) => {
+        let temp = [...manageRoots];
+        const action = !temp[index]
+        temp[index] = action
+        setManageRoots(temp)
+
+        let localRoots = [...selectedRoots]
+
+        if (action)
+        {
+            localRoots.push(root)
+        }
+        else
+        {
+            const idx = localRoots.indexOf(root)
+            localRoots = localRoots.splice(idx, 1)
+        }
+        setSelectedRoots(localRoots)
+    }
+
+    const onClickSelectType = (index : number, type : string) => {
+        let temp = [...manageTypes];
+        const action = !temp[index]
+        temp[index] = !temp[index]
+        setManageTypes(temp)
+
+        let localTypes = [...selectedTypes]
+
+        if (action)
+        {
+            localTypes.push(type)
+        }
+        else
+        {
+            const idx = localTypes.indexOf(type)
+            localTypes = localTypes.splice(idx, 1)
+        }
+        setSelectedTypes(localTypes)
+    }
+
+    const onClickSelectExercise = (index : number, exercise : ExerciseType) => {
+        let temp = [...manageExercise];
+        const action = !temp[index]
+        temp[index] = !temp[index]
+        setManageExercise(temp)
+
+        let localExercise = [...selectedExercises]
+
+        if (action)
+        {
+            localExercise.push(exercise)
+        }
+        else
+        {
+            const idx = localExercise.indexOf(exercise)
+            localExercise = localExercise.splice(idx, 1)
+        }
+        setSelectedExercises(localExercise)
+    }
+
     return (
-        <Box flex={1} padding={1} bg="nord.background">
+        <Box flexMain={true} p={1} style={style.bg}> 
+
             <VStack marginTop={5} alignItems="center">
-                <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
+                <Box flexMain={false} align="flex-start" mAll={{t: 5}} style={style.bg2} p={4} width={375}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text>
-                    <Checkbox.Group onChange={setSelectedRoots} value={selectedRoots}>
                         <HStack space={3} flexWrap={'wrap'}>
                             <HStack>
                             {
                                 NATURAL_ROOTS.map( (naturalRoot, i) => { return (
-                                    <Checkbox key={i} value={naturalRoot} size="md">{naturalRoot}</Checkbox>
+                                    <CheckBox 
+                                        iconColor="white" 
+                                        iconSize={20} 
+                                        checked={manageRoots[i]} 
+                                        checkMark={check} key={i} 
+                                        onPress={() => onClickNaturalRoot(i, naturalRoot)} 
+                                        title={naturalRoot} />
                                 )})
                             }
                             </HStack>
                             <HStack>
                             {
                                 ACCIDENTAL_ROOTS.map( (accidentalRoot, i) => { return (
-                                    <Checkbox key={i} value={accidentalRoot} size="md" >{accidentalRoot}</Checkbox>
+                                    <CheckBox 
+                                        iconColor="white" 
+                                        iconSize={20} 
+                                        checked={manageRoots[i + 7]} 
+                                        checkMark={check} 
+                                        key={i} 
+                                        onPress={() => onClickNaturalRoot(i + 7, accidentalRoot)} 
+                                        title={accidentalRoot} />
                                 )})
                             }
                             </HStack>
                         </HStack>
-                    </Checkbox.Group>
                 </Box>
 
-                <Box marginTop={5}bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
+                <Box flexMain={false} align="flex-start" mAll={{t: 50}} style={style.bg2} py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Type</Text>
-                    <Checkbox.Group onChange={setSelectedTypes} value={selectedTypes}>
                         <HStack space={3} flexWrap={'wrap'}>
                         {
                             SCALE_TYPES.map( (scaleType, i) => { return (
-                                <Checkbox key={i} value={scaleType} size="md" >{scaleType}</Checkbox>
+                                <CheckBox 
+                                    checkMark={check} 
+                                    iconSize={20} 
+                                    iconColor="white" 
+                                    key={i} 
+                                    onPress={() => onClickSelectType(i, scaleType)} 
+                                    checked={manageTypes[i]} 
+                                    title={scaleType} />
                             )})
                         }
                         </HStack>
-                    </Checkbox.Group>
                 </Box>
 
-                <Box marginTop={5} bg="nord.secondaryBackground" py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
+                <Box flexMain={false} align="flex-start" mAll={{t: 50}} style={style.bg2} py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
                     <Text color="nord.primary.1" mt={-3} fontSize={20}>Exercise</Text>
-                    <Checkbox.Group onChange={setSelectedExercises} value={selectedExercises}>
                         <HStack space={3} flexWrap={'wrap'}>
                         {
-                            [...Exercises.keys()].map((exerciseType) => {
-                                  return  <Checkbox key={exerciseType} value={exerciseType} size="md">{Exercises.get(exerciseType)}</Checkbox>
+                            [...Exercises.keys()].map((exerciseType, i) => {
+                                  return  <CheckBox 
+                                            iconColor="white" 
+                                            checkMark={check} 
+                                            iconSize={20} 
+                                            onPress={() => onClickSelectExercise(i, exerciseType)}  
+                                            checked={manageExercise[i]}   
+                                            title={Exercises.get(exerciseType)!} />
                             })
                         }
                         </HStack>
-                    </Checkbox.Group>
                 </Box>
 
                 <HStack marginTop={10} space={4} alignItems="center">
@@ -182,5 +275,16 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
         </Modal>
     )
 }
+
+const style = StyleSheet.create({
+    bg:{
+        backgroundColor: "#ECEFF4", //nord.background
+    },
+    bg2:{
+        backgroundColor: "#E5E9F0", //"nord.secondaryBackground"
+        elevation: 8,
+        borderRadius: 5,
+    }
+})
 
 export default Generate;

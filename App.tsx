@@ -11,6 +11,7 @@ import RoutineProvider from './src/state/modules/routine/routine';
 import PracticeDataProvider from './src/state/modules/PracticeData/PracticeData';
 import dbInstance from './src/data/Database/database';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
+import { ThemeProvider } from './src/context';
 
 
 const App = () => {
@@ -20,13 +21,13 @@ const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NativeBaseProvider theme={CustomTheme}>
-       
+        <ThemeProvider>
           <RoutineProvider>
             <PracticeDataProvider>
               <RootNavigator />
             </PracticeDataProvider>
           </RoutineProvider>
-        
+        </ThemeProvider>
       </NativeBaseProvider>
     </GestureHandlerRootView>
   );
