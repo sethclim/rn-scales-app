@@ -57,7 +57,9 @@ const getX = (
   index: number,
   date: Date,
 ) => {
+  console.log('WOW HAHA WOW ' + index);
   if (index == 1) {
+    console.log('MONTH MOTH MONTH ' + date.getMonth());
     return dateXPositionMap[date.getMonth()];
   } else if (index == 0) {
     return dateXPositionMap[(date.getDay() - 1) % 7];
@@ -260,7 +262,7 @@ export class GraphGenerator {
       //Each entry in group
       for (let j = 0; j < practiceDatas.length; j++) {
         const pd = practiceDatas[j];
-        this.GetAllExercises(pd, j);
+        this.GetAllExercises(pd, i);
       }
     }
 

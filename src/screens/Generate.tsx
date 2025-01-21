@@ -155,7 +155,8 @@ const Generate = () => {
                                         iconColor="white" 
                                         iconSize={20} 
                                         checked={manageRoots[i]} 
-                                        checkMark={check} key={i} 
+                                        checkMark={check} 
+                                        key={i} 
                                         onPress={() => onClickNaturalRoot(i, naturalRoot)} 
                                         title={naturalRoot} />
                                 )})
@@ -202,6 +203,7 @@ const Generate = () => {
                         {
                             [...Exercises.keys()].map((exerciseType, i) => {
                                   return  <CheckBox 
+                                            key={i} 
                                             iconColor="white" 
                                             checkMark={check} 
                                             iconSize={20} 
