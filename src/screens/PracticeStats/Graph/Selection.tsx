@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Text, View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import {
   Canvas,
@@ -9,7 +9,7 @@ import {
   vec,
 } from "@shopify/react-native-skia";
 import { SharedValue, runOnJS, runOnUI, useSharedValue } from "react-native-reanimated";
-import  { useDerivedValue, withTiming } from "react-native-reanimated";
+import { useDerivedValue, withTiming } from "react-native-reanimated";
 
 import type { GraphData } from "./GraphBuilder";
 
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
   },
-}); 
+});
 
 export interface GraphState {
   next: number;
@@ -53,9 +53,21 @@ interface SelectionProps {
 
 export const Selection = ({ current, next, transition, graphData }: SelectionProps) => {
 
+  const [b_Width, setB_Width] = useState(98)
+  
+  const find_dimesions = (layout: any) => {
+    const { x, y, width, height } = layout;
+    console.warn(x);
+    console.warn(y);
+    console.warn(width);
+    console.warn(height);
+  
+    setB_Width(width / graphData.titles.length)
+  }
+
   const translateX = useSharedValue(0);
 
-  const workletMix = (value : number, current : number, next : number) => {
+  const workletMix = (value: number, current: number, next: number) => {
     //console.log("value " + value + " current " + current + " next " + next)
     "worklet";
     translateX.value = mix(value, current, next)
@@ -63,7 +75,7 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
 
   const transform = useDerivedValue(() => {
     // console.log("current " + state.value.current + " next " + state.value.next)
-    workletMix(transition.value, current.value * buttonWidth,  next.value * buttonWidth)
+    workletMix(transition.value, current.value * b_Width, next.value * b_Width)
 
     // console.log("next.value 2: " + next.value)
 
@@ -75,7 +87,7 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
   }, [transition.value, current.value, next.value]);
 
 
-  const onPress = (index : number) =>{
+  const onPress = (index: number) => {
     //onsole.log("index " + index)
     //console.log("state.value.next " + state.value.next)
     current.value = next.value;
@@ -91,12 +103,25 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
     });
   }
 
+  const getButtonStyle = () => {
+    return StyleSheet.create({
+      button: {
+        height: 64,
+        width: buttonWidth,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 16,
+      }
+    })
+  }
+
+
   return (
     <View style={styles.root}>
       <View style={styles.container}>
-        <Canvas style={StyleSheet.absoluteFill}>
+        <Canvas style={StyleSheet.absoluteFill} onLayout={(event) => { find_dimesions(event.nativeEvent.layout) }} >
           <Group transform={transform}>
-            <RoundedRect x={0} y={0} height={64} width={buttonWidth} r={16}>
+            <RoundedRect x={0} y={0} height={64} width={b_Width} r={16}>
               <LinearGradient
                 colors={["#31CBD1", "#61E0A1"]}
                 start={vec(0, 0)}
@@ -109,8 +134,10 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
           <TouchableWithoutFeedback
             key={index}
             onPress={() => onPress(index)}
+
           >
-            <View style={styles.button}>
+            <View style={[styles.button,  {width : b_Width }]} 
+            >
               <Text style={styles.label}>{title}</Text>
             </View>
           </TouchableWithoutFeedback>
@@ -119,3 +146,5 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
     </View>
   );
 };
+
+// style={getButtonStyle().button} 
