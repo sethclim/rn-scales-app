@@ -39,7 +39,7 @@ const BottomTabs = () => {
                             _pressed={{
                                 bg: "#00000000",
                                 _icon: {
-                                color:"#ff0000"
+                                    color:"#ff0000"
                                 }
                             }}
                         />
