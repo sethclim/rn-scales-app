@@ -105,32 +105,27 @@ const GenerateRoutine = (inputOptions: Array<any>): Array<RoutineItem> => {
   return results;
 };
 
-const SaveRoutine = async (
+const SaveRoutine = (
   routineData: Array<RoutineItem>,
   payload: Array<string>,
 ) => {
-  const inputOptions = payload.slice(0, 3);
-  const title = payload[3];
-
-  //console.log("Save Name " + title);
-  //console.log("inputOptions " + inputOptions[0].length + " " + inputOptions[1].length+ " " + inputOptions[2].length);
-
-  // console.log('routineData.length ' + routineData.length);
-  // console.log('routineData.length <=0 ' + (routineData.length <= 0));
-  if (routineData.length <= 0) {
-    routineData = GenerateRoutine(inputOptions);
-    //console.log('GenerateRoutine routineData.length ' + routineData.length);
-  }
-
-  const routineToSave: Routine = {
-    id: '-1',
-    title: title,
-    RoutineItems: routineData,
-    createdAt: '99',
-  };
-
-  const res = await dbInstance.saveRoutine(routineToSave);
-
+  // const inputOptions = payload.slice(0, 3);
+  // const title = payload[3];
+  // //console.log("Save Name " + title);
+  // //console.log("inputOptions " + inputOptions[0].length + " " + inputOptions[1].length+ " " + inputOptions[2].length);
+  // // console.log('routineData.length ' + routineData.length);
+  // // console.log('routineData.length <=0 ' + (routineData.length <= 0));
+  // if (routineData.length <= 0) {
+  //   routineData = GenerateRoutine(inputOptions);
+  //   //console.log('GenerateRoutine routineData.length ' + routineData.length);
+  // }
+  // const routineToSave: Routine = {
+  //   id: '-1',
+  //   title: title,
+  //   RoutineItems: routineData,
+  //   createdAt: '99',
+  // };
+  // const res = await dbInstance.saveRoutine(routineToSave);
   //Do Watermelon logic
   // const newRoutine = await database.write(async () => {
   //   const routine = await database
@@ -143,10 +138,8 @@ const SaveRoutine = async (
   //       // Handle any errors that occur
   //       console.error('MYERROR ' + error);
   //     });
-
   //   if (routine != null) {
   //     const RoutineItems = database.get<RoutineItem[]>('routine_items');
-
   //     for (var i = 0; i < routineData.length; i++) {
   //       const item = routineData[i];
   //       RoutineItems.create(routineItem => {
@@ -156,10 +149,8 @@ const SaveRoutine = async (
   //       });
   //     }
   //   }
-
   //   return routine;
   // });
-
   //return newRoutine;
 };
 
