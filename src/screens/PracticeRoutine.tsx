@@ -7,6 +7,8 @@ import { BottomTabNavigatorParamList } from "../navigation/types";
 
 import { Text, Box, Center, Button } from "native-base"
 
+import { VStack } from "../native_blocks"
+
 import Context from "../state/modules/routine/context";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { requestTask } from "../state/modules/routine/store/actions";
@@ -49,7 +51,9 @@ const PracticeRoutine = () =>{
             {
                 state.currentTask != null ? 
                 <>
-                    <Text fontSize={50} color="nord.primary.1" textAlign="center">{state.currentTask.displayItem}</Text>
+                    <VStack flexMain={false}  height={170}>
+                        <Text fontSize={50} color="nord.primary.1" textAlign="center">{state.currentTask.displayItem}</Text>
+                    </VStack>
                     <TouchableOpacity
                         onPress={Next}
                         style={styles.roundButton}>

@@ -13,7 +13,7 @@ import { useDerivedValue, withTiming } from "react-native-reanimated";
 
 import type { GraphData } from "./GraphBuilder";
 
-const buttonWidth = 98;
+// const buttonWidth = 98;
 const styles = StyleSheet.create({
   root: {
     paddingHorizontal: 0,
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 64,
-    width: buttonWidth,
+    // width: buttonWidth,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 16,
@@ -74,6 +74,8 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
   }
 
   const transform = useDerivedValue(() => {
+
+    // console.log("b_Width " + b_Width + " next.value " + next.value)
     // console.log("current " + state.value.current + " next " + state.value.next)
     workletMix(transition.value, current.value * b_Width, next.value * b_Width)
 
@@ -107,7 +109,7 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
     return StyleSheet.create({
       button: {
         height: 64,
-        width: buttonWidth,
+        width: b_Width,
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 16,
@@ -125,7 +127,7 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
               <LinearGradient
                 colors={["#31CBD1", "#61E0A1"]}
                 start={vec(0, 0)}
-                end={vec(buttonWidth, 64)}
+                end={vec(b_Width, 64)}
               />
             </RoundedRect>
           </Group>
