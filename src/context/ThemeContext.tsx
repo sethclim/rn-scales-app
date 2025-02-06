@@ -6,6 +6,7 @@ export type ThemeContextType = {
   background : string | null;
   secondaryBackground : string | null;
   toggleTheme: () => void;
+  mode : string;
 };
 
 const defaultThemeContext : ThemeContextType = {
@@ -14,6 +15,7 @@ const defaultThemeContext : ThemeContextType = {
   background : null,
   secondaryBackground : null,
   toggleTheme: () => {},
+  mode : 'light'
 }
 
 export const ThemeContext = createContext<ThemeContextType>(defaultThemeContext);

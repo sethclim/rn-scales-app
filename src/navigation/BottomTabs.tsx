@@ -12,6 +12,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { Button } from "../native_blocks/";
 
 import { useNavigation } from '@react-navigation/native';
+import { ThemeContext } from '../context/ThemeContext';
 
 const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
@@ -19,15 +20,29 @@ const BottomTabs = () => {
     
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
+    const { primary, background, mode } = React.useContext(ThemeContext);
+
     return(
-        <BottomTab.Navigator >
+        <BottomTab.Navigator 
+            screenOptions={({ route }) => ({
+                headerShown: true,
+                tabBarStyle: {
+                height: 80,
+                paddingHorizontal: 5,
+                paddingTop: 3,
+                backgroundColor: background!,
+                position: 'absolute',
+                borderTopWidth: 0,
+            },
+            })}
+        >
             <BottomTab.Screen name="Generate" component={Generate}
                 options={{ 
                     title: 'Generate',
                     headerStyle: {
-                        backgroundColor: '#5E81AC',
+                        backgroundColor: primary,
                     },
-                    headerTintColor: '#fff',
+                    headerTintColor: background!,
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     },
@@ -37,7 +52,7 @@ const BottomTabs = () => {
                         </Button>
                       ),
                     //tabBarInactiveTintColor:"#00ff00",
-                    tabBarActiveTintColor:"#5E81AC",
+                    tabBarActiveTintColor:primary,
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons name="create" color={color} size={size} />
                     ),
@@ -48,14 +63,14 @@ const BottomTabs = () => {
                 options={{
                     title: 'Saved Routines',
                     headerStyle: {
-                        backgroundColor: '#5E81AC',
+                        backgroundColor: primary,
                     },
-                    headerTintColor: '#fff',
+                    headerTintColor: background!,
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     },
                     //tabBarInactiveTintColor:"#00ff00",
-                    tabBarActiveTintColor:"#5E81AC",
+                    tabBarActiveTintColor:primary,
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="folder" color={color} size={size} />
                     ),
@@ -66,14 +81,14 @@ const BottomTabs = () => {
                 options={{
                     title: 'Practice Stats',
                     headerStyle: {
-                        backgroundColor: '#5E81AC',
+                        backgroundColor: primary,
                     },
-                    headerTintColor: '#fff',
+                    headerTintColor: background!,
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     },
                     //tabBarInactiveTintColor:"#00ff00",
-                    tabBarActiveTintColor:"#5E81AC",
+                    tabBarActiveTintColor: primary,
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="folder" color={color} size={size} />
                     ),

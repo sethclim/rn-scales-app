@@ -9,10 +9,10 @@ const ROW_HEIGHT = 50
 
 const Settings  = () => {
 
-    const { toggleTheme } = useContext(ThemeContext);
+    const { toggleTheme, background } = useContext(ThemeContext);
   
     return (
-      <Box m={30} flexMain={true} >
+      <Box p={30} flexMain={true} style={{backgroundColor : background!}} >
         {/* bg="nord.secondaryBackground" */}
         <Box mAll={{t : 20}}  height={400} pVH={{v : 10}}>
             <VStack flexMain={true}>

@@ -14,7 +14,7 @@ export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
   };
 
   return (
-    <ThemeContext.Provider value={{ ...theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ ...theme, toggleTheme, mode }}>
       {children}
     </ThemeContext.Provider>
   );
