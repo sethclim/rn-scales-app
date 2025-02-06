@@ -9,7 +9,7 @@ const ROW_HEIGHT = 50
 
 const Settings  = () => {
 
-    const { toggleTheme, background } = useContext(ThemeContext);
+    const { requestTheme, background } = useContext(ThemeContext);
   
     return (
       <Box p={30} flexMain={true} style={{backgroundColor : background!}} >
@@ -20,13 +20,13 @@ const Settings  = () => {
                     {/* <Text fontSize="lg"  color="nord.primary.1">Theme</Text> */}
                     <HStack justifyContent="center">
                         <Box height={120} width={75} m={2} >
-                            <TextButton  titles="Nord" onPress={() => toggleTheme()}  />
+                            <TextButton  titles="Nord" onPress={() => requestTheme('light')}  />
                         </Box>
                         {/* <Box height={120} width={75} m={2} >
                             <TextButton  titles="Blackout" onPress={() => {}}  />
                         </Box> */}
                         <Box height={120} width={75} m={2}>
-                            <TextButton  titles="Tokyo Nights" onPress={() => toggleTheme()}  />
+                            <TextButton  titles="Tokyo Nights" onPress={() => requestTheme('tokyo')}  />
                         </Box>
                     </HStack>
                 </VStack>

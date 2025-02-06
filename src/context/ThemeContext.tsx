@@ -5,7 +5,7 @@ export type ThemeContextType = {
   secondary: any;
   background : string | null;
   secondaryBackground : string | null;
-  toggleTheme: () => void;
+  requestTheme: (theme : string) => void;
   mode : string;
 };
 
@@ -14,7 +14,7 @@ const defaultThemeContext : ThemeContextType = {
   secondary: null,
   background : null,
   secondaryBackground : null,
-  toggleTheme: () => {},
+  requestTheme: () => {},
   mode : 'light'
 }
 
