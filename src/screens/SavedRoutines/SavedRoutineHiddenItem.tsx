@@ -1,7 +1,7 @@
 import React from "react";
 import { FunctionComponent, useContext } from "react";
 
-import { HStack, Pressable } from "native-base";
+import { HStack, Button } from "../../native_blocks/";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import {RoutineItem, Routine} from "../../data/Models/DataModels";
 
@@ -12,22 +12,18 @@ import { RowProps } from "./types";
 
 const SavedRoutineHiddenItem :  FunctionComponent<RowProps>  = ({routine, index, routineItems}) => {  
    
-    const { dispatch } = useContext(Context);
+    const { myDispatch } = useContext(Context);
 
     const deleteRow = (routine  : Routine, routineItems  : RoutineItem[]) => {
         const deleteMSG = deleteRoutine([routine])
-        dispatch(deleteMSG)
+        myDispatch(deleteMSG)
       };
   
     return (
-        <HStack flex={1} pl={2} justifyContent="flex-end">
-        <Pressable bg="nord.danger" 
-                   px={4}
-                   justifyContent="center" 
-                   onPress={() => deleteRow(routine, routineItems)} 
-                   _pressed={{ opacity: 0.5 }}>
-          <MaterialIcons name="delete" color="#fff" size={25} />
-        </Pressable>
+        <HStack pAll={{l : 5}} justifyContent="flex-end" style={{"backgroundColor" : "#FF474C"}}>
+          <Button onPress={() => deleteRow(routine, routineItems)}>
+            <MaterialIcons name="delete" color="white" size={25} />
+          </Button>
       </HStack>
     );
   };

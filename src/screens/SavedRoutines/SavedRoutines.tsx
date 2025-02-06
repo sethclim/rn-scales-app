@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState }  from 'react';
+import React, { useContext }  from 'react';
 
-import { Box, Text } from 'native-base';
+import { Box } from "../../native_blocks/primatives/Box";
 
 // import withObservables from '@nozbe/with-observables';
 import {Routine} from '../../data/Models/DataModels';
@@ -8,7 +8,7 @@ import { SavedRoutinesProps } from './types';
 import { SavedRoutineRow } from './SavedRoutineRow';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Text } from 'react-native'
 
 import  SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
 import Context from '../../state/modules/routine/context';
@@ -30,8 +30,6 @@ const SavedRoutines  = () => {
     }, [])
   )
 
-
-
   function compareDatesFn(a : Routine, b : Routine) {
     if (Date.parse(a.createdAt) > Date.parse(b.createdAt) ) {
       return 1;
@@ -46,7 +44,7 @@ const SavedRoutines  = () => {
   };
 
   return (
-    <Box flex={1} margin={30}  bg="#77777733">
+    <Box m={30}>
       <SwipeListView<Routine> 
         data={state.routines} 
         renderItem={ (data, rowMap) => (
@@ -64,8 +62,8 @@ const SavedRoutines  = () => {
         keyExtractor={(item, index) => item.id}
         recalculateHiddenLayout={true}
         ListEmptyComponent={() =>(
-          <Box   justifyContent="center" alignItems="center" height="500">
-            <Text color="#000">No Saved Routines</Text>
+          <Box   justifyContent="center" align="center" height={500}>
+            <Text>No Saved Routines</Text>
           </Box>
         )}
         />

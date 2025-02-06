@@ -2,8 +2,7 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import React from 'react';
 
-import { NativeBaseProvider } from "native-base";
-import CustomTheme from "./theme/index"
+// import { NativeBaseProvider } from "native-base";
 import RootNavigator from './src/navigation';
 
 //Providers
@@ -20,7 +19,7 @@ const App = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NativeBaseProvider theme={CustomTheme}>
+      {/* <NativeBaseProvider theme={CustomTheme}> */}
         <ThemeProvider>
           <RoutineProvider>
             <PracticeDataProvider>
@@ -28,7 +27,7 @@ const App = () => {
             </PracticeDataProvider>
           </RoutineProvider>
         </ThemeProvider>
-      </NativeBaseProvider>
+      {/* </NativeBaseProvider> */}
     </GestureHandlerRootView>
   );
 };

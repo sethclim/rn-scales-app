@@ -10,7 +10,6 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@gluestack-ui/themed-native-base": "^0.1.108",
     "@react-navigation/bottom-tabs": "^6.5.2",
     "@react-navigation/native": "^6.1.1",
     "@react-navigation/native-stack": "^6.9.7",
@@ -18,7 +17,6 @@
     "@shopify/react-native-skia": "1.2.3",
     "expo": "~51.0.38",
     "expo-sqlite": "~14.0.6",
-    "native-base": "^3.4.25",
     "native-blocks-core": "^1.0.0",
     "react": "18.2.0",
     "react-native": "0.74.5",
