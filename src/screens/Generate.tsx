@@ -18,6 +18,7 @@ import { TextButton } from "../components/TextButton";
 
 import check from "../assets/check.svg"
 import { CheckBox } from "../components/Checkbox";
+import { ThemeContext } from "../context/ThemeContext";
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -42,6 +43,8 @@ const Generate = () => {
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const [showModal, setShowModal] = useState(false);
+
+    const { background } = useContext(ThemeContext);
 
     const CheckValidRoutineConfiguration = () : boolean => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
@@ -165,7 +168,7 @@ const Generate = () => {
         );
 
     return (
-        <Box flexMain={true} p={1} style={style.bg}> 
+        <Box flexMain={true} p={1} style={{backgroundColor: background!}}> 
 
             <VStack mAll={{t: 30}} align="center" justifyContent="center" >
                 <Box flexMain={false} align="flex-start" m={20} mAll={{t: 5}} style={style.bg2} p={4}  height={100}  >

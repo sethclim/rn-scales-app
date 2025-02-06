@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack } from "../native_blocks/";
 import { TextButton } from "../components/TextButton";
+import { ThemeContext } from "../context/ThemeContext";
 
 const ROW_HEIGHT = 50
 
 const Settings  = () => {
+
+    const { toggleTheme } = useContext(ThemeContext);
   
     return (
       <Box m={30} flexMain={true} >
@@ -17,13 +20,13 @@ const Settings  = () => {
                     {/* <Text fontSize="lg"  color="nord.primary.1">Theme</Text> */}
                     <HStack justifyContent="center">
                         <Box height={120} width={75} m={2} >
-                            {/* <Text>Nord</Text> */}
+                            <TextButton  titles="Nord" onPress={() => toggleTheme()}  />
                         </Box>
-                        <Box height={120} width={75} m={2} >
-                            {/* <Text>Dark</Text> */}
-                        </Box>
+                        {/* <Box height={120} width={75} m={2} >
+                            <TextButton  titles="Blackout" onPress={() => {}}  />
+                        </Box> */}
                         <Box height={120} width={75} m={2}>
-                            {/* <Text>Color</Text> */}
+                            <TextButton  titles="Tokyo Nights" onPress={() => toggleTheme()}  />
                         </Box>
                     </HStack>
                 </VStack>

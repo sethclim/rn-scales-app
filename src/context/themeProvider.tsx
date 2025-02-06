@@ -1,6 +1,6 @@
 import React, { useState, type PropsWithChildren } from 'react';
 import { ThemeContext } from './ThemeContext';
-import { darktheme, lighttheme } from '../../theme/';
+import { toyoNightsTheme, lighttheme } from '../../theme/';
 
 export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [theme, setTheme] = useState(lighttheme);
@@ -8,9 +8,9 @@ export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const toggleTheme = () => {
     const nextMOde = mode === 'light';
-    console.log('toogle called ' + nextMOde);
+    console.log('toogle called ' + mode);
     setMode(nextMOde ? 'dark' : 'light');
-    setTheme(nextMOde ? darktheme : lighttheme);
+    setTheme(nextMOde ? toyoNightsTheme : lighttheme);
   };
 
   return (
