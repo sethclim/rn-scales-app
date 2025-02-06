@@ -19,6 +19,7 @@ import { TextButton } from "../components/TextButton";
 import check from "../assets/check.svg"
 import { CheckBox } from "../components/Checkbox";
 import { ThemeContext } from "../context/ThemeContext";
+import { Card } from "../components/Card";
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -171,7 +172,7 @@ const Generate = () => {
         <Box flexMain={true} p={1} style={{backgroundColor: background!}}> 
 
             <VStack mAll={{t: 30}} align="center" justifyContent="center" >
-                <Box flexMain={false} align="flex-start" m={20} mAll={{t: 5}} style={style.bg2} p={4}  height={100}  >
+                <Card height={100}>
                     {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text> */}
                         <VStack gap={3} >
                             <HStack>
@@ -203,10 +204,10 @@ const Generate = () => {
                             }
                             </HStack>
                         </VStack>
-                </Box>
+                </Card>
                 
                 {/* borderRadius="5" rounded="md"  maxWidth="100%" shadow={9} */}
-                <Box flexMain={false} align="flex-start" m={20} mAll={{t: 50}} style={style.bg2} pVH={{v: 4, h: 3}}   >
+                <Card height={100}>
                     {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Type</Text> */}
                         <HStack gap={3} flexWrap="wrap" >
                         {
@@ -222,9 +223,9 @@ const Generate = () => {
                             )})
                         }
                         </HStack>
-                </Box>
+                </Card>
 
-                <Box flexMain={false} align="flex-start" m={20} mAll={{t: 50}} style={style.bg2} pVH={{v: 4, h: 3}} height={100} >
+                <Card height={100}>
                     {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Exercise</Text> */}
                         <HStack gap={3} flexWrap="wrap" >
                         {
@@ -240,7 +241,7 @@ const Generate = () => {
                             })
                         }
                         </HStack>
-                </Box>
+                </Card>
 
                 <HStack mAll={{t:10}} gap={4} align="center">
                     <TextButton titles="Start" onPress={() => StartRoutine()} />
