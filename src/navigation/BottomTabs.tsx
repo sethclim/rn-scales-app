@@ -13,6 +13,7 @@ import { Button } from "../native_blocks/";
 
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from '../context/ThemeContext';
+import { Box } from '../native_blocks/primatives/Box';
 
 const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
@@ -22,14 +23,18 @@ const BottomTabs = () => {
 
     const { primary, background, mode } = React.useContext(ThemeContext);
 
+    const headerForeground = mode == 'light' ? background! : primary 
+    const headerBackground = mode == 'light' ? primary : background! 
+
     return(
         <BottomTab.Navigator 
             screenOptions={({ route }) => ({
                 headerShown: true,
                 tabBarStyle: {
-                height: 80,
+                height: 70,
                 paddingHorizontal: 5,
                 paddingTop: 3,
+                paddingBottom: 5,
                 backgroundColor: background!,
                 position: 'absolute',
                 borderTopWidth: 0,
@@ -40,16 +45,18 @@ const BottomTabs = () => {
                 options={{ 
                     title: 'Generate',
                     headerStyle: {
-                        backgroundColor: primary,
+                        backgroundColor: headerBackground!,
                     },
-                    headerTintColor: background!,
+                    headerTintColor: headerForeground,
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     },
                     headerRight: () => (
-                        <Button onPress={() => navigation.navigate('Settings')} >
-                            <MaterialIcons name="settings" color="#fff" size={20} />
-                        </Button>
+                        <Box align='flex-end' p={10}>
+                            <Button onPress={() => navigation.navigate('Settings')} >
+                                <MaterialIcons name="settings" color={headerForeground} size={25} />
+                            </Button>
+                        </Box>
                       ),
                     //tabBarInactiveTintColor:"#00ff00",
                     tabBarActiveTintColor:primary,
@@ -63,9 +70,9 @@ const BottomTabs = () => {
                 options={{
                     title: 'Saved Routines',
                     headerStyle: {
-                        backgroundColor: primary,
+                        backgroundColor: headerBackground,
                     },
-                    headerTintColor: background!,
+                    headerTintColor:  headerForeground,
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     },
@@ -81,9 +88,9 @@ const BottomTabs = () => {
                 options={{
                     title: 'Practice Stats',
                     headerStyle: {
-                        backgroundColor: primary,
+                        backgroundColor: headerBackground,
                     },
-                    headerTintColor: background!,
+                    headerTintColor:  headerForeground,
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     },

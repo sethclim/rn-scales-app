@@ -13,7 +13,10 @@ const Stack = createStackNavigator();
 
 const RootNavigator = () => {
 
-    const { primary, background } = React.useContext(ThemeContext);
+    const { primary, background, mode } = React.useContext(ThemeContext);
+
+    const headerForeground = mode == 'light' ? background! : primary 
+    const headerBackground = mode == 'light' ? primary : background! 
 
     return (
       <NavigationContainer>
@@ -29,9 +32,9 @@ const RootNavigator = () => {
               <Stack.Screen name="Practice" component={PracticeRoutine}
                   options={{ 
                     headerStyle: {
-                        backgroundColor: primary!,
+                        backgroundColor: headerBackground,
                     },
-                    headerTintColor: '#fff',
+                    headerTintColor: headerForeground,
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     }
@@ -40,9 +43,9 @@ const RootNavigator = () => {
                   options={{ 
                     title:"Settings",
                     headerStyle: {
-                        backgroundColor: primary!,
+                        backgroundColor: headerBackground,
                     },
-                    headerTintColor: '#fff',
+                    headerTintColor: headerForeground,
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     }

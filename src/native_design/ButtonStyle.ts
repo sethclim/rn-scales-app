@@ -7,7 +7,7 @@ const buttonCore = StyleSheet.create({
     justifyContent: 'center',
   },
   rounded: {
-    borderRadius: 1000,
+    borderRadius: 6,
   },
 });
 
