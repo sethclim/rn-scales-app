@@ -81,9 +81,9 @@ export class Database {
 
       if (insertedRoutineIdResult == null) return;
 
-      // console.log(
-      //   'insertedRoutineId ' + JSON.stringify(insertedRoutineIdResult),
-      // );
+      console.log(
+        'insertedRoutineId ' + JSON.stringify(insertedRoutineIdResult),
+      );
 
       let source = '';
       const insert = `INSERT INTO RoutineItem (displayItem, exerciseType, routineForeignKey) VALUES `;
@@ -95,8 +95,10 @@ export class Database {
         source += end;
       });
 
-      await txn.execAsync(source);
-      //console.log('Done save routine');
+      // console.log('source ' + source);
+
+      const insertedRoutineItemsIdResult = await txn.execAsync(source);
+      console.log('Done save routine ' + insertedRoutineItemsIdResult);
     });
   }
 
@@ -124,15 +126,21 @@ export class Database {
   }
 
   async getRoutineItems(routineId: number) {
+    console.log('getRoutineItems HERE');
+
     if (this.db == null) {
       console.log('DB not created');
       return;
     }
 
-    const allRows2 = await this.db.getAllAsync(
-      `SELECT * FROM RoutineItems WHERE routineForeignKey = $value`,
-      {$value: routineId},
-    );
+    const request = "SELECT * FROM RoutineItem WHERE routineForeignKey='12';";
+    console.log('request ' + request);
+
+    const allRows2 = await this.db.getAllAsync(request);
+    //      {$value: routineId.toString()},
+    console.log('allRows2 ' + JSON.stringify(allRows2));
+
+    return allRows2;
   }
 
   async savePracticedata(practiceData: PracticeData) {

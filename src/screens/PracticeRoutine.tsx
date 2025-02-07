@@ -73,13 +73,17 @@ const PracticeRoutine = () =>{
     const Next = () => {
 
         const requestMSG = requestTask([])
+
+        if (myDispatch == null)
+            return
+
         myDispatch(requestMSG);
 
-        if(state.currentTask != null)
-        {
-            const recordMSG = recordPracticeDataRequest(state.currentTask.exerciseType)
-            practiceDatadispatch(recordMSG);
-        }
+        // if(state.currentTask != null)
+        // {
+        //     const recordMSG = recordPracticeDataRequest(state.currentTask.exerciseType)
+        //     practiceDatadispatch(recordMSG);
+        // }
     }
 
     useFocusEffect(

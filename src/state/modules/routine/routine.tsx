@@ -8,8 +8,8 @@ import React, { Dispatch, FC, PropsWithChildren, useReducer, useState } from 're
 const RoutineProvider: FC<PropsWithChildren> = (props) => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    const myDispatch: Dispatch<IAction> = (action : IAction) => {
-        if(!useAsyncMiddlewareInResponseToAction(dispatch, action))
+    const myDispatch = async(action : IAction) => {
+        if(!await useAsyncMiddlewareInResponseToAction(dispatch, action, state))
             dispatch(action)
     }
 

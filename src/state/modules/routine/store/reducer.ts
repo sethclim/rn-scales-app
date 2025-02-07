@@ -34,7 +34,7 @@ const reducer = (state: IState, action: IAction): IState => {
       };
     case RoutineTypes.DELETE_ROUTINE:
       return {...state, loading: false, deleting: DeleteRoutine(payload)};
-    case RoutineTypes.RESUME_ROUTINE:
+    case RoutineTypes.RESUMED_ROUTINE_ITEMS:
       return {
         ...state,
         loading: false,
@@ -101,7 +101,7 @@ const GenerateRoutine = (inputOptions: Array<any>): Array<RoutineItem> => {
       }
     }
   }
-  //console.log('Calling GenerateRoutine' + results.length);
+  console.log('Calling GenerateRoutine' + results.length);
   return results;
 };
 

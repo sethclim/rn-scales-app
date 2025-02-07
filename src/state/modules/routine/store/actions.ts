@@ -13,6 +13,7 @@ export enum RoutineTypes {
   LOADING_ALL_ROUTINES,
   LOADED_ALL_ROUTINES,
   ROUTINE_SAVED,
+  RESUMED_ROUTINE_ITEMS,
 }
 
 export const generateRequest = (payload: Array<any>): IAction => ({
@@ -35,7 +36,7 @@ export const deleteRoutine = (payload: Array<Routine>): IAction => ({
   payload,
 });
 
-export const resumeRoutine = (payload: Array<RoutineItem>): IAction => ({
+export const resumeRoutine = (payload: string): IAction => ({
   type: RoutineTypes.RESUME_ROUTINE,
   payload,
 });
