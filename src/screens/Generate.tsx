@@ -45,7 +45,7 @@ const Generate = () => {
 
     const [showModal, setShowModal] = useState(false);
 
-    const { background } = useContext(ThemeContext);
+    const { background, primary } = useContext(ThemeContext);
 
     const CheckValidRoutineConfiguration = () : boolean => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
@@ -171,10 +171,10 @@ const Generate = () => {
     return (
         <Box flexMain={true} p={1} style={{backgroundColor: background!}}> 
 
-            <VStack mAll={{t: 30}} align="center" justifyContent="center" >
-                <Card height={100}>
-                    {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text> */}
-                        <VStack gap={3} >
+            <VStack mAll={{t: -60}} align="center" justifyContent="center" >
+                <Card height={120} padding={10}>
+                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Roots</Text>
+                        <VStack gap={3} pVH={{v: 4}} >
                             <HStack>
                             {
                                 NATURAL_ROOTS.map( (naturalRoot, i) => { return (
@@ -207,9 +207,9 @@ const Generate = () => {
                 </Card>
                 
                 {/* borderRadius="5" rounded="md"  maxWidth="100%" shadow={9} */}
-                <Card height={100}>
-                    {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Type</Text> */}
-                        <HStack gap={3} flexWrap="wrap" >
+                <Card height={120} padding={10}>
+                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Type</Text>
+                        <HStack gap={3} flexWrap="wrap" pVH={{v: 4}} >
                         {
                             SCALE_TYPES.map( (scaleType, i) => { return (
                                 <CheckBox 
@@ -225,9 +225,9 @@ const Generate = () => {
                         </HStack>
                 </Card>
 
-                <Card height={100}>
-                    {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Exercise</Text> */}
-                        <HStack gap={3} flexWrap="wrap" >
+                <Card height={120} padding={10}>
+                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Exercise</Text>
+                        <HStack gap={3} flexWrap="wrap" pVH={{v: 4}} >
                         {
                             [...Exercises.keys()].map((exerciseType, i) => {
                                   return  <CheckBox 
@@ -243,7 +243,7 @@ const Generate = () => {
                         </HStack>
                 </Card>
 
-                <HStack mAll={{t:10}} gap={4} align="center">
+                <HStack flexMain={false} mAll={{t:10}} gap={4} align="center">
                     <TextButton titles="Start" onPress={() => StartRoutine()} />
                     <TextButton titles="Save" onPress={() => setShowModal(true)} />
                 </HStack> 

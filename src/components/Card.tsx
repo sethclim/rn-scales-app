@@ -4,13 +4,14 @@ import { withStyle } from '../native_blocks/hoc/WithStyle';
 
 type CardProps = {
     height: number
+    padding: number
     style?: {}
     children?: React.ReactNode
 }
 
 const _Card = (props: CardProps) => {
     return (
-        <Box flexMain={false} align="flex-start" m={20} mAll={{t: 5}} style={props.style} p={4}  height={props.height}  >
+        <Box flexMain={false} align="flex-start" m={20} mAll={{t: 5}} style={props.style} p={props.padding}  height={props.height}  >
             {props.children}
         </Box>
     )
