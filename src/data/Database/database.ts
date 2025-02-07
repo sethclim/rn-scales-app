@@ -149,7 +149,7 @@ export class Database {
       return;
     }
 
-    const string_date = dateToString(practiceData.getDate());
+    const string_date = dateToString(practiceData._date);
 
     // const time_stamp = Math.round(practiceData.getDate().valueOf() / 1000);
 

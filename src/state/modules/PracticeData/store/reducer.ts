@@ -64,10 +64,10 @@ const RecordPracticeData = (
 
   // cloneCurrentPracticeData.Counts.set(stepData, (currentCount ?? 0) + 1);
 
-  // console.log(
-  //   'RecordPracticeData cloneCurrentPracticeData ' +
-  //     JSON.stringify(cloneCurrentPracticeData),
-  // );
+  console.log(
+    'RecordPracticeData cloneCurrentPracticeData ' +
+      JSON.stringify(cloneCurrentPracticeData),
+  );
 
   return cloneCurrentPracticeData;
 };
