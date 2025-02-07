@@ -10,7 +10,7 @@ import { ExerciseType } from "../data/Models/DataModels";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { getTodaysPracticeDataRequest } from "../state/modules/PracticeData/store/actions";
 import { Box, } from "../native_blocks/primatives/Box";
-import { VStack, HStack } from "../native_blocks/";
+import { VStack, HStack, Button, TextInputField } from "../native_blocks/";
 import { StyleSheet, Modal, Alert, Text,  } from "react-native";
 
 import { TextButton } from "../components/TextButton";
@@ -20,6 +20,7 @@ import check from "../assets/check.svg"
 import { CheckBox } from "../components/Checkbox";
 import { ThemeContext } from "../context/ThemeContext";
 import { Card } from "../components/Card";
+import { StyledTextInputField } from "../native_blocks/TextInput"
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -45,7 +46,7 @@ const Generate = () => {
 
     const [showModal, setShowModal] = useState(false);
 
-    const { background, primary } = useContext(ThemeContext);
+    const { background, primary, secondaryBackground } = useContext(ThemeContext);
 
     const CheckValidRoutineConfiguration = () : boolean => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
@@ -275,28 +276,33 @@ interface SaveModalProps {
 const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal, save}) => {
 
     const [value, setValue] = React.useState("");
+    const { background, primary, secondaryBackground } = useContext(ThemeContext);
 
     return(
-        <Modal visible={showModal} onRequestClose={() => setShowModal(false)}>
-            {/* <Modal.Content bg="nord.secondaryBackground" maxWidth="400px">
-                <Modal.Header bg="nord.primary.1">Save Routine</Modal.Header>
-                <Modal.Body bg="nord.secondaryBackground">
-                    <FormControl>
-                        <FormControl.Label>Routine Name</FormControl.Label>
-                        <Input color="black" onChangeText={(text) => setValue(text)} />
-                    </FormControl>
-                </Modal.Body>
-                <Modal.Footer bg="nord.secondaryBackground">
-                    <Button.Group space={2}>
-                        <Button w={20} onPress={() => setShowModal(false)}>
-                            Cancel
-                        </Button>
-                        <Button w={20} onPress={() => save(value)}>
-                            Save
-                        </Button>
-                    </Button.Group>
-                </Modal.Footer>
-            </Modal.Content> */}
+        <Modal  
+            animationType="fade"
+            //sstransparent={true} 
+            visible={showModal} 
+            onRequestClose={() => setShowModal(false)}>
+                <VStack justifyContent="center">
+                    <VStack flexMain={false} m={30} style={{backgroundColor: secondaryBackground!}}>
+                        <HStack style={{backgroundColor : primary}} height={60}>
+                            <Text style={{color : background!}}>Save Routine</Text>
+                        </HStack>
+
+                        <VStack>
+                            <StyledTextInputField text="" textChanged={(text) => setValue(text)} errorMessage="" />
+                            {/* <FormControl>
+                                <FormControl.Label>Routine Name</FormControl.Label>
+                                <Input color="black" onChangeText={(text) => setValue(text)} />
+                            </FormControl> */}
+                        </VStack>
+                        <HStack>
+                                <TextButton titles="Cancel" onPress={() => setShowModal(false)} />
+                                <TextButton titles="Save" onPress={() => save(value)} />
+                        </HStack>
+                    </VStack>
+                </VStack>
         </Modal>
     )
 }
