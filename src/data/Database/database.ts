@@ -337,6 +337,19 @@ export class Database {
 
     return pd;
   }
+
+  async deleteRoutine(routineId: string) {
+    if (this.db == null) {
+      console.log('DB not created');
+      return null;
+    }
+
+    console.log('[DB] deleteRoutine');
+
+    await this.db.execAsync(
+      `DELETE FROM RoutineItem WHERE routineForeignKey=${routineId}; DELETE FROM Routine WHERE id=${routineId};`,
+    );
+  }
 }
 
 const dbInstance = new Database();

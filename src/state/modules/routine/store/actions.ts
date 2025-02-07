@@ -31,7 +31,7 @@ export const saveRoutine = (payload: Array<any>): IAction => ({
   payload,
 });
 
-export const deleteRoutine = (payload: Array<Routine>): IAction => ({
+export const deleteRoutine = (payload: string): IAction => ({
   type: RoutineTypes.DELETE_ROUTINE,
   payload,
 });
