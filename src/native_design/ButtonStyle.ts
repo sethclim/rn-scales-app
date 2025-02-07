@@ -32,3 +32,12 @@ export const square = {
   width: 24,
   backgroundColor: colors.danger_red,
 };
+
+export const mini = {
+  ...buttonCore.center,
+  ...buttonCore.rounded,
+  height: 32,
+  width: 120,
+  elevation: 4,
+  backgroundColor: colors.danger_red,
+};

@@ -10,17 +10,17 @@ import { ExerciseType } from "../data/Models/DataModels";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { getTodaysPracticeDataRequest } from "../state/modules/PracticeData/store/actions";
 import { Box, } from "../native_blocks/primatives/Box";
-import { VStack, HStack, Button, TextInputField } from "../native_blocks/";
-import { StyleSheet, Modal, Alert, Text,  } from "react-native";
+import { VStack, HStack } from "../native_blocks/";
+import { Modal, Alert, Text,  } from "react-native";
 
 import { TextButton } from "../components/TextButton";
-
 
 import check from "../assets/check.svg"
 import { CheckBox } from "../components/Checkbox";
 import { ThemeContext } from "../context/ThemeContext";
 import { Card } from "../components/Card";
 import { StyledTextInputField } from "../native_blocks/TextInput"
+import { MiniTextButton } from "../components/MiniTextButton";
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -279,43 +279,40 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
     const { background, primary, secondaryBackground } = useContext(ThemeContext);
 
     return(
-        <Modal  
+        <Modal
             animationType="fade"
-            //sstransparent={true} 
+            transparent={true} 
             visible={showModal} 
             onRequestClose={() => setShowModal(false)}>
-                <VStack justifyContent="center">
-                    <VStack flexMain={false} m={30} style={{backgroundColor: secondaryBackground!}}>
+                <VStack justifyContent="center"  style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                    <VStack flexMain={false} m={30} style={{
+                        backgroundColor: secondaryBackground!, 
+                        borderColor: primary, 
+                        borderWidth: 2,
+                        shadowColor: '#000',
+                        shadowOffset: {
+                          width: 0,
+                          height: 2,
+                        },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 4,    
+                        elevation: 5,
+                    }}>
                         <HStack style={{backgroundColor : primary}} height={60}>
-                            <Text style={{color : background!}}>Save Routine</Text>
+                            <Text style={{color : background!, fontSize: 32, fontWeight: 700}}>Save Routine</Text>
                         </HStack>
 
-                        <VStack>
+                        <VStack p={10}>
                             <StyledTextInputField text="" textChanged={(text) => setValue(text)} errorMessage="" />
-                            {/* <FormControl>
-                                <FormControl.Label>Routine Name</FormControl.Label>
-                                <Input color="black" onChangeText={(text) => setValue(text)} />
-                            </FormControl> */}
                         </VStack>
-                        <HStack>
-                                <TextButton titles="Cancel" onPress={() => setShowModal(false)} />
-                                <TextButton titles="Save" onPress={() => save(value)} />
+                        <HStack gap={4} p={8}>
+                                <MiniTextButton titles="Cancel" onPress={() => setShowModal(false)} />
+                                <MiniTextButton titles="Save" onPress={() => save(value)} />
                         </HStack>
                     </VStack>
                 </VStack>
         </Modal>
     )
 }
-
-const style = StyleSheet.create({
-    bg:{
-        backgroundColor: "#ECEFF4", //nord.background
-    },
-    bg2:{
-        backgroundColor: "#E5E9F0", //"nord.secondaryBackground"
-        elevation: 8,
-        borderRadius: 5,
-    }
-})
 
 export default Generate;
