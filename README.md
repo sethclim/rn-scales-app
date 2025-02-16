@@ -1,6 +1,6 @@
 # scales-app
 App to practice technique on instruments and force you to practice 
-scales you might skip, plus track your practice statistics. 
+scales you might skip, plus track your practice Statistics. 
 
 ### Scales App Screenshots
 <table>
@@ -17,7 +17,7 @@ scales you might skip, plus track your practice statistics.
  ### Features
 -   [x] Generate Random Practice Routines
 -   [x] Save Routines
--   [x] Track Pratice Statistices
+-   [x] Track Pratice Statistics
 -   [x] Visual Practice Stats on Graph
 -   [x] Theme Switcher
 -   [ ] Resume practice where you left off
