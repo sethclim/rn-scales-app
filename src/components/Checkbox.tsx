@@ -8,13 +8,14 @@ const makeStyle = (theme: any) => {
         ...ButtonStyle.square,
         backgroundColor: "white",
         borderWidth: 1,
-        borderRadius: 2,
+        borderRadius: 4,
+        borderColor: "#5E81AC"
       },
       checkedBtnstyle:{
         ...ButtonStyle.square,
         backgroundColor: "#5E81AC",
-        borderWidth: 1,
-        borderRadius: 2,
+        // borderWidth: 1,
+        // borderRadius: 2,
         ZStack: 1
       },
       textStyle: {

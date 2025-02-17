@@ -15,9 +15,10 @@ type GraphProps = {
 type RenderExercisePathSetProps = {
   plots : PathSet[]
   index : SharedValue<number>
+  color : string
 }
 
-const RenderExercisePathSet = ({ plots, index } : RenderExercisePathSetProps) => {
+const RenderExercisePathSet = ({ plots, index, color } : RenderExercisePathSetProps) => {
 
   const paths = useSharedValue(plots);
 
@@ -39,8 +40,8 @@ const RenderExercisePathSet = ({ plots, index } : RenderExercisePathSetProps) =>
 
   return(
     <>
-      <Path path={animatedPath} color={"#ed174f"} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-      <Path path={animatedPath2} color={"#ed174f"} strokeWidth={5} style="fill"/>
+      <Path path={animatedPath} color={color} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
+      <Path path={animatedPath2} color={color} strokeWidth={5} style="fill"/>
     </>
   )
 }
@@ -52,11 +53,13 @@ type RenderExercisesProps = {
 
 const RenderExercises = ({exercises, index} : RenderExercisesProps) => {
 
+  const colours = ["red", "blue", "pink", "orange", "purple", "white", "yellow"]
+
   return(
     <>
     {
       [...exercises.entries()].map((entry, i) => {
-        return <RenderExercisePathSet plots={entry[1]} index={index} key={i} />
+        return <RenderExercisePathSet plots={entry[1]} index={index} key={i} color={colours[i]} />
       })
     }
     </>

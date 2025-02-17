@@ -12,6 +12,7 @@ export enum RoutineTypes {
   REQUEST_ALL_ROUTINES,
   LOADING_ALL_ROUTINES,
   LOADED_ALL_ROUTINES,
+  ROUTINE_SAVED,
 }
 
 export const generateRequest = (payload: Array<any>): IAction => ({
@@ -41,5 +42,10 @@ export const resumeRoutine = (payload: Array<RoutineItem>): IAction => ({
 
 export const requestAllRoutines = (): IAction => ({
   type: RoutineTypes.REQUEST_ALL_ROUTINES,
+  payload: null,
+});
+
+export const routineSaved = (): IAction => ({
+  type: RoutineTypes.ROUTINE_SAVED,
   payload: null,
 });

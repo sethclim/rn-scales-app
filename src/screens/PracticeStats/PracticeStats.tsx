@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useMemo } from 'react';
-import { StyleSheet, useWindowDimensions } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 
-import { View } from "native-base"
 
 //import { database } from "../../data/Database/database";
 
@@ -48,7 +47,7 @@ const PracticeStats = () => {
 
 
     return(
-      <View style={styles.container} bg="nord.primary.1">
+      <View style={styles.container}>
         <Graph width={width - Padding * 2 } height={height * 0.5 - 50}/>
       </View>
     )
@@ -58,6 +57,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: Padding,
+    backgroundColor: "#5E81AC"
   },
 });
 

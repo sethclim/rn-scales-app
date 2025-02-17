@@ -60,7 +60,7 @@ const getX = (
   if (index == 1) {
     return dateXPositionMap[date.getMonth()];
   } else if (index == 0) {
-    return dateXPositionMap[date.getDay()];
+    return dateXPositionMap[(date.getDay() - 1) % 7];
   }
 
   return dateXPositionMap[date.getMonth()];
@@ -200,7 +200,7 @@ export class GraphGenerator {
     return gridLines;
   };
 
-  GetAllExercises = (pd: PracticeData, index: number) => {
+  GetAllExercises = (pd: PracticeData, index: number, jIndex: number) => {
     const scale_y = this.HEIGHT / this.max_y;
     for (let [exercise, count] of pd.getCounts()) {
       // if (count <= 0) continue;
@@ -215,7 +215,7 @@ export class GraphGenerator {
 
       const newPlot = createPlot();
 
-      if (index == 0) {
+      if (jIndex == 0) {
         newPlot.line.moveTo(x, y);
       } else {
         newPlot.line.lineTo(x, y);
@@ -260,11 +260,11 @@ export class GraphGenerator {
       //Each entry in group
       for (let j = 0; j < practiceDatas.length; j++) {
         const pd = practiceDatas[j];
-        this.GetAllExercises(pd, j);
+        this.GetAllExercises(pd, i, j);
       }
     }
 
-    console.log('this.ex ' + JSON.stringify([...this.ex.entries()], null, 2));
+    // console.log('this.ex ' + JSON.stringify([...this.ex.entries()], null, 2));
 
     return {
       titles: ['Week', 'Year'],

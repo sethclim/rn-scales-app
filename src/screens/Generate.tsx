@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useContext, useEffect, useState } from "react"
 
-import { HStack, VStack, Text, Button, AlertDialog, FormControl, Input, Modal } from 'native-base';
 import Context from "../state/modules/routine/context";
 import { generateRequest,saveRoutine } from "../state/modules/routine/store/actions";
 
@@ -10,8 +9,11 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { ExerciseType } from "../data/Models/DataModels";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { getTodaysPracticeDataRequest } from "../state/modules/PracticeData/store/actions";
-import { Box } from "../native_blocks/primatives/Box";
-import { StyleSheet } from "react-native";
+import { Box, } from "../native_blocks/primatives/Box";
+import { VStack, HStack } from "../native_blocks/";
+import { StyleSheet, Modal, Alert, Text,  } from "react-native";
+
+import { TextButton } from "../components/TextButton";
 
 
 import check from "../assets/check.svg"
@@ -60,7 +62,8 @@ const Generate = () => {
         if(CheckValidRoutineConfiguration())
             navigation.navigate('Practice')
         else
-            setIsOpen(!isOpen)
+            showAlert()
+            // setIsOpen(!isOpen)
     }
 
     const SaveRoutine = (saveName : string) => {
@@ -141,13 +144,33 @@ const Generate = () => {
         setSelectedExercises(localExercise)
     }
 
+    const showAlert = () =>
+        Alert.alert(
+          'Warning',
+          'Invalid Routine Configuration',
+          [
+            {
+              text: 'Ok',
+            //   onPress: () => Alert.alert('Cancel Pressed'),
+              style: 'cancel',
+            },
+          ],
+          {
+            cancelable: true,
+            onDismiss: () =>
+              Alert.alert(
+                'This alert was dismissed by tapping outside of the alert dialog.',
+              ),
+          },
+        );
+
     return (
         <Box flexMain={true} p={1} style={style.bg}> 
 
-            <VStack marginTop={5} alignItems="center">
-                <Box flexMain={false} align="flex-start" mAll={{t: 5}} style={style.bg2} p={4} width={375}>
-                    <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text>
-                        <HStack space={3} flexWrap={'wrap'}>
+            <VStack mAll={{t: 30}} align="center" justifyContent="center" >
+                <Box flexMain={false} align="flex-start" m={20} mAll={{t: 5}} style={style.bg2} p={4}  height={100}  >
+                    {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text> */}
+                        <VStack gap={3} >
                             <HStack>
                             {
                                 NATURAL_ROOTS.map( (naturalRoot, i) => { return (
@@ -155,7 +178,8 @@ const Generate = () => {
                                         iconColor="white" 
                                         iconSize={20} 
                                         checked={manageRoots[i]} 
-                                        checkMark={check} key={i} 
+                                        checkMark={check} 
+                                        key={i} 
                                         onPress={() => onClickNaturalRoot(i, naturalRoot)} 
                                         title={naturalRoot} />
                                 )})
@@ -175,12 +199,13 @@ const Generate = () => {
                                 )})
                             }
                             </HStack>
-                        </HStack>
+                        </VStack>
                 </Box>
-
-                <Box flexMain={false} align="flex-start" mAll={{t: 50}} style={style.bg2} py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
-                    <Text color="nord.primary.1" mt={-3} fontSize={20}>Type</Text>
-                        <HStack space={3} flexWrap={'wrap'}>
+                
+                {/* borderRadius="5" rounded="md"  maxWidth="100%" shadow={9} */}
+                <Box flexMain={false} align="flex-start" m={20} mAll={{t: 50}} style={style.bg2} pVH={{v: 4, h: 3}}   >
+                    {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Type</Text> */}
+                        <HStack gap={3} flexWrap="wrap" >
                         {
                             SCALE_TYPES.map( (scaleType, i) => { return (
                                 <CheckBox 
@@ -196,12 +221,13 @@ const Generate = () => {
                         </HStack>
                 </Box>
 
-                <Box flexMain={false} align="flex-start" mAll={{t: 50}} style={style.bg2} py="4" px="3" borderRadius="5" rounded="md" width={375} maxWidth="100%" shadow={9}>
-                    <Text color="nord.primary.1" mt={-3} fontSize={20}>Exercise</Text>
-                        <HStack space={3} flexWrap={'wrap'}>
+                <Box flexMain={false} align="flex-start" m={20} mAll={{t: 50}} style={style.bg2} pVH={{v: 4, h: 3}} height={100} >
+                    {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Exercise</Text> */}
+                        <HStack gap={3} flexWrap="wrap" >
                         {
                             [...Exercises.keys()].map((exerciseType, i) => {
                                   return  <CheckBox 
+                                            key={i} 
                                             iconColor="white" 
                                             checkMark={check} 
                                             iconSize={20} 
@@ -213,19 +239,14 @@ const Generate = () => {
                         </HStack>
                 </Box>
 
-                <HStack marginTop={10} space={4} alignItems="center">
-                    <Button  size="lg" width={130} onPress={() => StartRoutine()}>
-                        Start
-                    </Button>
-                    <Button  size="lg" width={130} onPress={() => setShowModal(true)}>
-                        Save
-                    </Button>
-
+                <HStack mAll={{t:10}} gap={4} align="center">
+                    <TextButton titles="Start" onPress={() => StartRoutine()} />
+                    <TextButton titles="Save" onPress={() => setShowModal(true)} />
                 </HStack> 
 
             </VStack>
 
-            <AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
+            {/* <AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
                 <AlertDialog.Content>
                     <AlertDialog.CloseButton />
                     <AlertDialog.Header>Invalid Routine Configuration</AlertDialog.Header>
@@ -233,7 +254,7 @@ const Generate = () => {
                         Please Select at least one option from each section!
                     </AlertDialog.Body>
                 </AlertDialog.Content>
-            </AlertDialog>
+            </AlertDialog> */}
 
             <SaveModal showModal={showModal} setShowModal={setShowModal} save={SaveRoutine} />
 
@@ -252,8 +273,8 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
     const [value, setValue] = React.useState("");
 
     return(
-        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-            <Modal.Content bg="nord.secondaryBackground" maxWidth="400px">
+        <Modal visible={showModal} onRequestClose={() => setShowModal(false)}>
+            {/* <Modal.Content bg="nord.secondaryBackground" maxWidth="400px">
                 <Modal.Header bg="nord.primary.1">Save Routine</Modal.Header>
                 <Modal.Body bg="nord.secondaryBackground">
                     <FormControl>
@@ -271,7 +292,7 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
                         </Button>
                     </Button.Group>
                 </Modal.Footer>
-            </Modal.Content>
+            </Modal.Content> */}
         </Modal>
     )
 }

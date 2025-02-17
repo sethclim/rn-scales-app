@@ -5,7 +5,10 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 
-import { Text, Box, Center, Button } from "native-base"
+import { Box, } from "../native_blocks/primatives/Box";
+import { TextButton } from "../components/TextButton";
+
+import { VStack } from "../native_blocks"
 
 import Context from "../state/modules/routine/context";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
@@ -44,27 +47,28 @@ const PracticeRoutine = () =>{
     ); 
 
     return(
-        <Box flex={1} padding={5} bg="nord.background">
-            <Center flex={1}>
+        // bg="nord.background"
+        <Box flexMain={true} p={5} >
+            {/* <Center flex={1}> */}
             {
                 state.currentTask != null ? 
                 <>
-                    <Text fontSize={50} color="nord.primary.1" textAlign="center">{state.currentTask.displayItem}</Text>
+                    <VStack flexMain={false}  height={170}>
+                        {/* <Text fontSize={50} color="nord.primary.1" textAlign="center">{state.currentTask.displayItem}</Text> */}
+                    </VStack>
                     <TouchableOpacity
                         onPress={Next}
                         style={styles.roundButton}>
-                        <Text fontSize={50}>Next</Text>
+                        {/* <Text fontSize={50}>Next</Text> */}
                     </TouchableOpacity>
                 </>
                 : 
                 <>
-                    <Text fontSize={50} color="nord.primary.1" textAlign="center">Practice Complete</Text>
-                    <Button  size="lg" width={130} onPress={()=> navigation.navigate('Generate')}>
-                        Go Back
-                    </Button>
+                    {/* <Text fontSize={50} color="nord.primary.1" textAlign="center">Practice Complete</Text> */}
+                    <TextButton titles="Go Back" onPress={()=> navigation.navigate('Generate')} />
                 </>
             }
-            </Center>
+            {/* </Center> */}
         </Box>
     )
 }

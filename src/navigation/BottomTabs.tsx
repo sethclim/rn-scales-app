@@ -9,7 +9,8 @@ import PracticeStats  from '../screens/PracticeStats/PracticeStats'
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { Button, IconButton } from 'native-base';
+import { Button } from "../native_blocks/";
+
 import { useNavigation } from '@react-navigation/native';
 
 const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
@@ -31,18 +32,9 @@ const BottomTabs = () => {
                         fontWeight: 'bold',
                     },
                     headerRight: () => (
-                        <IconButton 
-                            variant="unstyled"
-                            icon={<MaterialIcons name="settings" color="#fff" size={20} />} 
-                            borderRadius="full"
-                            onPress={() => navigation.navigate('Settings')}
-                            _pressed={{
-                                bg: "#00000000",
-                                _icon: {
-                                color:"#ff0000"
-                                }
-                            }}
-                        />
+                        <Button onPress={() => navigation.navigate('Settings')} >
+                            <MaterialIcons name="settings" color="#fff" size={20} />
+                        </Button>
                       ),
                     //tabBarInactiveTintColor:"#00ff00",
                     tabBarActiveTintColor:"#5E81AC",

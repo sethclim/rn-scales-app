@@ -6,7 +6,6 @@ const buttonCore = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   rounded: {
     borderRadius: 1000,
   },

@@ -1,8 +1,7 @@
 import React, { FunctionComponent, useContext } from "react";
-//Watermelon
 
-//NativeBase
-import { Box, HStack, Spacer, Text, IconButton } from "native-base";
+import { Box } from "../../native_blocks/primatives/Box";
+import { HStack, Button, VStack } from "../../native_blocks/";
 
 //Navigation
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
@@ -17,37 +16,34 @@ import {RoutineItem} from "../../data/Models/DataModels";
 import Context from "../../state/modules/routine/context";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { Text } from "react-native";
+
 
 export const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routineItems}) => {  
 
-    const { dispatch } = useContext(Context);
+    const { myDispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const StartSavedRoutine = (routineItems : RoutineItem[]) => {
         const resumeMSG = resumeRoutine(routineItems)   
-        dispatch(resumeMSG)
+        myDispatch(resumeMSG)
         navigation.navigate('Practice')
     }
   
     return (
-      <Box w="100%" h={50} bg="nord.primary.1" padding={1}>
-        <HStack space={3} justifyContent="flex-start" alignItems="center">
-          <Text marginLeft={5} fontWeight="bold">{routine.title}</Text>
-          <Spacer />
-          <IconButton 
-            variant="unstyled"
-            icon={<MaterialIcons name="play-arrow" color="#fff" size={20} />} 
-            borderRadius="full"
-            onPress={() => StartSavedRoutine(routineItems)}
-              _pressed={{
-                bg: "#00000000",
-                _icon: {
-                  color:"#ff0000"
-                }
-              }}
-            />
+      <VStack width={370}  height={50} style={{"backgroundColor" : "#6B8F71"}}>
+        <HStack gap={3} justifyContent="flex-start" align="center" p={6}>
+          <HStack justifyContent="flex-start" p={5}>
+            <Text style={{color : "white"}}>{routine.title}</Text>
+
+          </HStack>
+
+          <Button onPress={() => StartSavedRoutine(routineItems)}>
+            <MaterialIcons name="play-arrow" color="#fff" size={25} />
+          </Button>
+
           {/* <Button bg="#FFFFFF33" _text={{color:"white"}} onPress={() => StartSavedRoutine(routineItems)}>Start</Button> */}
         </HStack>
-      </Box>
+      </VStack>
     );
   };
