@@ -133,7 +133,7 @@ export class Database {
       return;
     }
 
-    const request = "SELECT * FROM RoutineItem WHERE routineForeignKey='12';";
+    const request = `SELECT * FROM RoutineItem WHERE routineForeignKey=${routineId};`;
     console.log('request ' + request);
 
     const allRows2 = await this.db.getAllAsync(request);
