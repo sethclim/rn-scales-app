@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   label: {
-    fontFamily: "Helvetica",
+    // fontFamily: "Helvetica",
     fontSize: 16,
     color: "white",
     textAlign: "center",
@@ -57,10 +57,10 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
   
   const find_dimesions = (layout: any) => {
     const { x, y, width, height } = layout;
-    console.warn(x);
-    console.warn(y);
-    console.warn(width);
-    console.warn(height);
+    // console.warn(x);
+    // console.warn(y);
+    // console.warn(width);
+    // console.warn(height);
   
     setB_Width(width / graphData.titles.length)
   }
