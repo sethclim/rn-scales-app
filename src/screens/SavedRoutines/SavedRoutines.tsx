@@ -14,11 +14,14 @@ import  SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
 import Context from '../../state/modules/routine/context';
 import { requestAllRoutines } from '../../state/modules/routine/store/actions';
 import { useFocusEffect } from '@react-navigation/native';
+import { ThemeContext } from '../../context/ThemeContext';
 
 const SavedRoutines  = () => {
 
   // const [routines, setRoutines] = useState<Routine[]>()
   const { myDispatch, state } = useContext(Context);
+
+  const { primary, background, mode } = useContext(ThemeContext);
 
   const DoSideEffect = () => {
     myDispatch(requestAllRoutines())
@@ -44,7 +47,7 @@ const SavedRoutines  = () => {
   };
 
   return (
-    <Box m={30}>
+    <Box p={30} style={{backgroundColor: background!}}>
       <SwipeListView<Routine> 
         data={state.routines} 
         renderItem={ (data, rowMap) => (

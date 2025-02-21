@@ -17,12 +17,14 @@ import Context from "../../state/modules/routine/context";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { Text } from "react-native";
+import { ThemeContext } from "../../context/ThemeContext";
 
 
 export const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routineItems}) => {  
 
     const { myDispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
+    const { primary, background, secondary, secondaryBackground, mode } = useContext(ThemeContext);
 
     const StartSavedRoutine = (routineItems : RoutineItem[]) => {
         const resumeMSG = resumeRoutine(routineItems)   
@@ -31,10 +33,10 @@ export const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index,
     }
   
     return (
-      <VStack width={370}  height={50} style={{"backgroundColor" : "#6B8F71"}}>
+      <VStack width={370}  height={50} style={{"backgroundColor" : mode == "light" ? primary : secondaryBackground!}}>
         <HStack gap={3} justifyContent="flex-start" align="center" p={6}>
           <HStack justifyContent="flex-start" p={5}>
-            <Text style={{color : "white"}}>{routine.title}</Text>
+            <Text style={{color : "white", fontSize: 20}}>{routine.title}</Text>
 
           </HStack>
 

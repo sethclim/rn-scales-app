@@ -7,7 +7,7 @@ const buttonCore = StyleSheet.create({
     justifyContent: 'center',
   },
   rounded: {
-    borderRadius: 1000,
+    borderRadius: 6,
   },
 });
 
@@ -30,5 +30,14 @@ export const square = {
   ...buttonCore.center,
   height: 24,
   width: 24,
+  backgroundColor: colors.danger_red,
+};
+
+export const mini = {
+  ...buttonCore.center,
+  ...buttonCore.rounded,
+  height: 32,
+  width: 120,
+  elevation: 4,
   backgroundColor: colors.danger_red,
 };

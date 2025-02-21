@@ -42,11 +42,13 @@
 export const lighttheme = {
   primary: '#5E81AC',
   secondary: '#6B8F71',
-  background: '#1D1E18',
+  background: 'white',
+  secondaryBackground: '#E5E9F0',
 };
 
-export const darktheme = {
-  primary: '#ffffff',
-  secondary: '#333333',
-  background: '#000000',
+export const toyoNightsTheme = {
+  primary: '#ff9e64',
+  secondary: '#2ac3de',
+  background: '#1a1b26',
+  secondaryBackground: '#414868',
 };

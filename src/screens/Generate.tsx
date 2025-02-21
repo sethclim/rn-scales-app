@@ -11,13 +11,16 @@ import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { getTodaysPracticeDataRequest } from "../state/modules/PracticeData/store/actions";
 import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack } from "../native_blocks/";
-import { StyleSheet, Modal, Alert, Text,  } from "react-native";
+import { Modal, Alert, Text,  } from "react-native";
 
 import { TextButton } from "../components/TextButton";
 
-
 import check from "../assets/check.svg"
 import { CheckBox } from "../components/Checkbox";
+import { ThemeContext } from "../context/ThemeContext";
+import { Card } from "../components/Card";
+import { StyledTextInputField } from "../native_blocks/TextInput"
+import { MiniTextButton } from "../components/MiniTextButton";
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -42,6 +45,8 @@ const Generate = () => {
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const [showModal, setShowModal] = useState(false);
+
+    const { background, primary, secondaryBackground } = useContext(ThemeContext);
 
     const CheckValidRoutineConfiguration = () : boolean => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
@@ -165,12 +170,12 @@ const Generate = () => {
         );
 
     return (
-        <Box flexMain={true} p={1} style={style.bg}> 
+        <Box flexMain={true} p={1} style={{backgroundColor: background!}}> 
 
-            <VStack mAll={{t: 30}} align="center" justifyContent="center" >
-                <Box flexMain={false} align="flex-start" m={20} mAll={{t: 5}} style={style.bg2} p={4}  height={100}  >
-                    {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Roots</Text> */}
-                        <VStack gap={3} >
+            <VStack mAll={{t: -60}} align="center" justifyContent="center" >
+                <Card height={120} padding={10}>
+                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Roots</Text>
+                        <VStack gap={3} pVH={{v: 4}} >
                             <HStack>
                             {
                                 NATURAL_ROOTS.map( (naturalRoot, i) => { return (
@@ -200,12 +205,12 @@ const Generate = () => {
                             }
                             </HStack>
                         </VStack>
-                </Box>
+                </Card>
                 
                 {/* borderRadius="5" rounded="md"  maxWidth="100%" shadow={9} */}
-                <Box flexMain={false} align="flex-start" m={20} mAll={{t: 50}} style={style.bg2} pVH={{v: 4, h: 3}}   >
-                    {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Type</Text> */}
-                        <HStack gap={3} flexWrap="wrap" >
+                <Card height={120} padding={10}>
+                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Type</Text>
+                        <HStack gap={3} flexWrap="wrap" pVH={{v: 4}} >
                         {
                             SCALE_TYPES.map( (scaleType, i) => { return (
                                 <CheckBox 
@@ -219,11 +224,11 @@ const Generate = () => {
                             )})
                         }
                         </HStack>
-                </Box>
+                </Card>
 
-                <Box flexMain={false} align="flex-start" m={20} mAll={{t: 50}} style={style.bg2} pVH={{v: 4, h: 3}} height={100} >
-                    {/* <Text color="nord.primary.1" mt={-3} fontSize={20}>Exercise</Text> */}
-                        <HStack gap={3} flexWrap="wrap" >
+                <Card height={120} padding={10}>
+                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Exercise</Text>
+                        <HStack gap={3} flexWrap="wrap" pVH={{v: 4}} >
                         {
                             [...Exercises.keys()].map((exerciseType, i) => {
                                   return  <CheckBox 
@@ -237,9 +242,9 @@ const Generate = () => {
                             })
                         }
                         </HStack>
-                </Box>
+                </Card>
 
-                <HStack mAll={{t:10}} gap={4} align="center">
+                <HStack flexMain={false} mAll={{t:10}} gap={4} align="center">
                     <TextButton titles="Start" onPress={() => StartRoutine()} />
                     <TextButton titles="Save" onPress={() => setShowModal(true)} />
                 </HStack> 
@@ -271,41 +276,43 @@ interface SaveModalProps {
 const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal, save}) => {
 
     const [value, setValue] = React.useState("");
+    const { background, primary, secondaryBackground } = useContext(ThemeContext);
 
     return(
-        <Modal visible={showModal} onRequestClose={() => setShowModal(false)}>
-            {/* <Modal.Content bg="nord.secondaryBackground" maxWidth="400px">
-                <Modal.Header bg="nord.primary.1">Save Routine</Modal.Header>
-                <Modal.Body bg="nord.secondaryBackground">
-                    <FormControl>
-                        <FormControl.Label>Routine Name</FormControl.Label>
-                        <Input color="black" onChangeText={(text) => setValue(text)} />
-                    </FormControl>
-                </Modal.Body>
-                <Modal.Footer bg="nord.secondaryBackground">
-                    <Button.Group space={2}>
-                        <Button w={20} onPress={() => setShowModal(false)}>
-                            Cancel
-                        </Button>
-                        <Button w={20} onPress={() => save(value)}>
-                            Save
-                        </Button>
-                    </Button.Group>
-                </Modal.Footer>
-            </Modal.Content> */}
+        <Modal
+            animationType="fade"
+            transparent={true} 
+            visible={showModal} 
+            onRequestClose={() => setShowModal(false)}>
+                <VStack justifyContent="center"  style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                    <VStack flexMain={false} m={30} style={{
+                        backgroundColor: secondaryBackground!, 
+                        borderColor: primary, 
+                        borderWidth: 2,
+                        shadowColor: '#000',
+                        shadowOffset: {
+                          width: 0,
+                          height: 2,
+                        },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 4,    
+                        elevation: 5,
+                    }}>
+                        <HStack style={{backgroundColor : primary}} height={60}>
+                            <Text style={{color : background!, fontSize: 32, fontWeight: 700}}>Save Routine</Text>
+                        </HStack>
+
+                        <VStack p={10}>
+                            <StyledTextInputField text="" textChanged={(text) => setValue(text)} errorMessage="" />
+                        </VStack>
+                        <HStack gap={4} p={8}>
+                                <MiniTextButton titles="Cancel" onPress={() => setShowModal(false)} />
+                                <MiniTextButton titles="Save" onPress={() => save(value)} />
+                        </HStack>
+                    </VStack>
+                </VStack>
         </Modal>
     )
 }
-
-const style = StyleSheet.create({
-    bg:{
-        backgroundColor: "#ECEFF4", //nord.background
-    },
-    bg2:{
-        backgroundColor: "#E5E9F0", //"nord.secondaryBackground"
-        elevation: 8,
-        borderRadius: 5,
-    }
-})
 
 export default Generate;
