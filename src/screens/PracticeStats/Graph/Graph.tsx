@@ -99,7 +99,7 @@ const RenderLabels = ({labels, index} : RenderLabelsProps) => {
   const yLabels = useDerivedValue(() =>{
     // console.log("shared value changed " + next.value + " " + graphs.value.length)
     return  labels[index.value].yLabels
-  },[index.value])
+  })
 
   const xLabels = useDerivedValue(() => {
     return labels[index.value].xLabels ? labels[index.value].xLabels : []
@@ -117,7 +117,7 @@ const RenderLabels = ({labels, index} : RenderLabelsProps) => {
           canvas.drawText(obj.text, obj.pos.x ? obj.pos.x : 150 , obj.pos.y ? obj.pos.y : 150, paint, font)
       })
     }
-  ), [yLabels.value]);
+  ));
 
   const xLabelsPicture = useDerivedValue(() => createPicture(
     (canvas) => {
@@ -132,7 +132,7 @@ const RenderLabels = ({labels, index} : RenderLabelsProps) => {
         canvas.drawTextBlob
       })
     }
-  ), [xLabels.value]);
+  ));
 
   return(
     <>

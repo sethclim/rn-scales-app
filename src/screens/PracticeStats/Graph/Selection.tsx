@@ -86,7 +86,7 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
         translateX: translateX.value
       },
     ];
-  }, [transition.value, current.value, next.value]);
+  });
 
 
   const onPress = (index: number) => {
