@@ -62,7 +62,9 @@ const GetTask = (routine: Array<RoutineItem>): RoutineItem => {
   return result;
 };
 
-const GenerateRoutine = (inputOptions: Array<any>): Array<RoutineItem> => {
+export const GenerateRoutine = (
+  inputOptions: Array<any>,
+): Array<RoutineItem> => {
   //console.log('Calling GenerateRoutine');
 
   const roots = inputOptions[0];

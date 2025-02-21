@@ -4,6 +4,7 @@ import { requestAllRoutines, routineSaved, RoutineTypes } from "./store/actions"
 import dbInstance from "../../../data/Database/database";
 import { IState } from "./store/initialState";
 import { Routine } from "../../../data/Models/DataModels";
+import { GenerateRoutine } from "./store/reducer";
 
 
 export const useAsyncMiddlewareInResponseToAction = async(dispatch : Dispatch<IAction>, action: IAction, state : IState) => {
@@ -24,14 +25,16 @@ export const useAsyncMiddlewareInResponseToAction = async(dispatch : Dispatch<IA
     }
     else if(action.type === RoutineTypes.SAVE_ROUTINE) {
         const inputOptions = action.payload.slice(0, 3);
-        dispatch({ type: RoutineTypes.GENERATE_REQUEST,  payload: inputOptions});
+        // dispatch({ type: RoutineTypes.GENERATE_REQUEST,  payload: inputOptions});
 
-        console.log("state.generatedRoutine " + JSON.stringify(state.generatedRoutine))
+        const generatedRoutine = GenerateRoutine(inputOptions)
+
+        console.log("state.generatedRoutine " + JSON.stringify(generatedRoutine))
 
         const routineToSave: Routine = {
             id: '-1',
             title: action.payload[3],
-            RoutineItems: state.generatedRoutine,
+            RoutineItems: generatedRoutine,
             createdAt: '99',
           };
         
