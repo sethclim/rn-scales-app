@@ -74,6 +74,9 @@ const Generate = () => {
     const SaveRoutine = (saveName : string) => {
 
         const saveRoutineMSG = saveRoutine([selectedRoots, selectedTypes, selectedExercises, saveName])
+
+        console.log("saveRoutineMSG " + JSON.stringify(saveRoutineMSG))
+
         myDispatch(saveRoutineMSG) 
 
         setShowModal(false);
@@ -278,6 +281,8 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
     const [value, setValue] = React.useState("");
     const { background, primary, secondaryBackground } = useContext(ThemeContext);
 
+    const save_routine = () => _WORKLET
+
     return(
         <Modal
             animationType="fade"
@@ -303,7 +308,7 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
                         </HStack>
 
                         <VStack p={10}>
-                            <StyledTextInputField text="" textChanged={(text) => setValue(text)} errorMessage="" />
+                            <StyledTextInputField text={value} textChanged={(text) => setValue(text)} errorMessage="" />
                         </VStack>
                         <HStack gap={4} p={8}>
                                 <MiniTextButton titles="Cancel" onPress={() => setShowModal(false)} />

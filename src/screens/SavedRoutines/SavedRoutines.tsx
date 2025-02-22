@@ -1,4 +1,4 @@
-import React, { useContext }  from 'react';
+import React, { useContext, useEffect }  from 'react';
 
 import { Box } from "../../native_blocks/primatives/Box";
 
@@ -24,6 +24,9 @@ const SavedRoutines  = () => {
   const { primary, background, mode } = useContext(ThemeContext);
 
   const DoSideEffect = () => {
+    if (myDispatch == null)
+      return
+
     myDispatch(requestAllRoutines())
   }
 

@@ -73,6 +73,10 @@ const PracticeRoutine = () =>{
     const Next = () => {
 
         const requestMSG = requestTask([])
+
+        if (myDispatch == null)
+            return
+
         myDispatch(requestMSG);
 
         if(state.currentTask != null)

@@ -49,11 +49,15 @@ const RecordPracticeData = (
   stepData: ExerciseType,
   currentPracticeData: PracticeData,
 ): PracticeData => {
-  const cloneCurrentPracticeData = new PracticeData(
-    currentPracticeData.getDate(),
-  );
+  let date: Date = new Date();
 
-  currentPracticeData.getCounts().forEach((value, key) => {
+  if (currentPracticeData !== null) {
+    date = currentPracticeData._date;
+  }
+
+  const cloneCurrentPracticeData = new PracticeData(date);
+
+  currentPracticeData?.getCounts().forEach((value, key) => {
     cloneCurrentPracticeData.updateValues(key, value);
   });
 
@@ -64,10 +68,10 @@ const RecordPracticeData = (
 
   // cloneCurrentPracticeData.Counts.set(stepData, (currentCount ?? 0) + 1);
 
-  // console.log(
-  //   'RecordPracticeData cloneCurrentPracticeData ' +
-  //     JSON.stringify(cloneCurrentPracticeData),
-  // );
+  console.log(
+    'RecordPracticeData cloneCurrentPracticeData ' +
+      JSON.stringify(cloneCurrentPracticeData),
+  );
 
   return cloneCurrentPracticeData;
 };

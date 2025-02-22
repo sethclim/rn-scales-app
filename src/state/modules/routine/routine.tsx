@@ -2,16 +2,18 @@ import { useAsyncMiddlewareInResponseToAction } from './middleware';
 import { IAction } from '../../types';
 import Context from './context';
 import reducer, { initialState } from './store';
-import React, { Dispatch, FC, PropsWithChildren, useReducer, useState } from 'react';
+import React, { Dispatch, FC, PropsWithChildren, useCallback, useReducer, useState } from 'react';
 
 
 const RoutineProvider: FC<PropsWithChildren> = (props) => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    const myDispatch: Dispatch<IAction> = (action : IAction) => {
-        if(!useAsyncMiddlewareInResponseToAction(dispatch, action))
-            dispatch(action)
-    }
+    const myDispatch = useCallback(
+        async (action: IAction) => {
+            if(!await useAsyncMiddlewareInResponseToAction(dispatch, action, state))
+                dispatch(action)
+        },
+    [state]);
 
     return (
         <Context.Provider value={{ state, myDispatch }}>

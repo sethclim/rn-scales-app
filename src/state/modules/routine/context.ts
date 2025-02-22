@@ -4,13 +4,11 @@ import initialState, {IState} from './store/initialState';
 
 interface IContextProps {
   state: IState;
-  myDispatch: Dispatch<IAction>;
+  myDispatch: ((action: IAction) => Promise<void>) | null;
 }
 
 const Context = createContext<IContextProps>({
-  myDispatch: () => {
-    // Dispatch initial value
-  },
+  myDispatch: null,
   state: initialState,
 });
 

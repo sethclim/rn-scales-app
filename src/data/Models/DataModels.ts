@@ -7,7 +7,7 @@ export type ExerciseType =
 
 export class PracticeData {
   Total: number = 0;
-  private _date: Date;
+  _date: Date;
   scale: number = 0;
   octave: number = 0;
   arpeggio: number = 0;

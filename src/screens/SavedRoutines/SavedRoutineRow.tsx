@@ -26,9 +26,17 @@ export const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index,
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
     const { primary, background, secondary, secondaryBackground, mode } = useContext(ThemeContext);
 
-    const StartSavedRoutine = (routineItems : RoutineItem[]) => {
-        const resumeMSG = resumeRoutine(routineItems)   
-        myDispatch(resumeMSG)
+    const StartSavedRoutine = async () => {
+        console.log("StartSavedRoutine ")
+
+
+        const resumeMSG = resumeRoutine(routine.id)   
+        console.log("resumeMSG " + JSON.stringify(resumeMSG))
+
+        if (myDispatch == null)
+          return
+
+        await myDispatch(resumeMSG);
         navigation.navigate('Practice')
     }
   
@@ -36,11 +44,10 @@ export const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index,
       <VStack width={370}  height={50} style={{"backgroundColor" : mode == "light" ? primary : secondaryBackground!}}>
         <HStack gap={3} justifyContent="flex-start" align="center" p={6}>
           <HStack justifyContent="flex-start" p={5}>
-            <Text style={{color : "white", fontSize: 20}}>{routine.title}</Text>
-
+            <Text style={{color : "white", fontSize: 20}}>{routine.title.charAt(0).toUpperCase() + routine.title.slice(1)}</Text>
           </HStack>
 
-          <Button onPress={() => StartSavedRoutine(routineItems)}>
+          <Button onPress={() => StartSavedRoutine()}>
             <MaterialIcons name="play-arrow" color="#fff" size={25} />
           </Button>
 

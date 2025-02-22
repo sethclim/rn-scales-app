@@ -34,7 +34,7 @@ const reducer = (state: IState, action: IAction): IState => {
       };
     case RoutineTypes.DELETE_ROUTINE:
       return {...state, loading: false, deleting: DeleteRoutine(payload)};
-    case RoutineTypes.RESUME_ROUTINE:
+    case RoutineTypes.RESUMED_ROUTINE_ITEMS:
       return {
         ...state,
         loading: false,
@@ -62,7 +62,9 @@ const GetTask = (routine: Array<RoutineItem>): RoutineItem => {
   return result;
 };
 
-const GenerateRoutine = (inputOptions: Array<any>): Array<RoutineItem> => {
+export const GenerateRoutine = (
+  inputOptions: Array<any>,
+): Array<RoutineItem> => {
   //console.log('Calling GenerateRoutine');
 
   const roots = inputOptions[0];
@@ -101,7 +103,7 @@ const GenerateRoutine = (inputOptions: Array<any>): Array<RoutineItem> => {
       }
     }
   }
-  //console.log('Calling GenerateRoutine' + results.length);
+  console.log('Calling GenerateRoutine' + results.length);
   return results;
 };
 
