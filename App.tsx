@@ -24,9 +24,9 @@ const App = () => {
        <Provider store={store}>
           <ThemeProvider>
             {/* <RoutineProvider> */}
-              <PracticeDataProvider>
+              {/* <PracticeDataProvider> */}
                 <RootNavigator />
-              </PracticeDataProvider>
+              {/* </PracticeDataProvider> */}
             {/* </RoutineProvider> */}
           </ThemeProvider>
         </Provider>

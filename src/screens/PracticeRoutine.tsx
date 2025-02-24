@@ -11,16 +11,17 @@ import { TextButton } from "../components/TextButton";
 import { VStack } from "../native_blocks"
 
 // import Context from "../state/modules/routine/context";
-import PracticeContext from "../state/modules/PracticeData/PracticeContext";
-import { requestTask } from "../state/modules/routine/store/actions";
-import { recordPracticeDataRequest, savePracticeDataRequest } from "../state/modules/PracticeData/store/actions";
-import { ExerciseType, PracticeData } from "../data/Models/DataModels";
+// import PracticeContext from "../state/modules/PracticeData/PracticeContext";
+// import { requestTask } from "../state/modules/routine/store/actions";
+// import { recordPracticeDataRequest, savePracticeDataRequest } from "../state/modules/PracticeData/store/actions";
+import { ExerciseType, IPracticeData } from "../data/Models/DataModels";
 import { withStyle } from "../native_blocks/hoc/WithStyle";
 import { FontWeight } from "@shopify/react-native-skia";
 import { ThemeContext } from "../context/ThemeContext";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { RootState } from "../state/store";
 import { getTask } from "../state/routineSlice";
+import { recordPracticeData, savePracticeData } from "../state/practiceDataSlice";
 
 type RoundButtonProps = {
     next : () => void
@@ -67,13 +68,14 @@ const makeRoundedButtonStyle = (theme: any) => {
 
 const PracticeRoutine = () =>{
     // const { state, myDispatch } = useContext(Context);
-    const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
+    // const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
 
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
     const { primary, background } = useContext(ThemeContext);
     const dispatch = useAppDispatch()
 
     const task = useAppSelector((state: RootState) => state.routine.currentTask)
+    const currentSessionPracticeData = useAppSelector((state: RootState) => state.practice.currentSessionPracticeData)
 
     const Next = () => {
 
@@ -83,8 +85,7 @@ const PracticeRoutine = () =>{
 
         if(task != null)
         {
-            const recordMSG = recordPracticeDataRequest(task.exerciseType)
-            practiceDatadispatch(recordMSG);
+            dispatch(recordPracticeData([task.exerciseType, 1]))
         }
     }
 
@@ -92,9 +93,9 @@ const PracticeRoutine = () =>{
         React.useCallback(() => {
             Next();
             return() =>{
-                //console.log("triggering save of pd!! ")
-                const saveMSG = savePracticeDataRequest()
-                practiceDatadispatch(saveMSG);
+                console.log("triggering save of pd!! ")
+                // const saveMSG = savePracticeDataRequest()
+                dispatch(savePracticeData(currentSessionPracticeData));
             }
         }, [])
     ); 

@@ -1,23 +1,11 @@
-import React, { useContext, useEffect, useMemo } from 'react';
-import { StyleSheet, useWindowDimensions, View } from "react-native";
-
-
-//import { database } from "../../data/Database/database";
-
-import {PracticeData, ExerciseType} from "../../data/Models/DataModels";
+import React, { useContext } from 'react';
+import {  useWindowDimensions, View } from "react-native";
 
 import Graph from './Graph/Graph';
-import PracticeContext from '../../state/modules/PracticeData/PracticeContext';
-import { getPracticeDataRequest } from '../../state/modules/PracticeData/store/actions';
-import { useFocusEffect } from '@react-navigation/native';
-import { Text } from 'react-native-svg';
 import { ThemeContext } from '../../context/ThemeContext';
 
 const Padding = 10;
 
-type PracticeStatsProps = {
-  practice_data : PracticeData[],
-}
 
 const PracticeStats = () => {
 

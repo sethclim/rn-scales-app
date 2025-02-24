@@ -26,6 +26,7 @@ import { useAppDispatch, useAppSelector } from "../state/hooks";
 // import { GenerateRoutine } from "../state/modules/routine/store/reducer";
 import { generateRoutine, saveRoutines } from "../state/routineSlice";
 import { RootState } from "../state/store";
+import { getTodaysPracticedata } from "../state/practiceDataSlice";
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -46,7 +47,7 @@ const Generate = () => {
     const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
 
     // const { myDispatch } = useContext(Context);
-    const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
+    // const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const [showModal, setShowModal] = useState(false);
@@ -63,7 +64,7 @@ const Generate = () => {
     }
 
     useEffect(() => {
-        practiceDatadispatch(getTodaysPracticeDataRequest(new Date()))
+        dispatch(getTodaysPracticedata())
     }, [])
 
     const StartRoutine = () => {

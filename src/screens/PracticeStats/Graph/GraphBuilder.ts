@@ -1,5 +1,9 @@
 import {SkPath, SkPoint, Skia} from '@shopify/react-native-skia';
-import {ExerciseType, PracticeData} from '../../../data/Models/DataModels';
+import {
+  ExerciseType,
+  IAllPracticeData,
+  IPracticeData,
+} from '../../../data/Models/DataModels';
 
 export type PathSet = {
   line: SkPath;
@@ -39,12 +43,22 @@ export type GraphData = {
   labels: Labels[];
 };
 
-const getMaxY = (data: PracticeData[]) => {
+const getCounts = (pd: IPracticeData): Map<ExerciseType, number> => {
+  return new Map([
+    ['scale', pd.scale],
+    ['octave', pd.octave],
+    ['arpeggio', pd.arpeggio],
+    ['solidChord', pd.solidChord],
+    ['brokenChord', pd.brokenChord],
+  ]);
+};
+
+const getMaxY = (data: IPracticeData[]) => {
   if (data.length <= 0) return 10;
 
   let max_y = 0;
   data.map(practiceData => {
-    practiceData.getCounts().forEach(count => {
+    getCounts(practiceData).forEach(count => {
       if (count > max_y) max_y = count;
     });
   });
@@ -86,10 +100,10 @@ const PADDING = 20;
 const GRID_RIGHT_MARGIN = 30;
 const GRID_BOTTOM_MARGIN = 50;
 
-const orderPracticeDataArrys = (dataMap: Map<GRAPH_ID, PracticeData[]>) => {
-  const ret: Array<PracticeData[]> = [];
-  const w = dataMap.get('Week');
-  const y = dataMap.get('Year');
+const orderPracticeDataArrys = (dataMap: IAllPracticeData) => {
+  const ret: Array<IPracticeData[]> = [];
+  const w = dataMap.Week;
+  const y = dataMap.Year;
 
   if (w !== undefined) {
     ret.push(w);
@@ -200,9 +214,9 @@ export class GraphGenerator {
     return gridLines;
   };
 
-  GetAllExercises = (pd: PracticeData, index: number, jIndex: number) => {
+  GetAllExercises = (pd: IPracticeData, index: number, jIndex: number) => {
     const scale_y = this.HEIGHT / this.max_y;
-    for (let [exercise, count] of pd.getCounts()) {
+    for (let [exercise, count] of getCounts(pd)) {
       // if (count <= 0) continue;
 
       //could early return here
@@ -210,7 +224,7 @@ export class GraphGenerator {
         this.ex.set(exercise, []);
       }
 
-      const x = getX(this.dateXPositionMap, index, pd.getDate());
+      const x = getX(this.dateXPositionMap, index, new Date(pd.date));
       const y = getY(count, scale_y, this.HEIGHT, PADDING);
 
       const newPlot = createPlot();
@@ -226,7 +240,7 @@ export class GraphGenerator {
     }
   };
 
-  getGraph(width: number, height: number, data: Map<GRAPH_ID, PracticeData[]>) {
+  getGraph(width: number, height: number, data: IAllPracticeData) {
     this.WIDTH = width;
     this.HEIGHT = height;
 

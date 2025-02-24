@@ -1,4 +1,4 @@
-import {ExerciseType, PracticeData} from '../../../../data/Models/DataModels';
+import {ExerciseType, IPracticeData} from '../../../../data/Models/DataModels';
 import {IAction} from '../../../types';
 
 export enum PracticeTypes {

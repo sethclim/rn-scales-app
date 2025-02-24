@@ -1,15 +1,15 @@
 import {Dispatch} from 'react';
-import {PracticeData} from '../../../../data/Models/DataModels';
+import {IPracticeData} from '../../../../data/Models/DataModels';
 import {IAction} from '../../../types';
 import {GRAPH_ID} from '../../../../screens/PracticeStats/Graph/GraphBuilder';
 
 export interface IState {
   error: string;
   loading: boolean;
-  currentSessionPracticeData: PracticeData;
+  currentSessionPracticeData: IPracticeData;
   savingPracticeData: any;
   practiceDatadispatch: Dispatch<IAction>;
-  practiceData: Map<GRAPH_ID, PracticeData[]>;
+  practiceData: Map<GRAPH_ID, IPracticeData[]>;
 }
 
 const initialState: IState = {

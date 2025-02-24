@@ -1,11 +1,15 @@
 // store.js
-import { configureStore } from '@reduxjs/toolkit';
-import routineReducer from './routineSlice';
 import { useDispatch } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+
+import routineReducer from './routineSlice';
+import practiceDataReducer from './practiceDataSlice';
+
 
 const store = configureStore({
   reducer: {
-    routine: routineReducer
+    routine: routineReducer,
+    practice: practiceDataReducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
 });
