@@ -1,12 +1,12 @@
 import React, { FunctionComponent, useContext, useEffect, useState } from "react"
 
-import Context from "../state/modules/routine/context";
-import { generateRequest,saveRoutine } from "../state/modules/routine/store/actions";
+// import Context from "../state/modules/routine/context";
+// import { generateRequest,saveRoutine } from "../state/modules/routine/store/actions";
 
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { ExerciseType } from "../data/Models/DataModels";
+import { ExerciseType, Routine } from "../data/Models/DataModels";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { getTodaysPracticeDataRequest } from "../state/modules/PracticeData/store/actions";
 import { Box, } from "../native_blocks/primatives/Box";
@@ -21,6 +21,11 @@ import { ThemeContext } from "../context/ThemeContext";
 import { Card } from "../components/Card";
 import { StyledTextInputField } from "../native_blocks/TextInput"
 import { MiniTextButton } from "../components/MiniTextButton";
+import { useAppDispatch, useAppSelector } from "../state/hooks";
+// import { RootState } from "../state/store";
+// import { GenerateRoutine } from "../state/modules/routine/store/reducer";
+import { generateRoutine, saveRoutines } from "../state/routineSlice";
+import { RootState } from "../state/store";
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -40,13 +45,18 @@ const Generate = () => {
     const [selectedTypes, setSelectedTypes] = React.useState<string []>([]);    
     const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
 
-    const { myDispatch } = useContext(Context);
+    // const { myDispatch } = useContext(Context);
     const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const [showModal, setShowModal] = useState(false);
 
     const { background, primary, secondaryBackground } = useContext(ThemeContext);
+
+    // const count = useAppSelector((state: RootState) => state.routine.value)
+    const dispatch = useAppDispatch()
+
+    const generatedRoutine = useAppSelector((state: RootState) => state.routine.generatedRoutine)
 
     const CheckValidRoutineConfiguration = () : boolean => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
@@ -60,9 +70,9 @@ const Generate = () => {
 
         console.log("WERID " + JSON.stringify([selectedRoots, selectedTypes, selectedExercises]))
 
-        const generateReq = generateRequest([selectedRoots, selectedTypes, selectedExercises])
+        // const generateReq = generateRequest([selectedRoots, selectedTypes, selectedExercises])
 
-        myDispatch(generateReq)
+        dispatch(generateRoutine([selectedRoots, selectedTypes, selectedExercises]))
 
         if(CheckValidRoutineConfiguration())
             navigation.navigate('Practice')
@@ -73,11 +83,22 @@ const Generate = () => {
 
     const SaveRoutine = (saveName : string) => {
 
-        const saveRoutineMSG = saveRoutine([selectedRoots, selectedTypes, selectedExercises, saveName])
+        // const saveRoutineMSG = saveRoutine([selectedRoots, selectedTypes, selectedExercises, saveName])
 
-        console.log("saveRoutineMSG " + JSON.stringify(saveRoutineMSG))
+        // console.log("saveRoutineMSG " + JSON.stringify(saveRoutineMSG))
 
-        myDispatch(saveRoutineMSG) 
+        // dispatch(SaveRoutine()) 
+
+        dispatch(generateRoutine([selectedRoots, selectedTypes, selectedExercises]))
+
+        const routineToSave: Routine = {
+            id: '-1',
+            title: saveName,
+            RoutineItems: generatedRoutine, //generatedRoutine
+            createdAt: '99',
+          };
+
+        dispatch(saveRoutines(routineToSave))
 
         setShowModal(false);
     }

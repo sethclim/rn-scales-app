@@ -11,28 +11,34 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import { StyleSheet, Text } from 'react-native'
 
 import  SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
-import Context from '../../state/modules/routine/context';
+// import Context from '../../state/modules/routine/context';
 import { requestAllRoutines } from '../../state/modules/routine/store/actions';
 import { useFocusEffect } from '@react-navigation/native';
 import { ThemeContext } from '../../context/ThemeContext';
+import { useAppDispatch, useAppSelector } from '../../state/hooks';
+import { getAllRoutines } from '../../state/routineSlice';
+import { RootState } from '../../state/store';
 
 const SavedRoutines  = () => {
 
   // const [routines, setRoutines] = useState<Routine[]>()
-  const { myDispatch, state } = useContext(Context);
+  // const { myDispatch, state } = useContext(Context);
 
   const { primary, background, mode } = useContext(ThemeContext);
+  const dispatch = useAppDispatch()
 
-  const DoSideEffect = () => {
-    if (myDispatch == null)
-      return
+  // const DoSideEffect = () => {
+  //   // if (myDispatch == null)
+  //   //   return
 
-    myDispatch(requestAllRoutines())
-  }
+  //   dispatch(getAllRoutines())
+  // }
+
+  const routines = useAppSelector((state: RootState) => state.routine.routines)
 
   useFocusEffect(
     React.useCallback(() => {
-        DoSideEffect();
+      dispatch(getAllRoutines())
     }, [])
   )
 
@@ -52,7 +58,7 @@ const SavedRoutines  = () => {
   return (
     <Box p={30} style={{backgroundColor: background!}}>
       <SwipeListView<Routine> 
-        data={state.routines} 
+        data={routines} 
         renderItem={ (data, rowMap) => (
           <SavedRoutineRow routine={data.item} routineItems={data.item.RoutineItems} index={0}  />
         )} 

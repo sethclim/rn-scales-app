@@ -125,7 +125,7 @@ export class Database {
     return exportRoutines;
   }
 
-  async getRoutineItems(routineId: number) {
+  async getRoutineItems(routineId: string) {
     console.log('getRoutineItems HERE');
 
     if (this.db == null) {

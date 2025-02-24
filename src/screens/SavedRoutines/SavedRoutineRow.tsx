@@ -9,34 +9,38 @@ import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../../navigation/types";
 
 //Project
-import { resumeRoutine } from "../../state/modules/routine/store/actions";
+// import { resumeRoutine } from "../../state/modules/routine/store/actions";
 
 import { RowProps } from "./types";
 import {RoutineItem} from "../../data/Models/DataModels";
-import Context from "../../state/modules/routine/context";
+// import Context from "../../state/modules/routine/context";
 
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { Text } from "react-native";
 import { ThemeContext } from "../../context/ThemeContext";
+import { useAppDispatch } from "../../state/hooks";
+import { resumeRoutine } from "../../state/routineSlice";
 
 
 export const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index, routineItems}) => {  
 
-    const { myDispatch } = useContext(Context);
+    // const { myDispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
     const { primary, background, secondary, secondaryBackground, mode } = useContext(ThemeContext);
 
+    const dispatch = useAppDispatch()
+
     const StartSavedRoutine = async () => {
-        console.log("StartSavedRoutine ")
+        // console.log("StartSavedRoutine ")
 
 
-        const resumeMSG = resumeRoutine(routine.id)   
-        console.log("resumeMSG " + JSON.stringify(resumeMSG))
+        // const resumeMSG = resumeRoutine(routine.id)   
+        // console.log("resumeMSG " + JSON.stringify(resumeMSG))
 
-        if (myDispatch == null)
-          return
+        // // if (myDispatch == null)
+        // //   return
 
-        await myDispatch(resumeMSG);
+        await dispatch(resumeRoutine(routine.id));
         navigation.navigate('Practice')
     }
   

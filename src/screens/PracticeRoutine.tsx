@@ -10,7 +10,7 @@ import { TextButton } from "../components/TextButton";
 
 import { VStack } from "../native_blocks"
 
-import Context from "../state/modules/routine/context";
+// import Context from "../state/modules/routine/context";
 import PracticeContext from "../state/modules/PracticeData/PracticeContext";
 import { requestTask } from "../state/modules/routine/store/actions";
 import { recordPracticeDataRequest, savePracticeDataRequest } from "../state/modules/PracticeData/store/actions";
@@ -18,6 +18,9 @@ import { ExerciseType, PracticeData } from "../data/Models/DataModels";
 import { withStyle } from "../native_blocks/hoc/WithStyle";
 import { FontWeight } from "@shopify/react-native-skia";
 import { ThemeContext } from "../context/ThemeContext";
+import { useAppSelector, useAppDispatch } from "../state/hooks";
+import { RootState } from "../state/store";
+import { getTask } from "../state/routineSlice";
 
 type RoundButtonProps = {
     next : () => void
@@ -63,25 +66,24 @@ const makeRoundedButtonStyle = (theme: any) => {
 
 
 const PracticeRoutine = () =>{
-    const { state, myDispatch } = useContext(Context);
+    // const { state, myDispatch } = useContext(Context);
     const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
 
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
     const { primary, background } = useContext(ThemeContext);
+    const dispatch = useAppDispatch()
 
+    const task = useAppSelector((state: RootState) => state.routine.currentTask)
 
     const Next = () => {
 
-        const requestMSG = requestTask([])
+        // const requestMSG = requestTask([])
 
-        if (myDispatch == null)
-            return
+        dispatch(getTask(null))
 
-        myDispatch(requestMSG);
-
-        if(state.currentTask != null)
+        if(task != null)
         {
-            const recordMSG = recordPracticeDataRequest(state.currentTask.exerciseType)
+            const recordMSG = recordPracticeDataRequest(task.exerciseType)
             practiceDatadispatch(recordMSG);
         }
     }
@@ -97,15 +99,16 @@ const PracticeRoutine = () =>{
         }, [])
     ); 
 
+
     return(
         // bg="nord.background"
         <Box flexMain={true} p={5} style={{backgroundColor: background!}} >
             {/* <Center flex={1}> */}
             {
-                state.currentTask != null ? 
+                task != null ? 
                 <>
                     <VStack flexMain={false}  height={170}>
-                        <Text style={{color: primary, fontSize: 40, textAlign: "center"}}>{state.currentTask.displayItem}</Text>
+                        <Text style={{color: primary, fontSize: 40, textAlign: "center"}}>{task.displayItem}</Text>
                     </VStack>
                     <StyledRoundButton next={Next} />
                 </>
