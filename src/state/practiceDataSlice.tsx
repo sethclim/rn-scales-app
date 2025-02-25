@@ -1,7 +1,7 @@
-import { ExerciseType, IAllPracticeData, IPracticeData } from "../data/Models/DataModels";
-import { GRAPH_ID } from "../screens/PracticeStats/Graph/GraphBuilder";
+import { IAllPracticeData, IPracticeData } from "../data/Models/DataModels";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import dbInstance from "../data/Database/database";
+import { RootState } from "./store";
 
 
 export interface IPracticeDataState {
@@ -26,34 +26,15 @@ export const getAllPracticedata = createAsyncThunk("practice/getAllPracticeData"
     return await dbInstance.getAllPracticeData(new Date());
 })
 
-export const savePracticeData = createAsyncThunk("practice/savePracticeData", async(practiceData : IPracticeData) => {
-    return await dbInstance.savePracticedata(practiceData);
+export const savePracticeData = createAsyncThunk("practice/savePracticeData", async(empty : any, { dispatch, getState }) => {
+    const state = getState() as RootState;
+    
+    return await dbInstance.savePracticedata(state.practice.currentSessionPracticeData);
 })
 
 export const getTodaysPracticedata = createAsyncThunk("practice/getTodaysPracticedata", async() => {
     return await dbInstance.getTodaysPracticeData(new Date());
 })
-
-const updateValues = (currentSessionPracticeData : IPracticeData, ex: ExerciseType, amt: number) => {
-  switch (ex) {
-    case 'scale':
-      currentSessionPracticeData.scale += amt;
-      break;
-    case 'octave':
-      currentSessionPracticeData.octave += amt;
-      break;
-    case 'arpeggio':
-      currentSessionPracticeData.arpeggio += amt;
-      break;
-    case 'solidChord':
-      currentSessionPracticeData.solidChord += amt;
-      break;
-    case 'brokenChord':
-      currentSessionPracticeData.brokenChord += amt;
-      break;
-  }
-}
-
 
 //Reducer
 const practiceDataSlice = createSlice({
@@ -61,33 +42,23 @@ const practiceDataSlice = createSlice({
     initialState,
     reducers: {
       recordPracticeData: (state, action) => {      
-        // if (state.currentSessionPracticeData === null) {
-        //     state.currentSessionPracticeData = new PracticeData()
-        //     state.currentSessionPracticeData.date = new Date().toString();
-        // }
-        
-
-        updateValues(state.currentSessionPracticeData, action.payload[0], action.payload[1])
-      
-        // const cloneCurrentPracticeData = new PracticeData(date);
-      
-        // currentPracticeData?.getCounts().forEach((value, key) => {
-        //   cloneCurrentPracticeData.updateValues(key, value);
-        // });
-      
-        // cloneCurrentPracticeData.updateValues(stepData, 1);
-      
-        // const currentCount = currentPracticeData.Counts.get(stepData);
-        // console.log('RecordPracticeData currentCount ' + currentCount);
-      
-        // cloneCurrentPracticeData.Counts.set(stepData, (currentCount ?? 0) + 1);
-      
-        // console.log(
-        //   'RecordPracticeData cloneCurrentPracticeData ' +
-        //     JSON.stringify(cloneCurrentPracticeData),
-        // );
-      
-        // return cloneCurrentPracticeData;
+        switch (action.payload[0]) {
+          case 'scale':
+            state.currentSessionPracticeData.scale += action.payload[1];
+            break;
+          case 'octave':
+            state.currentSessionPracticeData.octave += action.payload[1];
+            break;
+          case 'arpeggio':
+            state.currentSessionPracticeData.arpeggio += action.payload[1];
+            break;
+          case 'solidChord':
+            state.currentSessionPracticeData.solidChord += action.payload[1];
+            break;
+          case 'brokenChord':
+            state.currentSessionPracticeData.brokenChord += action.payload[1];
+            break;
+        }
       }
     },
     extraReducers: (builder) => {

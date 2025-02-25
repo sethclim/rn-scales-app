@@ -47,9 +47,18 @@ export const getAllRoutines = createAsyncThunk("routine/getAllRoutines", async()
   return res
 })
 
-export const saveRoutines = createAsyncThunk("routine/saveRoutine", async(routine : Routine) => {
- 
-  const res = await dbInstance.saveRoutine(routine);
+export const saveRoutines = createAsyncThunk("routine/saveRoutine", async(options : [string, string[], string[], ExerciseType[]], { dispatch, getState }) => {
+  dispatch(routineSlice.actions.generateRoutine(options.slice(1, 4)));
+  const state = getState() as RootState;
+
+  const routineToSave: Routine = {
+    id: '-1',
+    title: options[0],
+    RoutineItems: state.routine.generatedRoutine, //generatedRoutine
+    createdAt: '99',
+  };
+
+  const res = await dbInstance.saveRoutine(routineToSave);
   return res
 })
 
@@ -61,14 +70,14 @@ export const deleteRoutine = createAsyncThunk("routine/saveRoutine", async(id : 
   return await dbInstance.deleteRoutine(id);
 }) 
 
-
 //Reducer
 const routineSlice = createSlice({
     name: "routine",
     initialState,
     reducers: {
       generateRoutine: (state, action) => {
-        //console.log('Calling GenerateRoutine');
+        state.generatedRoutine = []
+        console.log(`Calling GenerateRoutine ${state.generatedRoutine} !`);
       
         const roots = action.payload[0];
         const types = action.payload[1];

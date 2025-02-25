@@ -46,18 +46,13 @@ const Generate = () => {
     const [selectedTypes, setSelectedTypes] = React.useState<string []>([]);    
     const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
 
-    // const { myDispatch } = useContext(Context);
-    // const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const [showModal, setShowModal] = useState(false);
 
     const { background, primary, secondaryBackground } = useContext(ThemeContext);
 
-    // const count = useAppSelector((state: RootState) => state.routine.value)
     const dispatch = useAppDispatch()
-
-    const generatedRoutine = useAppSelector((state: RootState) => state.routine.generatedRoutine)
 
     const CheckValidRoutineConfiguration = () : boolean => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
@@ -69,9 +64,7 @@ const Generate = () => {
 
     const StartRoutine = () => {
 
-        console.log("WERID " + JSON.stringify([selectedRoots, selectedTypes, selectedExercises]))
-
-        // const generateReq = generateRequest([selectedRoots, selectedTypes, selectedExercises])
+        console.log("StartRoutine " + JSON.stringify([selectedRoots, selectedTypes, selectedExercises]))
 
         dispatch(generateRoutine([selectedRoots, selectedTypes, selectedExercises]))
 
@@ -83,24 +76,7 @@ const Generate = () => {
     }
 
     const SaveRoutine = (saveName : string) => {
-
-        // const saveRoutineMSG = saveRoutine([selectedRoots, selectedTypes, selectedExercises, saveName])
-
-        // console.log("saveRoutineMSG " + JSON.stringify(saveRoutineMSG))
-
-        // dispatch(SaveRoutine()) 
-
-        dispatch(generateRoutine([selectedRoots, selectedTypes, selectedExercises]))
-
-        const routineToSave: Routine = {
-            id: '-1',
-            title: saveName,
-            RoutineItems: generatedRoutine, //generatedRoutine
-            createdAt: '99',
-          };
-
-        dispatch(saveRoutines(routineToSave))
-
+        dispatch(saveRoutines([saveName, selectedRoots, selectedTypes, selectedExercises]))
         setShowModal(false);
     }
 

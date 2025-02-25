@@ -75,11 +75,8 @@ const PracticeRoutine = () =>{
     const dispatch = useAppDispatch()
 
     const task = useAppSelector((state: RootState) => state.routine.currentTask)
-    const currentSessionPracticeData = useAppSelector((state: RootState) => state.practice.currentSessionPracticeData)
 
     const Next = () => {
-
-        // const requestMSG = requestTask([])
 
         dispatch(getTask(null))
 
@@ -93,9 +90,7 @@ const PracticeRoutine = () =>{
         React.useCallback(() => {
             Next();
             return() =>{
-                console.log("triggering save of pd!! ")
-                // const saveMSG = savePracticeDataRequest()
-                dispatch(savePracticeData(currentSessionPracticeData));
+                dispatch(savePracticeData(null));
             }
         }, [])
     ); 

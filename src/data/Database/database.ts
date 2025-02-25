@@ -151,6 +151,8 @@ export class Database {
       return;
     }
 
+    console.log(`practiceData ${JSON.stringify(practiceData)}`);
+
     const string_date = dateToString(new Date(practiceData.date));
 
     // const time_stamp = Math.round(practiceData.getDate().valueOf() / 1000);
@@ -158,7 +160,7 @@ export class Database {
     const res = await this.db.getFirstAsync<DBPracticeDataGrouped>(
       'SELECT * FROM PracticeData WHERE date = $d',
       {
-        $d: practiceData.date,
+        $d: string_date,
       },
     );
 

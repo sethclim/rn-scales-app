@@ -1,4 +1,5 @@
 {
   "name": "ScalesApp",
-  "displayName": "ScalesApp"
+  "displayName": "ScalesApp",
+  "newArchEnabled" : true
 }
