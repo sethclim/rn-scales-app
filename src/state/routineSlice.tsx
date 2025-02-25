@@ -3,6 +3,7 @@ import { RootState } from "./store"
 import { ExerciseType, Routine, RoutineItem } from "../data/Models/DataModels";
 import dbInstance from "../data/Database/database";
 import { Exercises } from "../screens/Generate";
+import { act } from "react";
 
 // // Define a type for the slice state
 // interface CounterState {
@@ -76,6 +77,7 @@ const routineSlice = createSlice({
     initialState,
     reducers: {
       generateRoutine: (state, action) => {
+        console.log(`Calling GenerateRoutine ${JSON.stringify(action.payload)} !`);
         state.generatedRoutine = []
         console.log(`Calling GenerateRoutine ${state.generatedRoutine} !`);
       

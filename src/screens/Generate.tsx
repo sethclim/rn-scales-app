@@ -42,9 +42,9 @@ export const Exercises = new Map<ExerciseType, string>([
 
 const Generate = () => {
     //State
-    const [selectedRoots, setSelectedRoots] = React.useState(["C", "D", "E", "F", "G", "A", "B"]);    
-    const [selectedTypes, setSelectedTypes] = React.useState<string []>([]);    
-    const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
+    // const [selectedRoots, setSelectedRoots] = React.useState(["C", "D", "E", "F", "G", "A", "B"]);    
+    // const [selectedTypes, setSelectedTypes] = React.useState<string []>([]);    
+    // const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
 
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
@@ -54,7 +54,7 @@ const Generate = () => {
 
     const dispatch = useAppDispatch()
 
-    const CheckValidRoutineConfiguration = () : boolean => {
+    const CheckValidRoutineConfiguration = (selectedRoots : string[], selectedTypes : string[], selectedExercises : any) : boolean => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
     }
 
@@ -63,19 +63,58 @@ const Generate = () => {
     }, [])
 
     const StartRoutine = () => {
+        const selectedRoots : string[] = []
+        const selectedTypes : string[] = []
+        const selectedExercises : ExerciseType[] = []
 
-        console.log("StartRoutine " + JSON.stringify([selectedRoots, selectedTypes, selectedExercises]))
+        const array3 = NATURAL_ROOTS.concat(ACCIDENTAL_ROOTS);
+        manageRoots.forEach((type, index) => {
+            if(type)
+                selectedRoots.push(array3[index])
+        });
+        
+        manageTypes.forEach((type, index) => {
+            if(type)
+                selectedTypes.push(SCALE_TYPES[index])
+        });
 
-        dispatch(generateRoutine([selectedRoots, selectedTypes, selectedExercises]))
+        manageExercise.forEach((type, index) =>{
+            if(type)
+                selectedExercises.push(Array.from(Exercises.keys())[index])
+        });
 
-        if(CheckValidRoutineConfiguration())
+        // console.log("StartRoutine " + JSON.stringify([selectedRoots, selectedTypes, selectedExercises]))
+        
+        if(CheckValidRoutineConfiguration(selectedRoots, selectedTypes, selectedExercises))
+        {    
+            dispatch(generateRoutine([selectedRoots, selectedTypes, selectedExercises]))
             navigation.navigate('Practice')
+        }
         else
             showAlert()
             // setIsOpen(!isOpen)
     }
 
     const SaveRoutine = (saveName : string) => {
+        const selectedRoots : string[] = []
+        const selectedTypes : string[] = []
+        const selectedExercises : ExerciseType[] = []
+
+        const array3 = NATURAL_ROOTS.concat(ACCIDENTAL_ROOTS);
+        manageRoots.forEach((type, index) => {
+            if(type)
+                selectedRoots.push(array3[index])
+        });
+        
+        manageTypes.forEach((type, index) => {
+            if(type)
+                selectedTypes.push(SCALE_TYPES[index])
+        });
+
+        manageExercise.forEach((type, index) =>{
+            if(type)
+                selectedExercises.push(Array.from(Exercises.keys())[index])
+        });
         dispatch(saveRoutines([saveName, selectedRoots, selectedTypes, selectedExercises]))
         setShowModal(false);
     }
@@ -92,62 +131,20 @@ const Generate = () => {
 
     const onClickNaturalRoot = (index : number, root : string) => {
         let temp = [...manageRoots];
-        const action = !temp[index]
-        temp[index] = action
+        temp[index] = !temp[index]
         setManageRoots(temp)
-
-        let localRoots = [...selectedRoots]
-
-        if (action)
-        {
-            localRoots.push(root)
-        }
-        else
-        {
-            const idx = localRoots.indexOf(root)
-            localRoots = localRoots.splice(idx, 1)
-        }
-        setSelectedRoots(localRoots)
     }
 
-    const onClickSelectType = (index : number, type : string) => {
+    const onClickSelectType = (index : number) => {
         let temp = [...manageTypes];
-        const action = !temp[index]
         temp[index] = !temp[index]
         setManageTypes(temp)
-
-        let localTypes = [...selectedTypes]
-
-        if (action)
-        {
-            localTypes.push(type)
-        }
-        else
-        {
-            const idx = localTypes.indexOf(type)
-            localTypes = localTypes.splice(idx, 1)
-        }
-        setSelectedTypes(localTypes)
     }
 
     const onClickSelectExercise = (index : number, exercise : ExerciseType) => {
         let temp = [...manageExercise];
-        const action = !temp[index]
         temp[index] = !temp[index]
         setManageExercise(temp)
-
-        let localExercise = [...selectedExercises]
-
-        if (action)
-        {
-            localExercise.push(exercise)
-        }
-        else
-        {
-            const idx = localExercise.indexOf(exercise)
-            localExercise = localExercise.splice(idx, 1)
-        }
-        setSelectedExercises(localExercise)
     }
 
     const showAlert = () =>
@@ -219,7 +216,7 @@ const Generate = () => {
                                     iconSize={20} 
                                     iconColor="white" 
                                     key={i} 
-                                    onPress={() => onClickSelectType(i, scaleType)} 
+                                    onPress={() => onClickSelectType(i)} 
                                     checked={manageTypes[i]} 
                                     title={scaleType} />
                             )})
