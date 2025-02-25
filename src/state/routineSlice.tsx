@@ -50,8 +50,9 @@ export const resumeRoutine = createAsyncThunk("routine/resumeRoutine", async(id 
   return await dbInstance.getRoutineItems(id);
 })
 
-export const deleteRoutine = createAsyncThunk("routine/saveRoutine", async(id : string) => {
-  return await dbInstance.deleteRoutine(id);
+export const deleteRoutine = createAsyncThunk("routine/saveRoutine", async(id : string, { dispatch, getState }) => {
+  await dbInstance.deleteRoutine(id);
+  dispatch(routineSlice.actions.removeDeletedRoutineImmediately(id));
 }) 
 
 //Reducer
@@ -106,7 +107,24 @@ const routineSlice = createSlice({
       getTask : (state, action) => {
         const index = Math.floor(Math.random() * state.generatedRoutine.length);
         state.currentTask = state.generatedRoutine.splice(index, 1)[0];
-      }      
+      },
+      removeDeletedRoutineImmediately : (state, action) => {
+        const temp = [...state.routines]
+        let itemIndex = null
+        temp.forEach((item, index) => {
+          if(item.id == action.payload)
+          {
+            itemIndex = index;
+          }
+        })
+
+        if (itemIndex === null)
+          return
+
+        temp.splice(itemIndex, 1)
+
+        state.routines = temp
+      },      
     },
     extraReducers: (builder) => {
         builder
