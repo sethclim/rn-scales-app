@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Canvas,  createPicture, Path, Picture, Skia, useFont, SkPath } from "@shopify/react-native-skia";
 import {  SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Selection } from "./Selection";
-import { ExercisesPathSetMap, GraphGenerator, Labels, PathSet } from "./GraphBuilder";
+import { ExercisesPathSetMap, GraphData, GraphGenerator, Labels, PathSet } from "./GraphBuilder";
 
 import { useFocusEffect } from "@react-navigation/native";
 import { useAppDispatch, useAppSelector } from "../../../state/hooks";
@@ -144,6 +144,13 @@ const RenderLabels = ({labels, index} : RenderLabelsProps) => {
   )
 }
 
+const initialGraph : GraphData = {
+  exercises: new Map(),
+  grids: [],
+  titles: [],
+  labels: []
+}
+
 const Graph = ({width, height}: GraphProps)  => {
     const dispatch = useAppDispatch()
     const practiceData = useAppSelector((state: RootState) => state.practice.practiceData)
@@ -158,17 +165,14 @@ const Graph = ({width, height}: GraphProps)  => {
       }, [])
     ); 
     
-    const GG = new GraphGenerator();
-    const [currentGraph, setCurrentGraph] = useState(() =>
-      GG.getGraph(width, height, practiceData)
-    );
-
+    const [currentGraph, setCurrentGraph] = useState<GraphData>(initialGraph);
+    
     const transition = useSharedValue(0);
     const next    = useSharedValue(0);
     const current = useSharedValue(0);
-
+    
     useEffect(() => {
-
+      const GG = new GraphGenerator();
       setCurrentGraph(GG.getGraph(width, height, practiceData))
     }, [practiceData])
 

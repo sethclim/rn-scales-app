@@ -146,6 +146,11 @@ export class GraphGenerator {
   grids: SkPath[] = [];
   labels: Labels[] = [];
 
+  constructor() {
+    this.grids = [];
+    this.labels = [];
+  }
+
   getGridXPositions = () => {
     //reset this for next iteration of the loop
     this.dateXPositionMap = {};
@@ -210,8 +215,7 @@ export class GraphGenerator {
         i * scale_y + PADDING,
       );
     }
-
-    return gridLines;
+    this.grids.push(gridLines);
   };
 
   GetAllExercises = (pd: IPracticeData, index: number, jIndex: number) => {
@@ -240,7 +244,7 @@ export class GraphGenerator {
     }
   };
 
-  getGraph(width: number, height: number, data: IAllPracticeData) {
+  getGraph(width: number, height: number, data: IAllPracticeData): GraphData {
     this.WIDTH = width;
     this.HEIGHT = height;
 
@@ -264,7 +268,7 @@ export class GraphGenerator {
       let max_y = getMaxY(practiceDatas);
       this.max_y = Math.ceil(max_y / 10) * 10;
 
-      this.grids.push(this.buildGrid());
+      this.buildGrid();
 
       const xL = this.buildXAxisLabels(i);
       const yL = this.buildYAxisLabels();
