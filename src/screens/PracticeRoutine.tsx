@@ -1,22 +1,17 @@
-import React, { useContext, useEffect, useState } from "react"
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import React, { useContext } from "react"
+import { Text, TouchableOpacity } from "react-native";
 
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 
-import { Box, } from "../native_blocks/primatives/Box";
+import { Box } from "../native_blocks/primatives/Box";
 import { TextButton } from "../components/TextButton";
 
 import { VStack } from "../native_blocks"
 
-// import Context from "../state/modules/routine/context";
-// import PracticeContext from "../state/modules/PracticeData/PracticeContext";
-// import { requestTask } from "../state/modules/routine/store/actions";
-// import { recordPracticeDataRequest, savePracticeDataRequest } from "../state/modules/PracticeData/store/actions";
-import { ExerciseType, IPracticeData } from "../data/Models/DataModels";
 import { withStyle } from "../native_blocks/hoc/WithStyle";
-import { FontWeight } from "@shopify/react-native-skia";
+
 import { ThemeContext } from "../context/ThemeContext";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { RootState } from "../state/store";
@@ -67,8 +62,6 @@ const makeRoundedButtonStyle = (theme: any) => {
 
 
 const PracticeRoutine = () =>{
-    // const { state, myDispatch } = useContext(Context);
-    // const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
 
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
     const { primary, background } = useContext(ThemeContext);

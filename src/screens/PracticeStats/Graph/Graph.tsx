@@ -3,8 +3,7 @@ import { Canvas,  createPicture, Path, Picture, Skia, useFont, SkPath } from "@s
 import {  SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Selection } from "./Selection";
 import { ExercisesPathSetMap, GraphGenerator, Labels, PathSet } from "./GraphBuilder";
-// // import PracticeContext from "../../../state/modules/PracticeData/PracticeContext";
-// import { getPracticeDataRequest } from "../../../state/modules/PracticeData/store/actions";
+
 import { useFocusEffect } from "@react-navigation/native";
 import { useAppDispatch, useAppSelector } from "../../../state/hooks";
 import { getAllPracticedata } from "../../../state/practiceDataSlice";
@@ -146,9 +145,6 @@ const RenderLabels = ({labels, index} : RenderLabelsProps) => {
 }
 
 const Graph = ({width, height}: GraphProps)  => {
-
-  // const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
-
     const dispatch = useAppDispatch()
     const practiceData = useAppSelector((state: RootState) => state.practice.practiceData)
 

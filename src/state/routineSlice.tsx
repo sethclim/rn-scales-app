@@ -1,25 +1,8 @@
-import { CaseReducer, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "./store"
 import { ExerciseType, Routine, RoutineItem } from "../data/Models/DataModels";
 import dbInstance from "../data/Database/database";
 import { Exercises } from "../screens/Generate";
-import { act } from "react";
-
-// // Define a type for the slice state
-// interface CounterState {
-//   value: number,
-//   status: string,
-//   entities: [],
-//   errors: []
-// }
-
-// // Define the initial state using that type
-// const initialState: CounterState = {
-//   value: 0,
-//   status: "idle",
-//   entities: [],
-//   errors: []
-// }
 
 export interface IRoutineState {
   error: string;

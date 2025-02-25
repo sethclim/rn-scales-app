@@ -1,14 +1,10 @@
 import React, { FunctionComponent, useContext, useEffect, useState } from "react"
 
-// import Context from "../state/modules/routine/context";
-// import { generateRequest,saveRoutine } from "../state/modules/routine/store/actions";
-
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { ExerciseType, Routine } from "../data/Models/DataModels";
-import PracticeContext from "../state/modules/PracticeData/PracticeContext";
-import { getTodaysPracticeDataRequest } from "../state/modules/PracticeData/store/actions";
+import { ExerciseType } from "../data/Models/DataModels";
+
 import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack } from "../native_blocks/";
 import { Modal, Alert, Text,  } from "react-native";
@@ -21,11 +17,10 @@ import { ThemeContext } from "../context/ThemeContext";
 import { Card } from "../components/Card";
 import { StyledTextInputField } from "../native_blocks/TextInput"
 import { MiniTextButton } from "../components/MiniTextButton";
-import { useAppDispatch, useAppSelector } from "../state/hooks";
-// import { RootState } from "../state/store";
-// import { GenerateRoutine } from "../state/modules/routine/store/reducer";
+import { useAppDispatch } from "../state/hooks";
+
 import { generateRoutine, saveRoutines } from "../state/routineSlice";
-import { RootState } from "../state/store";
+
 import { getTodaysPracticedata } from "../state/practiceDataSlice";
 
 //Options
@@ -41,10 +36,6 @@ export const Exercises = new Map<ExerciseType, string>([
 ]);
 
 const Generate = () => {
-    //State
-    // const [selectedRoots, setSelectedRoots] = React.useState(["C", "D", "E", "F", "G", "A", "B"]);    
-    // const [selectedTypes, setSelectedTypes] = React.useState<string []>([]);    
-    // const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
 
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 

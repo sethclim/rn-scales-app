@@ -42,6 +42,9 @@ const practiceDataSlice = createSlice({
     initialState,
     reducers: {
       recordPracticeData: (state, action) => {      
+        if(state.currentSessionPracticeData == null)
+          state.currentSessionPracticeData = {date: "", Total: 0, scale: 0, octave: 0, arpeggio: 0, solidChord : 0, brokenChord: 0}
+
         switch (action.payload[0]) {
           case 'scale':
             state.currentSessionPracticeData.scale += action.payload[1];
