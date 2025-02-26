@@ -72,8 +72,7 @@ const PracticeRoutine = () =>{
     const generatedRoutine = useAppSelector((state: RootState) => state.routine.generatedRoutine)
 
     const [progress, setProgress] = useState<number>(0)
-
-    const [progressAmt, setProgressAmt] = useState<number>(1)
+    const [totalPracticeNumber, setTotalPracticeNumber] = useState<number>(0)
 
     const Next = () => {
 
@@ -83,14 +82,14 @@ const PracticeRoutine = () =>{
         {
             dispatch(recordPracticeData([task.exerciseType, 1]))
             
-            setProgress(progress + progressAmt)
+            setProgress(progress + 1)
         }
     }
 
     useFocusEffect(
         React.useCallback(() => {
+            setTotalPracticeNumber(generatedRoutine.length)
             Next();
-            setProgressAmt((100 / generatedRoutine.length))
             return() =>{
                 dispatch(savePracticeData(null));
             }
@@ -118,7 +117,7 @@ const PracticeRoutine = () =>{
                 </>
             }
             </VStack>
-            <ProgessBar progress={progress} height={50} />  
+            <ProgessBar progress={progress} height={50} progressTextDisplay="out-of" realMax={totalPracticeNumber} />  
         </Box>
     )
 }
