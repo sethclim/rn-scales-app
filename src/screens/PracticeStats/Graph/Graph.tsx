@@ -176,6 +176,7 @@ const Graph = ({width, height}: GraphProps)  => {
       setCurrentGraph(GG.getGraph(width, height, practiceData))
     }, [practiceData])
 
+    
     return(
       <>
         <Canvas style={{ height: height, width: width, backgroundColor: "#00000055"}}>

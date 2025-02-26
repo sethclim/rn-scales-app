@@ -74,7 +74,7 @@ const getX = (
   if (index == 1) {
     return dateXPositionMap[date.getMonth()];
   } else if (index == 0) {
-    return dateXPositionMap[(date.getDay() - 1) % 7];
+    return dateXPositionMap[date.getDay() % 7];
   }
 
   return dateXPositionMap[date.getMonth()];
