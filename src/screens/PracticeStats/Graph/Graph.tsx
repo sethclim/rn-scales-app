@@ -1,11 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Canvas,  createPicture, Path, Picture, Skia, useFont, SkPath } from "@shopify/react-native-skia";
 import {  SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Selection } from "./Selection";
-import { ExercisesPathSetMap, GraphGenerator, Labels, PathSet } from "./GraphBuilder";
-import PracticeContext from "../../../state/modules/PracticeData/PracticeContext";
-import { getPracticeDataRequest } from "../../../state/modules/PracticeData/store/actions";
+import { ExercisesPathSetMap, GraphData, GraphGenerator, Labels, PathSet } from "./GraphBuilder";
+
 import { useFocusEffect } from "@react-navigation/native";
+import { useAppDispatch, useAppSelector } from "../../../state/hooks";
+import { getAllPracticedata } from "../../../state/practiceDataSlice";
+import { RootState } from "../../../state/store";
 
 type GraphProps = {
   width : number,
@@ -142,12 +144,19 @@ const RenderLabels = ({labels, index} : RenderLabelsProps) => {
   )
 }
 
-const Graph = ({width, height}: GraphProps)  => {
+const initialGraph : GraphData = {
+  exercises: new Map(),
+  grids: [],
+  titles: [],
+  labels: []
+}
 
-  const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
+const Graph = ({width, height}: GraphProps)  => {
+    const dispatch = useAppDispatch()
+    const practiceData = useAppSelector((state: RootState) => state.practice.practiceData)
 
     const fetchPracticeData = () => {
-      practiceDatadispatch(getPracticeDataRequest())
+      dispatch(getAllPracticedata())
     }
     
     useFocusEffect(
@@ -156,19 +165,16 @@ const Graph = ({width, height}: GraphProps)  => {
       }, [])
     ); 
     
-    const GG = new GraphGenerator();
-    const [currentGraph, setCurrentGraph] = useState(() =>
-      GG.getGraph(width, height, practiceDataState.practiceData)
-    );
-
+    const [currentGraph, setCurrentGraph] = useState<GraphData>(initialGraph);
+    
     const transition = useSharedValue(0);
     const next    = useSharedValue(0);
     const current = useSharedValue(0);
-
+    
     useEffect(() => {
-
-      setCurrentGraph(GG.getGraph(width, height, practiceDataState.practiceData))
-    }, [practiceDataState.practiceData])
+      const GG = new GraphGenerator();
+      setCurrentGraph(GG.getGraph(width, height, practiceData))
+    }, [practiceData])
 
     return(
       <>

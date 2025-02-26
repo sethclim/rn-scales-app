@@ -37,9 +37,10 @@ scales you might skip, plus track your practice Statistics.
 - [Native Blocks](https://github.com/Tenwall-Development/native-blocks-internal)
 - [Expo SQLite](https://docs.expo.dev/versions/latest/sdk/sqlite/)
 - [React Native Skia](https://shopify.github.io/react-native-skia/)
+- [Redux Toolkit](https://redux-toolkit.js.org/)
 
 ### Local Dev Quick Start
 
 ```
-yarn Install && yarn expo Start
+yarn install && yarn expo start
 ```
