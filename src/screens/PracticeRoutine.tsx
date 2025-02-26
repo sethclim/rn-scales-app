@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useState } from "react"
 import { Text, TouchableOpacity } from "react-native";
 
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -17,6 +17,7 @@ import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { RootState } from "../state/store";
 import { getTask } from "../state/routineSlice";
 import { recordPracticeData, savePracticeData } from "../state/practiceDataSlice";
+import { ProgessBar } from "../components/ProgressBar";
 
 type RoundButtonProps = {
     next : () => void
@@ -68,6 +69,11 @@ const PracticeRoutine = () =>{
     const dispatch = useAppDispatch()
 
     const task = useAppSelector((state: RootState) => state.routine.currentTask)
+    const generatedRoutine = useAppSelector((state: RootState) => state.routine.generatedRoutine)
+
+    const [progress, setProgress] = useState<number>(0)
+
+    const [progressAmt, setProgressAmt] = useState<number>(1)
 
     const Next = () => {
 
@@ -76,12 +82,15 @@ const PracticeRoutine = () =>{
         if(task != null)
         {
             dispatch(recordPracticeData([task.exerciseType, 1]))
+            
+            setProgress(progress + progressAmt)
         }
     }
 
     useFocusEffect(
         React.useCallback(() => {
             Next();
+            setProgressAmt((100 / generatedRoutine.length))
             return() =>{
                 dispatch(savePracticeData(null));
             }
@@ -90,24 +99,26 @@ const PracticeRoutine = () =>{
 
 
     return(
-        // bg="nord.background"
         <Box flexMain={true} p={5} style={{backgroundColor: background!}} >
-            {/* <Center flex={1}> */}
+            <VStack justifyContent="center">
             {
                 task != null ? 
                 <>
-                    <VStack flexMain={false}  height={170}>
+                    <VStack flexMain={false} height={170}>
                         <Text style={{color: primary, fontSize: 40, textAlign: "center"}}>{task.displayItem}</Text>
                     </VStack>
                     <StyledRoundButton next={Next} />
                 </>
                 : 
                 <>
-                    <Text style={{color: primary, fontSize: 40, textAlign: "center"}}>Practice Complete</Text>
+                    <VStack flexMain={false} height={170}>
+                        <Text style={{color: primary, fontSize: 40, textAlign: "center"}}>Practice Complete</Text>
+                    </VStack>
                     <TextButton titles="Go Back" onPress={()=> navigation.navigate('Generate')} />
                 </>
             }
-            {/* </Center> */}
+            </VStack>
+            <ProgessBar progress={progress} height={50} />  
         </Box>
     )
 }
