@@ -19,7 +19,7 @@ const makeStyle = (theme: any) => {
         ZStack: 1
       },
       textStyle: {
-        ...MyTextStyle.h3,
+         ...MyTextStyle.h3,
         color: theme.primary,
         margin: 4
       },

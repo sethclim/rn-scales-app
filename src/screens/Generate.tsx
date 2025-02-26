@@ -7,7 +7,7 @@ import { ExerciseType } from "../data/Models/DataModels";
 
 import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack } from "../native_blocks/";
-import { Modal, Alert, Text,  } from "react-native";
+import { Modal, Alert, Text, PixelRatio, Dimensions,  } from "react-native";
 
 import { TextButton } from "../components/TextButton";
 
@@ -22,6 +22,7 @@ import { useAppDispatch } from "../state/hooks";
 import { generateRoutine, saveRoutines } from "../state/routineSlice";
 
 import { getTodaysPracticedata } from "../state/practiceDataSlice";
+import { GetNormalizedSize } from "../utils/responsive_utils";
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -35,7 +36,10 @@ export const Exercises = new Map<ExerciseType, string>([
     ["brokenChord", "Broken Chords"]
 ]);
 
+
 const Generate = () => {
+
+    const { width } = Dimensions.get('window');
 
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
@@ -51,6 +55,7 @@ const Generate = () => {
 
     useEffect(() => {
         dispatch(getTodaysPracticedata())
+        console.log(`width ${width}`)
     }, [])
 
     const StartRoutine = () => {
@@ -162,8 +167,8 @@ const Generate = () => {
         <Box flexMain={true} p={1} style={{backgroundColor: background!}}> 
 
             <VStack mAll={{t: -60}} align="center" justifyContent="center" >
-                <Card height={120} padding={10}>
-                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Roots</Text>
+                <Card height={GetNormalizedSize(120, width)} padding={10}>
+                    <Text style={{color : primary, fontSize: GetNormalizedSize(20, width), fontWeight: "700"}}>Roots</Text>
                         <VStack gap={3} pVH={{v: 4}} >
                             <HStack>
                             {
@@ -197,7 +202,7 @@ const Generate = () => {
                 </Card>
                 
                 {/* borderRadius="5" rounded="md"  maxWidth="100%" shadow={9} */}
-                <Card height={120} padding={10}>
+                <Card height={GetNormalizedSize(120, width)} padding={10}>
                     <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Type</Text>
                         <HStack gap={3} flexWrap="wrap" pVH={{v: 4}} >
                         {
@@ -215,7 +220,7 @@ const Generate = () => {
                         </HStack>
                 </Card>
 
-                <Card height={120} padding={10}>
+                <Card height={GetNormalizedSize(120, width)} padding={10}>
                     <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Exercise</Text>
                         <HStack gap={3} flexWrap="wrap" pVH={{v: 4}} >
                         {
@@ -290,7 +295,7 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
                         elevation: 5,
                     }}>
                         <HStack style={{backgroundColor : primary}} height={60}>
-                            <Text style={{color : background!, fontSize: 32, fontWeight: 700}}>Save Routine</Text>
+                            <Text style={{color : background!, fontSize: 32 / PixelRatio.getFontScale(), fontWeight: 700}}>Save Routine</Text>
                         </HStack>
 
                         <VStack p={10}>

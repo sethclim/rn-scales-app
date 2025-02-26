@@ -1,5 +1,8 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import {colors} from './Colors';
+import {GetNormalizedSize} from '../utils/responsive_utils';
+
+const {width} = Dimensions.get('window');
 
 const buttonCore = StyleSheet.create({
   center: {
@@ -20,7 +23,7 @@ const padding = (v: number, h: number) => {
 
 export const primary = {
   ...buttonCore.center,
-  ...padding(12, 32),
+  ...padding(12, GetNormalizedSize(32, width)),
   ...buttonCore.rounded,
   elevation: 4,
   backgroundColor: colors.danger_red,
@@ -28,8 +31,8 @@ export const primary = {
 
 export const square = {
   ...buttonCore.center,
-  height: 24,
-  width: 24,
+  height: GetNormalizedSize(24, width),
+  width: GetNormalizedSize(24, width),
   backgroundColor: colors.danger_red,
 };
 
