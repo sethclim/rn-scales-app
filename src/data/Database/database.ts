@@ -30,6 +30,10 @@ export type DBPracticeData = {
   brokenChord: number;
 };
 
+const daysInMonth = (month: number, year: number) => {
+  return new Date(year, month + 1, 0).getDate();
+};
+
 export class Database {
   constructor() {
     this.db = null;
@@ -189,35 +193,53 @@ export class Database {
     }
   }
 
-  async getAllPracticeData(today: Date): Promise<IAllPracticeData> {
+  async getAllPracticeData(today_date: Date): Promise<IAllPracticeData> {
     if (this.db == null) {
       console.log('DB not created');
       return {Year: [], Month: [], Week: [], Day: []};
     }
 
+    const year = today_date.getFullYear();
+    const month = today_date.getMonth();
+    const today = today_date.getDate();
+
+    console.log(`year ${year} month ${month} today ${today}`);
+
     const startOfWeek = dateToString(
       new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate() - today.getDay(),
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        today_date.getDate() - today_date.getDay(),
         0,
         0,
       ),
     );
 
+    let day_end_week = today_date.getDate() + (7 - today_date.getDay());
+    const num_days_in_month = daysInMonth(month, year);
+    console.log(`num_days_in_month ${num_days_in_month}`);
+    if (day_end_week > num_days_in_month) {
+      day_end_week = num_days_in_month;
+    }
+
+    console.log(`day_end_week ${day_end_week}`);
     const endOfWeek = dateToString(
       new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate() + (7 - today.getDay()),
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        day_end_week,
         23,
         59,
       ),
     );
 
-    const startOfYear = dateToString(new Date(today.getFullYear(), 0, 1, 0, 0));
+    console.log(`startOfWeek ${startOfWeek} endOfWeek ${endOfWeek}`);
+
+    const startOfYear = dateToString(
+      new Date(today_date.getFullYear(), 0, 1, 0, 0),
+    );
     const endOfYear = dateToString(
-      new Date(today.getFullYear(), 11, 31, 23, 59),
+      new Date(today_date.getFullYear(), 11, 31, 23, 59),
     );
 
     // const startOfYearTS = Math.round(startOfYear.valueOf() / 1000);
@@ -230,16 +252,14 @@ export class Database {
       SUM(arpeggio) AS arpeggio_count,
       SUM(solidChord) AS solidChord_count,
       SUM(brokenChord) AS brokenChord_count
-      FROM PracticeData WHERE date_month_year BETWEEN $d1 AND $d2`,
+      FROM PracticeData WHERE date_month_year BETWEEN $d1 AND $d2 GROUP BY date`,
       {
         $d1: startOfWeek,
         $d2: endOfWeek,
       },
     );
 
-    console.log(
-      '100 practiceData practiceData ' + JSON.stringify(practiceDataWeek),
-    );
+    console.log('Week PD: ' + JSON.stringify(practiceDataWeek));
 
     const exportPracticeDataWeek: IPracticeData[] = practiceDataWeek.map(x => {
       const date = new Date(x.date_month_year);
@@ -247,7 +267,7 @@ export class Database {
       //console.log('Date ' + date);
 
       const pd: IPracticeData = {
-        date: new Date().toString(),
+        date: date.toString(),
         scale: x.scale_count,
         octave: x.octave_count,
         arpeggio: x.arpeggio_count,
@@ -282,9 +302,7 @@ export class Database {
     // SUM(solidChord) AS solidChord_count,
     // SUM(brokenChord) AS brokenChord_count
 
-    console.log(
-      '101 practiceData practiceData ' + JSON.stringify(practiceDataYear),
-    );
+    console.log('Year PD: ' + JSON.stringify(practiceDataYear));
 
     const exportPracticeDataYear: IPracticeData[] = practiceDataYear.map(x => {
       const date = new Date(x.date_month_year);
