@@ -259,9 +259,7 @@ export class Database {
       },
     );
 
-    console.log(
-      '100 practiceData practiceData ' + JSON.stringify(practiceDataWeek),
-    );
+    console.log('Week PD: ' + JSON.stringify(practiceDataWeek));
 
     const exportPracticeDataWeek: IPracticeData[] = practiceDataWeek.map(x => {
       const date = new Date(x.date_month_year);
@@ -304,9 +302,7 @@ export class Database {
     // SUM(solidChord) AS solidChord_count,
     // SUM(brokenChord) AS brokenChord_count
 
-    console.log(
-      '101 practiceData practiceData ' + JSON.stringify(practiceDataYear),
-    );
+    console.log('Year PD: ' + JSON.stringify(practiceDataYear));
 
     const exportPracticeDataYear: IPracticeData[] = practiceDataYear.map(x => {
       const date = new Date(x.date_month_year);
