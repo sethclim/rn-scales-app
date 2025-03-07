@@ -229,7 +229,7 @@ export class GraphGenerator {
 
   GetAllExercises = (index: number, practiceDataArr: IPracticeData[]) => {
     console.log(`GetAllExercises index ${index}`);
-    const scalar_y = this.HEIGHT / this.max_y;
+    const scalar_y = this.inner_height / this.max_y;
 
     const ex: ExerciseSet = {
       scale: createPlot(),
@@ -244,10 +244,20 @@ export class GraphGenerator {
 
       const x = getX(this.dateXPositionMap, index, new Date(pd.date));
 
-      const y_scale = getY(pd.scale, scalar_y, this.HEIGHT, PADDING);
-      const y_octave = getY(pd.octave, scalar_y, this.HEIGHT, PADDING);
-      const y_arpeggio = getY(pd.arpeggio, scalar_y, this.HEIGHT, PADDING);
-      const y_solidChord = getY(pd.solidChord, scalar_y, this.HEIGHT, PADDING);
+      const y_scale = getY(pd.scale, scalar_y, this.inner_height, PADDING);
+      const y_octave = getY(pd.octave, scalar_y, this.inner_height, PADDING);
+      const y_arpeggio = getY(
+        pd.arpeggio,
+        scalar_y,
+        this.inner_height,
+        PADDING,
+      );
+      const y_solidChord = getY(
+        pd.solidChord,
+        scalar_y,
+        this.inner_height,
+        PADDING,
+      );
       const y_brokenChord = getY(
         pd.brokenChord,
         scalar_y,

@@ -228,7 +228,7 @@ const Graph = ({ width, height }: GraphProps) => {
             <RenderLabels labels={currentGraph.labels} index={next} /> : null
         }
       </Canvas>
-      {/* <Selection current={current} next={next} transition={transition} graphData={currentGraph} /> */}
+      <Selection current={current} next={next} transition={transition} graphData={currentGraph} />
     </>
   )
 }
