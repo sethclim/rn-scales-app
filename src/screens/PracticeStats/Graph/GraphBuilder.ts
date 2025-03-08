@@ -261,12 +261,13 @@ export class GraphGenerator {
       const y_brokenChord = getY(
         pd.brokenChord,
         scalar_y,
-        this.HEIGHT,
+        this.inner_height,
         PADDING,
       );
 
       if (i == 0) {
         ex.scale.line.moveTo(x, y_scale);
+        2;
         ex.octave.line.moveTo(x, y_octave);
         ex.arpeggio.line.moveTo(x, y_arpeggio);
         ex.solidChord.line.moveTo(x, y_solidChord);
@@ -284,29 +285,6 @@ export class GraphGenerator {
       ex.arpeggio.dots.addCircle(x, y_arpeggio, 6);
       ex.solidChord.dots.addCircle(x, y_solidChord, 6);
       ex.brokenChord.dots.addCircle(x, y_brokenChord, 6);
-
-      // for (let [exercise, count] of getCounts(practiceDataArr[i])) {
-      //   // if (count <= 0) continue;
-
-      //   // //could early return here
-      //   // if (this.ex.get(exercise) === undefined) {
-      //   //   this.ex.set(exercise, []);
-      //   // }
-
-      //   const x = getX(this.dateXPositionMap, index, new Date(pd.date));
-      //   const y = getY(count, scalar_y, this.HEIGHT, PADDING);
-
-      //   const newPlot = createPlot();
-
-      //   if (jIndex == 0) {
-      //     newPlot.line.moveTo(x, y);
-      //   } else {
-      //     newPlot.line.lineTo(x, y);
-      //   }
-      //   newPlot.dots.addCircle(x, y, 6);
-
-      //   ex.get(exercise)?.push(newPlot);
-      // }
     }
     console.log('Adding to exercies' + this.exercises.length);
     this.exercises.push(ex);
@@ -344,11 +322,6 @@ export class GraphGenerator {
       this.labels.push({xLabels: xL, yLabels: yL});
 
       this.GetAllExercises(i, practiceDatas);
-
-      // //Each entry in group
-      // for (let j = 0; j < practiceDatas.length; j++) {
-      //   const pd = practiceDatas[j];
-      // }
     }
 
     // console.log('this.ex ' + JSON.stringify([...this.ex.entries()], null, 2));
