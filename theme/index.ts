@@ -47,7 +47,7 @@ export const lighttheme = {
 };
 
 export const toyoNightsTheme = {
-  primary: '#ff9e64',
+  primary: '#7aa2f7',
   secondary: '#2ac3de',
   background: '#1a1b26',
   secondaryBackground: '#414868',

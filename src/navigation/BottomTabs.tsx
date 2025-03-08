@@ -6,6 +6,7 @@ import {BottomTabNavigatorParamList} from './types';
 import Generate from '../screens/Generate';
 import SavedRoutines from '../screens/SavedRoutines/SavedRoutines';
 import PracticeStats  from '../screens/PracticeStats/PracticeStats'
+import { HomePage } from "../screens/HomePage"
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -69,6 +70,24 @@ const BottomTabs = () => {
             <BottomTab.Screen name="SavedRoutines" component={SavedRoutines} 
                 options={{
                     title: 'Saved Routines',
+                    headerStyle: {
+                        backgroundColor: headerBackground,
+                    },
+                    headerTintColor:  headerForeground,
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                    //tabBarInactiveTintColor:"#00ff00",
+                    tabBarActiveTintColor:primary,
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="folder" color={color} size={size} />
+                    ),
+              }}
+            />
+
+            <BottomTab.Screen name="HomePage" component={HomePage} 
+                options={{
+                    title: 'Home',
                     headerStyle: {
                         backgroundColor: headerBackground,
                     },
