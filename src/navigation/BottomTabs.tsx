@@ -15,6 +15,7 @@ import { Button } from "../native_blocks/";
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from '../context/ThemeContext';
 import { Box } from '../native_blocks/primatives/Box';
+import Settings from '../screens/Settings';
 
 const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
@@ -98,7 +99,7 @@ const BottomTabs = () => {
                     //tabBarInactiveTintColor:"#00ff00",
                     tabBarActiveTintColor:primary,
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="folder" color={color} size={size} />
+                        <MaterialCommunityIcons name="home" color={color} size={size} />
                     ),
               }}
             />
@@ -116,7 +117,24 @@ const BottomTabs = () => {
                     //tabBarInactiveTintColor:"#00ff00",
                     tabBarActiveTintColor: primary,
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="folder" color={color} size={size} />
+                        <MaterialCommunityIcons name="cosine-wave" color={color} size={size} />
+                    ),
+              }}
+            />
+             <BottomTab.Screen name="Settings" component={Settings} 
+                options={{
+                    title: 'Settings',
+                    headerStyle: {
+                        backgroundColor: headerBackground,
+                    },
+                    headerTintColor:  headerForeground,
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                    //tabBarInactiveTintColor:"#00ff00",
+                    tabBarActiveTintColor: primary,
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="cog" color={color} size={size} />
                     ),
               }}
             />
