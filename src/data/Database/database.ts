@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 
-import {PracticeData, Routine} from '../Models/DataModels';
+import {IAllPracticeData, IPracticeData, Routine} from '../Models/DataModels';
 import {dateToString} from '../../utils/date_utils';
 import {GRAPH_ID} from '../../screens/PracticeStats/Graph/GraphBuilder';
 
@@ -28,6 +28,10 @@ export type DBPracticeData = {
   arpeggio: number;
   solidChord: number;
   brokenChord: number;
+};
+
+const daysInMonth = (month: number, year: number) => {
+  return new Date(year, month + 1, 0).getDate();
 };
 
 export class Database {
@@ -62,7 +66,7 @@ export class Database {
   async saveRoutine(routine: Routine) {
     if (this.db == null) {
       console.log('DB not created');
-      return;
+      return false;
     }
 
     await this.db.withExclusiveTransactionAsync(async txn => {
@@ -81,9 +85,9 @@ export class Database {
 
       if (insertedRoutineIdResult == null) return;
 
-      // console.log(
-      //   'insertedRoutineId ' + JSON.stringify(insertedRoutineIdResult),
-      // );
+      console.log(
+        'insertedRoutineId ' + JSON.stringify(insertedRoutineIdResult),
+      );
 
       let source = '';
       const insert = `INSERT INTO RoutineItem (displayItem, exerciseType, routineForeignKey) VALUES `;
@@ -95,9 +99,13 @@ export class Database {
         source += end;
       });
 
-      await txn.execAsync(source);
-      //console.log('Done save routine');
+      // console.log('source ' + source);
+
+      const insertedRoutineItemsIdResult = await txn.execAsync(source);
+      console.log('Done save routine ' + insertedRoutineItemsIdResult);
     });
+
+    return true;
   }
 
   async getAllRoutines() {
@@ -123,25 +131,33 @@ export class Database {
     return exportRoutines;
   }
 
-  async getRoutineItems(routineId: number) {
+  async getRoutineItems(routineId: string) {
+    console.log('getRoutineItems HERE');
+
     if (this.db == null) {
       console.log('DB not created');
       return;
     }
 
-    const allRows2 = await this.db.getAllAsync(
-      `SELECT * FROM RoutineItems WHERE routineForeignKey = $value`,
-      {$value: routineId},
-    );
+    const request = `SELECT * FROM RoutineItem WHERE routineForeignKey=${routineId};`;
+    console.log('request ' + request);
+
+    const allRows2 = await this.db.getAllAsync(request);
+    //      {$value: routineId.toString()},
+    console.log('allRows2 ' + JSON.stringify(allRows2));
+
+    return allRows2;
   }
 
-  async savePracticedata(practiceData: PracticeData) {
+  async savePracticedata(practiceData: IPracticeData) {
     if (this.db == null) {
       console.log('DB not created');
       return;
     }
 
-    const string_date = dateToString(practiceData.getDate());
+    console.log(`practiceData ${JSON.stringify(practiceData)}`);
+
+    const string_date = dateToString(new Date(practiceData.date));
 
     // const time_stamp = Math.round(practiceData.getDate().valueOf() / 1000);
 
@@ -177,37 +193,53 @@ export class Database {
     }
   }
 
-  async getAllPracticeData(
-    today: Date,
-  ): Promise<Map<GRAPH_ID, PracticeData[]>> {
+  async getAllPracticeData(today_date: Date): Promise<IAllPracticeData> {
     if (this.db == null) {
       console.log('DB not created');
-      return new Map([['Year', []]]);
+      return {Year: [], Month: [], Week: [], Day: []};
     }
+
+    const year = today_date.getFullYear();
+    const month = today_date.getMonth();
+    const today = today_date.getDate();
+
+    console.log(`year ${year} month ${month} today ${today}`);
 
     const startOfWeek = dateToString(
       new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate() - today.getDay(),
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        today_date.getDate() - today_date.getDay(),
         0,
         0,
       ),
     );
 
+    let day_end_week = today_date.getDate() + (7 - today_date.getDay());
+    const num_days_in_month = daysInMonth(month, year);
+    console.log(`num_days_in_month ${num_days_in_month}`);
+    if (day_end_week > num_days_in_month) {
+      day_end_week = num_days_in_month;
+    }
+
+    console.log(`day_end_week ${day_end_week}`);
     const endOfWeek = dateToString(
       new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate() + (7 - today.getDay()),
+        today_date.getFullYear(),
+        today_date.getMonth(),
+        day_end_week,
         23,
         59,
       ),
     );
 
-    const startOfYear = dateToString(new Date(today.getFullYear(), 0, 1, 0, 0));
+    console.log(`startOfWeek ${startOfWeek} endOfWeek ${endOfWeek}`);
+
+    const startOfYear = dateToString(
+      new Date(today_date.getFullYear(), 0, 1, 0, 0),
+    );
     const endOfYear = dateToString(
-      new Date(today.getFullYear(), 11, 31, 23, 59),
+      new Date(today_date.getFullYear(), 11, 31, 23, 59),
     );
 
     // const startOfYearTS = Math.round(startOfYear.valueOf() / 1000);
@@ -220,28 +252,29 @@ export class Database {
       SUM(arpeggio) AS arpeggio_count,
       SUM(solidChord) AS solidChord_count,
       SUM(brokenChord) AS brokenChord_count
-      FROM PracticeData WHERE date_month_year BETWEEN $d1 AND $d2`,
+      FROM PracticeData WHERE date_month_year BETWEEN $d1 AND $d2 GROUP BY date`,
       {
         $d1: startOfWeek,
         $d2: endOfWeek,
       },
     );
 
-    console.log(
-      '100 practiceData practiceData ' + JSON.stringify(practiceDataWeek),
-    );
+    console.log('Week PD: ' + JSON.stringify(practiceDataWeek));
 
-    const exportPracticeDataWeek: PracticeData[] = practiceDataWeek.map(x => {
+    const exportPracticeDataWeek: IPracticeData[] = practiceDataWeek.map(x => {
       const date = new Date(x.date_month_year);
 
       //console.log('Date ' + date);
 
-      const pd = new PracticeData(date);
-      pd.scale = x.scale_count;
-      pd.octave = x.octave_count;
-      pd.arpeggio = x.arpeggio_count;
-      pd.solidChord = x.solidChord_count;
-      pd.brokenChord = x.brokenChord_count;
+      const pd: IPracticeData = {
+        date: date.toString(),
+        scale: x.scale_count,
+        octave: x.octave_count,
+        arpeggio: x.arpeggio_count,
+        solidChord: x.solidChord_count,
+        brokenChord: x.brokenChord_count,
+      };
+
       return pd;
     });
 
@@ -269,11 +302,9 @@ export class Database {
     // SUM(solidChord) AS solidChord_count,
     // SUM(brokenChord) AS brokenChord_count
 
-    console.log(
-      '101 practiceData practiceData ' + JSON.stringify(practiceDataYear),
-    );
+    console.log('Year PD: ' + JSON.stringify(practiceDataYear));
 
-    const exportPracticeDataYear: PracticeData[] = practiceDataYear.map(x => {
+    const exportPracticeDataYear: IPracticeData[] = practiceDataYear.map(x => {
       const date = new Date(x.date_month_year);
       date.setFullYear(
         parseInt(x.date_month_year.split('-')[1]),
@@ -283,19 +314,22 @@ export class Database {
 
       //console.log('Date ' + date);
 
-      const pd = new PracticeData(date);
-      pd.scale = x.scale_count;
-      pd.octave = x.octave_count;
-      pd.arpeggio = x.arpeggio_count;
-      pd.solidChord = x.solidChord_count;
-      pd.brokenChord = x.brokenChord_count;
+      const pd: IPracticeData = {
+        date: new Date().toString(),
+        scale: x.scale_count,
+        octave: x.octave_count,
+        arpeggio: x.arpeggio_count,
+        solidChord: x.solidChord_count,
+        brokenChord: x.brokenChord_count,
+      };
       return pd;
     });
-
-    return new Map([
-      ['Week', exportPracticeDataWeek],
-      ['Year', exportPracticeDataYear],
-    ]);
+    return {
+      Year: exportPracticeDataYear,
+      Month: [],
+      Week: exportPracticeDataWeek,
+      Day: [],
+    };
   }
 
   async getTodaysPracticeData(todaysDate: Date) {
@@ -317,10 +351,19 @@ export class Database {
     //   'getTodaysPracticeData practiceData' + JSON.stringify(practiceData),
     // );
 
-    const pd = new PracticeData(todaysDate);
+    const pd: IPracticeData = {
+      date: todaysDate.toString(),
+      Total: 0,
+      scale: 0,
+      octave: 0,
+      arpeggio: 0,
+      solidChord: 0,
+      brokenChord: 0,
+    };
 
     if (practiceData == null) return pd;
 
+    pd.date = todaysDate.toString();
     pd.scale = practiceData.scale;
     pd.octave = practiceData.octave;
     pd.arpeggio = practiceData.arpeggio;
@@ -328,6 +371,19 @@ export class Database {
     pd.brokenChord = practiceData.brokenChord;
 
     return pd;
+  }
+
+  async deleteRoutine(routineId: string) {
+    if (this.db == null) {
+      console.log('DB not created');
+      return null;
+    }
+
+    console.log('[DB] deleteRoutine');
+
+    await this.db.execAsync(
+      `DELETE FROM RoutineItem WHERE routineForeignKey=${routineId}; DELETE FROM Routine WHERE id=${routineId};`,
+    );
   }
 }
 

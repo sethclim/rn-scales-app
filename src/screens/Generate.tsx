@@ -1,14 +1,10 @@
 import React, { FunctionComponent, useContext, useEffect, useState } from "react"
 
-import Context from "../state/modules/routine/context";
-import { generateRequest,saveRoutine } from "../state/modules/routine/store/actions";
-
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { ExerciseType } from "../data/Models/DataModels";
-import PracticeContext from "../state/modules/PracticeData/PracticeContext";
-import { getTodaysPracticeDataRequest } from "../state/modules/PracticeData/store/actions";
+
 import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack } from "../native_blocks/";
 import { Modal, Alert, Text,  } from "react-native";
@@ -21,6 +17,11 @@ import { ThemeContext } from "../context/ThemeContext";
 import { Card } from "../components/Card";
 import { StyledTextInputField } from "../native_blocks/TextInput"
 import { MiniTextButton } from "../components/MiniTextButton";
+import { useAppDispatch } from "../state/hooks";
+
+import { generateRoutine, saveRoutines } from "../state/routineSlice";
+
+import { getTodaysPracticedata } from "../state/practiceDataSlice";
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -35,47 +36,77 @@ export const Exercises = new Map<ExerciseType, string>([
 ]);
 
 const Generate = () => {
-    //State
-    const [selectedRoots, setSelectedRoots] = React.useState(["C", "D", "E", "F", "G", "A", "B"]);    
-    const [selectedTypes, setSelectedTypes] = React.useState<string []>([]);    
-    const [selectedExercises, setSelectedExercises] = React.useState<Array<ExerciseType>>([]); 
 
-    const { myDispatch } = useContext(Context);
-    const { practiceDatadispatch, practiceDataState } = useContext(PracticeContext);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
     const [showModal, setShowModal] = useState(false);
 
     const { background, primary, secondaryBackground } = useContext(ThemeContext);
 
-    const CheckValidRoutineConfiguration = () : boolean => {
+    const dispatch = useAppDispatch()
+
+    const CheckValidRoutineConfiguration = (selectedRoots : string[], selectedTypes : string[], selectedExercises : any) : boolean => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
     }
 
     useEffect(() => {
-        practiceDatadispatch(getTodaysPracticeDataRequest(new Date()))
+        dispatch(getTodaysPracticedata())
     }, [])
 
     const StartRoutine = () => {
+        const selectedRoots : string[] = []
+        const selectedTypes : string[] = []
+        const selectedExercises : ExerciseType[] = []
 
-        console.log("WERID " + JSON.stringify([selectedRoots, selectedTypes, selectedExercises]))
+        const array3 = NATURAL_ROOTS.concat(ACCIDENTAL_ROOTS);
+        manageRoots.forEach((type, index) => {
+            if(type)
+                selectedRoots.push(array3[index])
+        });
+        
+        manageTypes.forEach((type, index) => {
+            if(type)
+                selectedTypes.push(SCALE_TYPES[index])
+        });
 
-        const generateReq = generateRequest([selectedRoots, selectedTypes, selectedExercises])
+        manageExercise.forEach((type, index) =>{
+            if(type)
+                selectedExercises.push(Array.from(Exercises.keys())[index])
+        });
 
-        myDispatch(generateReq)
-
-        if(CheckValidRoutineConfiguration())
+        // console.log("StartRoutine " + JSON.stringify([selectedRoots, selectedTypes, selectedExercises]))
+        
+        if(CheckValidRoutineConfiguration(selectedRoots, selectedTypes, selectedExercises))
+        {    
+            dispatch(generateRoutine([selectedRoots, selectedTypes, selectedExercises]))
             navigation.navigate('Practice')
+        }
         else
             showAlert()
             // setIsOpen(!isOpen)
     }
 
     const SaveRoutine = (saveName : string) => {
+        const selectedRoots : string[] = []
+        const selectedTypes : string[] = []
+        const selectedExercises : ExerciseType[] = []
 
-        const saveRoutineMSG = saveRoutine([selectedRoots, selectedTypes, selectedExercises, saveName])
-        myDispatch(saveRoutineMSG) 
+        const array3 = NATURAL_ROOTS.concat(ACCIDENTAL_ROOTS);
+        manageRoots.forEach((type, index) => {
+            if(type)
+                selectedRoots.push(array3[index])
+        });
+        
+        manageTypes.forEach((type, index) => {
+            if(type)
+                selectedTypes.push(SCALE_TYPES[index])
+        });
 
+        manageExercise.forEach((type, index) =>{
+            if(type)
+                selectedExercises.push(Array.from(Exercises.keys())[index])
+        });
+        dispatch(saveRoutines([saveName, selectedRoots, selectedTypes, selectedExercises]))
         setShowModal(false);
     }
 
@@ -91,62 +122,20 @@ const Generate = () => {
 
     const onClickNaturalRoot = (index : number, root : string) => {
         let temp = [...manageRoots];
-        const action = !temp[index]
-        temp[index] = action
+        temp[index] = !temp[index]
         setManageRoots(temp)
-
-        let localRoots = [...selectedRoots]
-
-        if (action)
-        {
-            localRoots.push(root)
-        }
-        else
-        {
-            const idx = localRoots.indexOf(root)
-            localRoots = localRoots.splice(idx, 1)
-        }
-        setSelectedRoots(localRoots)
     }
 
-    const onClickSelectType = (index : number, type : string) => {
+    const onClickSelectType = (index : number) => {
         let temp = [...manageTypes];
-        const action = !temp[index]
         temp[index] = !temp[index]
         setManageTypes(temp)
-
-        let localTypes = [...selectedTypes]
-
-        if (action)
-        {
-            localTypes.push(type)
-        }
-        else
-        {
-            const idx = localTypes.indexOf(type)
-            localTypes = localTypes.splice(idx, 1)
-        }
-        setSelectedTypes(localTypes)
     }
 
     const onClickSelectExercise = (index : number, exercise : ExerciseType) => {
         let temp = [...manageExercise];
-        const action = !temp[index]
         temp[index] = !temp[index]
         setManageExercise(temp)
-
-        let localExercise = [...selectedExercises]
-
-        if (action)
-        {
-            localExercise.push(exercise)
-        }
-        else
-        {
-            const idx = localExercise.indexOf(exercise)
-            localExercise = localExercise.splice(idx, 1)
-        }
-        setSelectedExercises(localExercise)
     }
 
     const showAlert = () =>
@@ -218,7 +207,7 @@ const Generate = () => {
                                     iconSize={20} 
                                     iconColor="white" 
                                     key={i} 
-                                    onPress={() => onClickSelectType(i, scaleType)} 
+                                    onPress={() => onClickSelectType(i)} 
                                     checked={manageTypes[i]} 
                                     title={scaleType} />
                             )})
@@ -278,6 +267,8 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
     const [value, setValue] = React.useState("");
     const { background, primary, secondaryBackground } = useContext(ThemeContext);
 
+    const save_routine = () => _WORKLET
+
     return(
         <Modal
             animationType="fade"
@@ -303,7 +294,7 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
                         </HStack>
 
                         <VStack p={10}>
-                            <StyledTextInputField text="" textChanged={(text) => setValue(text)} errorMessage="" />
+                            <StyledTextInputField text={value} textChanged={(text) => setValue(text)} errorMessage="" />
                         </VStack>
                         <HStack gap={4} p={8}>
                                 <MiniTextButton titles="Cancel" onPress={() => setShowModal(false)} />

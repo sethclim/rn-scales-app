@@ -1,12 +1,24 @@
 import {SkPath, SkPoint, Skia} from '@shopify/react-native-skia';
-import {ExerciseType, PracticeData} from '../../../data/Models/DataModels';
+import {
+  ExerciseType,
+  IAllPracticeData,
+  IPracticeData,
+} from '../../../data/Models/DataModels';
 
 export type PathSet = {
   line: SkPath;
   dots: SkPath;
 };
 
-export type ExercisesPathSetMap = Map<ExerciseType, PathSet[]>;
+export type ExerciseSet = {
+  scale: PathSet;
+  octave: PathSet;
+  arpeggio: PathSet;
+  solidChord: PathSet;
+  brokenChord: PathSet;
+};
+
+// export type ExercisesPathSetMap = ExerciseSet[];
 export type GRAPH_ID = 'Day' | 'Week' | 'Month' | 'Year';
 
 const LABELS = [
@@ -33,18 +45,28 @@ type AxisLabelInfo = {
 };
 
 export type GraphData = {
-  exercises: ExercisesPathSetMap;
+  exercises: ExerciseSet[];
   grids: SkPath[];
   titles: string[];
   labels: Labels[];
 };
 
-const getMaxY = (data: PracticeData[]) => {
+const getCounts = (pd: IPracticeData): Map<ExerciseType, number> => {
+  return new Map([
+    ['scale', pd.scale],
+    ['octave', pd.octave],
+    ['arpeggio', pd.arpeggio],
+    ['solidChord', pd.solidChord],
+    ['brokenChord', pd.brokenChord],
+  ]);
+};
+
+const getMaxY = (data: IPracticeData[]) => {
   if (data.length <= 0) return 10;
 
   let max_y = 0;
   data.map(practiceData => {
-    practiceData.getCounts().forEach(count => {
+    getCounts(practiceData).forEach(count => {
       if (count > max_y) max_y = count;
     });
   });
@@ -60,7 +82,7 @@ const getX = (
   if (index == 1) {
     return dateXPositionMap[date.getMonth()];
   } else if (index == 0) {
-    return dateXPositionMap[(date.getDay() - 1) % 7];
+    return dateXPositionMap[date.getDay() % 7];
   }
 
   return dateXPositionMap[date.getMonth()];
@@ -86,12 +108,13 @@ const PADDING = 20;
 const GRID_RIGHT_MARGIN = 30;
 const GRID_BOTTOM_MARGIN = 50;
 
-const orderPracticeDataArrys = (dataMap: Map<GRAPH_ID, PracticeData[]>) => {
-  const ret: Array<PracticeData[]> = [];
-  const w = dataMap.get('Week');
-  const y = dataMap.get('Year');
+const orderPracticeDataArrys = (dataMap: IAllPracticeData) => {
+  const ret: Array<IPracticeData[]> = [];
+  const w = dataMap.Week;
+  const y = dataMap.Year;
 
   if (w !== undefined) {
+    console.log('w ' + JSON.stringify(w));
     ret.push(w);
   }
 
@@ -128,9 +151,14 @@ export class GraphGenerator {
   dateXPositionMap: {[id: number]: number} = {};
   xPositions: number[] = [];
 
-  ex: ExercisesPathSetMap = new Map();
+  exercises: ExerciseSet[] = [];
   grids: SkPath[] = [];
   labels: Labels[] = [];
+
+  constructor() {
+    this.grids = [];
+    this.labels = [];
+  }
 
   getGridXPositions = () => {
     //reset this for next iteration of the loop
@@ -196,37 +224,95 @@ export class GraphGenerator {
         i * scale_y + PADDING,
       );
     }
-
-    return gridLines;
+    this.grids.push(gridLines);
   };
 
-  GetAllExercises = (pd: PracticeData, index: number, jIndex: number) => {
-    const scale_y = this.HEIGHT / this.max_y;
-    for (let [exercise, count] of pd.getCounts()) {
-      // if (count <= 0) continue;
+  GetAllExercises = (index: number, practiceDataArr: IPracticeData[]) => {
+    console.log(`GetAllExercises index ${index}`);
+    const scalar_y = this.inner_height / this.max_y;
 
-      //could early return here
-      if (this.ex.get(exercise) === undefined) {
-        this.ex.set(exercise, []);
-      }
+    const ex: ExerciseSet = {
+      scale: createPlot(),
+      octave: createPlot(),
+      arpeggio: createPlot(),
+      solidChord: createPlot(),
+      brokenChord: createPlot(),
+    };
 
-      const x = getX(this.dateXPositionMap, index, pd.getDate());
-      const y = getY(count, scale_y, this.HEIGHT, PADDING);
+    for (let i = 0; i < practiceDataArr.length; i++) {
+      const pd = practiceDataArr[i];
 
-      const newPlot = createPlot();
+      const x = getX(this.dateXPositionMap, index, new Date(pd.date));
 
-      if (jIndex == 0) {
-        newPlot.line.moveTo(x, y);
+      const y_scale = getY(pd.scale, scalar_y, this.inner_height, PADDING);
+      const y_octave = getY(pd.octave, scalar_y, this.inner_height, PADDING);
+      const y_arpeggio = getY(
+        pd.arpeggio,
+        scalar_y,
+        this.inner_height,
+        PADDING,
+      );
+      const y_solidChord = getY(
+        pd.solidChord,
+        scalar_y,
+        this.inner_height,
+        PADDING,
+      );
+      const y_brokenChord = getY(
+        pd.brokenChord,
+        scalar_y,
+        this.HEIGHT,
+        PADDING,
+      );
+
+      if (i == 0) {
+        ex.scale.line.moveTo(x, y_scale);
+        ex.octave.line.moveTo(x, y_octave);
+        ex.arpeggio.line.moveTo(x, y_arpeggio);
+        ex.solidChord.line.moveTo(x, y_solidChord);
+        ex.brokenChord.line.moveTo(x, y_brokenChord);
       } else {
-        newPlot.line.lineTo(x, y);
+        ex.scale.line.lineTo(x, y_scale);
+        ex.octave.line.lineTo(x, y_octave);
+        ex.arpeggio.line.lineTo(x, y_arpeggio);
+        ex.solidChord.line.lineTo(x, y_solidChord);
+        ex.brokenChord.line.lineTo(x, y_brokenChord);
       }
-      newPlot.dots.addCircle(x, y, 6);
 
-      this.ex.get(exercise)?.push(newPlot);
+      ex.scale.dots.addCircle(x, y_scale, 6);
+      ex.octave.dots.addCircle(x, y_octave, 6);
+      ex.arpeggio.dots.addCircle(x, y_arpeggio, 6);
+      ex.solidChord.dots.addCircle(x, y_solidChord, 6);
+      ex.brokenChord.dots.addCircle(x, y_brokenChord, 6);
+
+      // for (let [exercise, count] of getCounts(practiceDataArr[i])) {
+      //   // if (count <= 0) continue;
+
+      //   // //could early return here
+      //   // if (this.ex.get(exercise) === undefined) {
+      //   //   this.ex.set(exercise, []);
+      //   // }
+
+      //   const x = getX(this.dateXPositionMap, index, new Date(pd.date));
+      //   const y = getY(count, scalar_y, this.HEIGHT, PADDING);
+
+      //   const newPlot = createPlot();
+
+      //   if (jIndex == 0) {
+      //     newPlot.line.moveTo(x, y);
+      //   } else {
+      //     newPlot.line.lineTo(x, y);
+      //   }
+      //   newPlot.dots.addCircle(x, y, 6);
+
+      //   ex.get(exercise)?.push(newPlot);
+      // }
     }
+    console.log('Adding to exercies' + this.exercises.length);
+    this.exercises.push(ex);
   };
 
-  getGraph(width: number, height: number, data: Map<GRAPH_ID, PracticeData[]>) {
+  getGraph(width: number, height: number, data: IAllPracticeData): GraphData {
     this.WIDTH = width;
     this.HEIGHT = height;
 
@@ -250,25 +336,28 @@ export class GraphGenerator {
       let max_y = getMaxY(practiceDatas);
       this.max_y = Math.ceil(max_y / 10) * 10;
 
-      this.grids.push(this.buildGrid());
+      this.buildGrid();
 
       const xL = this.buildXAxisLabels(i);
       const yL = this.buildYAxisLabels();
 
       this.labels.push({xLabels: xL, yLabels: yL});
 
-      //Each entry in group
-      for (let j = 0; j < practiceDatas.length; j++) {
-        const pd = practiceDatas[j];
-        this.GetAllExercises(pd, i, j);
-      }
+      this.GetAllExercises(i, practiceDatas);
+
+      // //Each entry in group
+      // for (let j = 0; j < practiceDatas.length; j++) {
+      //   const pd = practiceDatas[j];
+      // }
     }
 
     // console.log('this.ex ' + JSON.stringify([...this.ex.entries()], null, 2));
 
+    console.log('HERE HERE IS THE LENGTH ' + this.exercises.length);
+
     return {
       titles: ['Week', 'Year'],
-      exercises: this.ex,
+      exercises: this.exercises,
       grids: this.grids,
       labels: this.labels,
     };

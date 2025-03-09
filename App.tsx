@@ -6,12 +6,14 @@ import React from 'react';
 import RootNavigator from './src/navigation';
 
 //Providers
-import RoutineProvider from './src/state/modules/routine/routine';
+// import RoutineProvider from './src/state/modules/routine/routine';
 import PracticeDataProvider from './src/state/modules/PracticeData/PracticeData';
 import dbInstance from './src/data/Database/database';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { ThemeProvider } from './src/context';
 
+import { Provider } from "react-redux";
+import store from "./src/state/store"
 
 const App = () => {
 
@@ -19,15 +21,15 @@ const App = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      {/* <NativeBaseProvider theme={CustomTheme}> */}
-        <ThemeProvider>
-          <RoutineProvider>
-            <PracticeDataProvider>
-              <RootNavigator />
-            </PracticeDataProvider>
-          </RoutineProvider>
-        </ThemeProvider>
-      {/* </NativeBaseProvider> */}
+       <Provider store={store}>
+          <ThemeProvider>
+            {/* <RoutineProvider> */}
+              {/* <PracticeDataProvider> */}
+                <RootNavigator />
+              {/* </PracticeDataProvider> */}
+            {/* </RoutineProvider> */}
+          </ThemeProvider>
+        </Provider>
     </GestureHandlerRootView>
   );
 };
