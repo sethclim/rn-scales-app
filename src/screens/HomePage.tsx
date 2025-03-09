@@ -70,8 +70,8 @@ useEffect(()=>{
                 </HStack> */}
 
                 <SquareHomeButton onPress={() => navigation.navigate("Generate")} text="Generate" color={pallet.one} size={110}/>
-                <SquareHomeButton onPress={() => navigation.navigate("Generate")} text="Saved Routines" color={pallet.two} size={110}/>
-                <SquareHomeButton onPress={() => navigation.navigate("Settings")} text="Stats" color={pallet.three} size={110}/>
+                <SquareHomeButton onPress={() => navigation.navigate("SavedRoutines")} text="Saved Routines" color={pallet.two} size={110}/>
+                <SquareHomeButton onPress={() => navigation.navigate("PracticeStats")} text="Stats" color={pallet.three} size={110}/>
             {/* </Card> */}
         </HStack>
         {/* <HStack flexMain={false} justifyContent="center"  p={0} m={0} gap={20}>
