@@ -53,13 +53,6 @@ const BottomTabs = () => {
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     },
-                    headerRight: () => (
-                        <Box align='flex-end' p={10}>
-                            <Button onPress={() => navigation.navigate('Settings')} >
-                                <MaterialIcons name="settings" color={headerForeground} size={25} />
-                            </Button>
-                        </Box>
-                      ),
                     //tabBarInactiveTintColor:"#00ff00",
                     tabBarActiveTintColor:primary,
                     tabBarIcon: ({ color, size }) => (
