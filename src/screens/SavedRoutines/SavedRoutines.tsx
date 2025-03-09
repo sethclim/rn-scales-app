@@ -1,18 +1,15 @@
-import React, { useContext, useEffect }  from 'react';
+import React, { useContext }  from 'react';
 
 import { Box } from "../../native_blocks/primatives/Box";
 
-// import withObservables from '@nozbe/with-observables';
-import {Routine} from '../../data/Models/DataModels';
-import { SavedRoutinesProps } from './types';
+import { Routine } from '../../data/Models/DataModels';
 import { SavedRoutineRow } from './SavedRoutineRow';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import { StyleSheet, Text } from 'react-native'
 
-import  SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
-// import Context from '../../state/modules/routine/context';
-import { requestAllRoutines } from '../../state/modules/routine/store/actions';
+import SavedRoutineHiddenItem  from './SavedRoutineHiddenItem';
+
 import { useFocusEffect } from '@react-navigation/native';
 import { ThemeContext } from '../../context/ThemeContext';
 import { useAppDispatch, useAppSelector } from '../../state/hooks';
@@ -21,18 +18,8 @@ import { RootState } from '../../state/store';
 
 const SavedRoutines  = () => {
 
-  // const [routines, setRoutines] = useState<Routine[]>()
-  // const { myDispatch, state } = useContext(Context);
-
   const { primary, background, mode } = useContext(ThemeContext);
   const dispatch = useAppDispatch()
-
-  // const DoSideEffect = () => {
-  //   // if (myDispatch == null)
-  //   //   return
-
-  //   dispatch(getAllRoutines())
-  // }
 
   const routines = useAppSelector((state: RootState) => state.routine.routines)
 
@@ -75,7 +62,7 @@ const SavedRoutines  = () => {
         recalculateHiddenLayout={true}
         ListEmptyComponent={() =>(
           <Box   justifyContent="center" align="center" height={500}>
-            <Text>No Saved Routines</Text>
+            <Text style={{color: primary, fontSize: 20}}>No Saved Routines</Text>
           </Box>
         )}
         />

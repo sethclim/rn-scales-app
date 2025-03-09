@@ -41,11 +41,11 @@ const Settings  = () => {
                             <TextButton  titles="Blackout" onPress={() => {}}  />
                         </Box> */}
                         <Button  onPress={() => requestTheme('tokyo')} style={{height: 120}}>
-                            <Box flexMain={false} height={120} width={75} m={2} p={4} style={{backgroundColor : '#ff9e64'}} >
+                            <Box flexMain={false} height={120} width={75} m={2} p={4} style={{backgroundColor : '#7aa2f7'}} >
                                 <Text style={{color: 'white'}}>Tokyo Nights</Text>
                                 <VStack justifyContent="flex-end">
                                     <Box flexMain={false}  style={{
-                                            backgroundColor : mode == "tokyo" ? '#ff9e64' : "white", 
+                                            backgroundColor : mode == "tokyo" ? '#7aa2f7' : "white", 
                                             borderRadius: 1000,
                                             borderWidth:  mode == "tokyo" ? 2 : 0, 
                                             borderColor: "white"
