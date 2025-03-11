@@ -6,6 +6,7 @@ import {BottomTabNavigatorParamList} from './types';
 import Generate from '../screens/Generate';
 import SavedRoutines from '../screens/SavedRoutines/SavedRoutines';
 import PracticeStats  from '../screens/PracticeStats/PracticeStats'
+import { HomePage } from "../screens/HomePage"
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -14,6 +15,7 @@ import { Button } from "../native_blocks/";
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from '../context/ThemeContext';
 import { Box } from '../native_blocks/primatives/Box';
+import Settings from '../screens/Settings';
 
 const BottomTab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
@@ -51,13 +53,6 @@ const BottomTabs = () => {
                     headerTitleStyle: {
                         fontWeight: 'bold',
                     },
-                    headerRight: () => (
-                        <Box align='flex-end' p={10}>
-                            <Button onPress={() => navigation.navigate('Settings')} >
-                                <MaterialIcons name="settings" color={headerForeground} size={25} />
-                            </Button>
-                        </Box>
-                      ),
                     //tabBarInactiveTintColor:"#00ff00",
                     tabBarActiveTintColor:primary,
                     tabBarIcon: ({ color, size }) => (
@@ -84,6 +79,24 @@ const BottomTabs = () => {
               }}
             />
 
+            <BottomTab.Screen name="HomePage" component={HomePage} 
+                options={{
+                    title: 'Home',
+                    headerStyle: {
+                        backgroundColor: headerBackground,
+                    },
+                    headerTintColor:  headerForeground,
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                    //tabBarInactiveTintColor:"#00ff00",
+                    tabBarActiveTintColor:primary,
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="home" color={color} size={size} />
+                    ),
+              }}
+            />
+
             <BottomTab.Screen name="PracticeStats" component={PracticeStats} 
                 options={{
                     title: 'Practice Stats',
@@ -97,7 +110,24 @@ const BottomTabs = () => {
                     //tabBarInactiveTintColor:"#00ff00",
                     tabBarActiveTintColor: primary,
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="folder" color={color} size={size} />
+                        <MaterialCommunityIcons name="cosine-wave" color={color} size={size} />
+                    ),
+              }}
+            />
+             <BottomTab.Screen name="Settings" component={Settings} 
+                options={{
+                    title: 'Settings',
+                    headerStyle: {
+                        backgroundColor: headerBackground,
+                    },
+                    headerTintColor:  headerForeground,
+                    headerTitleStyle: {
+                        fontWeight: 'bold',
+                    },
+                    //tabBarInactiveTintColor:"#00ff00",
+                    tabBarActiveTintColor: primary,
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="cog" color={color} size={size} />
                     ),
               }}
             />

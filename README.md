@@ -18,6 +18,18 @@ scales you might skip, plus track your practice Statistics.
     <td><img src="https://github.com/user-attachments/assets/7c7c9b8c-f3a0-4854-9cf3-13eb283a69d5" width=130 height=auto></td>
     <td><img src="https://github.com/user-attachments/assets/836c6e94-8f02-4213-a081-7a2dd91291bc" width=130 height=auto></td>
   </tr>
+   <tr>
+    <td>Home</td>
+    <td>Settings</td>
+    <!-- <td>Saved Routines</td>
+    <td>Practice Stats</td> -->
+  </tr>
+    <tr>
+    <td><img src="https://github.com/user-attachments/assets/422cbbd0-9bb9-46a2-92c3-3113f4ae467b" alt="Description" width="130" height="auto"></td>
+    <td><img src="https://github.com/user-attachments/assets/d923ad14-ccbb-4f41-8da4-a8dd5497a276" width=130 height=auto></td>
+    <!-- <td><img src="https://github.com/user-attachments/assets/7c7c9b8c-f3a0-4854-9cf3-13eb283a69d5" width=130 height=auto></td>
+    <td><img src="https://github.com/user-attachments/assets/836c6e94-8f02-4213-a081-7a2dd91291bc" width=130 height=auto></td> -->
+  </tr>
  </table>
 
 ### Features
