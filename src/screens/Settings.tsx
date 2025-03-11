@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack, Button } from "../native_blocks/";
@@ -12,6 +13,21 @@ const ROW_HEIGHT = 50
 const Settings  = () => {
 
     const { requestTheme, background, primary, secondaryBackground, mode} = useContext(ThemeContext);
+
+    const storeData = async (value: string) => {
+        try {
+          await AsyncStorage.setItem('theme', value);
+        } catch (e) {
+          // saving error
+          console.warn(e)
+        }
+      };
+
+      const changeTheme = (theme : string) => {
+        requestTheme(theme)
+        storeData(theme)
+      }
+
   
     return (
       <Box p={30} flexMain={true} style={{backgroundColor : background!}} >
@@ -21,7 +37,7 @@ const Settings  = () => {
                 <VStack flexMain={false} pVH={{v: 8, h: 2}} align="flex-start">
                     <Text style={{fontSize: 20, color: primary}}>Theme</Text>
                     <HStack justifyContent="center" align="flex-start">
-                        <Button  onPress={() => requestTheme('light')} style={{height: 120}}>
+                        <Button  onPress={() => changeTheme('light')} style={{height: 120}}>
                             <Box flexMain={false} height={120} width={75} m={2} p={4} style={{backgroundColor : '#5E81AC'}} >
                                 <Text style={{color: 'white'}}>Nord</Text>
                                 <VStack justifyContent="flex-end">

@@ -29,7 +29,7 @@ const RenderExercisePathSet = ({ plots, index, color }: RenderExercisePathSetPro
     },
     [index, plots]
   );
-
+  
   const animatedPath2 = useDerivedValue(
     () => {
       "worklet"

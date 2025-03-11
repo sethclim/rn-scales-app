@@ -22,6 +22,7 @@ import { useAppDispatch } from "../state/hooks";
 import { generateRoutine, saveRoutines } from "../state/routineSlice";
 
 import { getTodaysPracticedata } from "../state/practiceDataSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 //Options
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
@@ -41,7 +42,7 @@ const Generate = () => {
 
     const [showModal, setShowModal] = useState(false);
 
-    const { background, primary, secondaryBackground } = useContext(ThemeContext);
+    const { background, primary, secondaryBackground, requestTheme } = useContext(ThemeContext);
 
     const dispatch = useAppDispatch()
 
@@ -49,8 +50,22 @@ const Generate = () => {
         return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
     }
 
+    const readTheme = async () => {
+        try {
+            const mode = await AsyncStorage.getItem('theme');
+
+            if(mode != null)
+            {
+                requestTheme(mode)
+            }
+        } catch (e) {
+            console.warn(e)
+        }
+    };
+
     useEffect(() => {
         dispatch(getTodaysPracticedata())
+        readTheme()
     }, [])
 
     const StartRoutine = () => {
