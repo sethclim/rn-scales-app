@@ -39,8 +39,8 @@ scales you might skip, plus track your practice Statistics.
 - [x] Track Pratice Statistics
 - [x] Visual Practice Stats on Graph
 - [x] Theme Switcher
+- [x] Visual Practice Progress
 - [ ] Resume practice where you left off
-- [ ] Visual Practice Progress
 - [ ] Custom favourite / "need more work" list
 
 ### Technologies Used
