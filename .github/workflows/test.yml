@@ -1,0 +1,40 @@
+name: Tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+# Cancel an older run when new commits are pushed to the same PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # .gitmodules uses an SSH URL; the runner has no SSH key, so fetch the
+      # (public) native_blocks submodule over HTTPS instead
+      - name: Checkout submodules
+        run: |
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          git submodule update --init --recursive
+
+      # Node 22.5+ for node:sqlite, used by the real-SQL database tests
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Test
+        run: yarn test --ci
