@@ -1,3 +1,4 @@
+import { log } from '../utils/logger';
 import React, { useState, type PropsWithChildren } from 'react';
 import { ThemeContext } from './ThemeContext';
 import { toyoNightsTheme, lighttheme, rosePineTheme, catppuccinLatteTheme, catppuccinMochaTheme } from '../../theme/';
@@ -7,7 +8,7 @@ export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [mode, setMode] = useState('light');
 
   const requestTheme = (nextTheme : string) => {
-    console.log('toogle called ' + theme);
+    log.debug('toogle called ' + theme);
     setMode(nextTheme);
 
     if (nextTheme == 'light')

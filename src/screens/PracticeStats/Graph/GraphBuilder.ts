@@ -1,3 +1,4 @@
+import { log } from '../../../utils/logger';
 import {SkPath, SkPoint, Skia} from '@shopify/react-native-skia';
 import {
   ExerciseType,
@@ -141,7 +142,7 @@ const orderPracticeDataArrys = (dataMap: IAllPracticeData) => {
   const y = dataMap.Year;
 
   if (w !== undefined) {
-    console.log('w ' + JSON.stringify(w));
+    log.debug('w ' + JSON.stringify(w));
     ret.push(w);
   }
 
@@ -257,7 +258,7 @@ export class GraphGenerator {
   };
 
   GetAllExercises = (index: number, practiceDataArr: IPracticeData[]) => {
-    console.log(`GetAllExercises index ${index}`);
+    log.debug(`GetAllExercises index ${index}`);
     const scalar_y = this.inner_height / this.max_y;
 
     const ex: ExerciseSet = {
@@ -315,7 +316,7 @@ export class GraphGenerator {
       ex.solidChord.dots.addCircle(x, y_solidChord, DOT_RADIUS);
       ex.brokenChord.dots.addCircle(x, y_brokenChord, DOT_RADIUS);
     }
-    console.log('Adding to exercies' + this.exercises.length);
+    log.debug('Adding to exercies' + this.exercises.length);
     this.exercises.push(ex);
   };
 
@@ -356,7 +357,7 @@ export class GraphGenerator {
 
     // console.log('this.ex ' + JSON.stringify([...this.ex.entries()], null, 2));
 
-    console.log('HERE HERE IS THE LENGTH ' + this.exercises.length);
+    log.debug('HERE HERE IS THE LENGTH ' + this.exercises.length);
 
     return {
       titles: ['Week', 'Year'],

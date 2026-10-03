@@ -1,3 +1,4 @@
+import { log } from "../utils/logger";
 import React, { useContext, useEffect, useState } from "react"
 import { Text } from "react-native"
 import { VStack, HStack, Button } from "../native_blocks"
@@ -36,7 +37,7 @@ type SquareHomeButtonProps = {
 const SquareHomeButton = (props : SquareHomeButtonProps) => {
 
     useEffect(()=>{
-        console.log("props " + props.color)
+        log.debug("props " + props.color)
     },[])
 
     return (
@@ -57,7 +58,7 @@ const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParam
 const [pallet, setGridPallet] = useState(gridPalletTokyo)
 
 useEffect(()=>{
-    console.log("pallet " + JSON.stringify(pallet))
+    log.debug("pallet " + JSON.stringify(pallet))
 },[])
 
  return (
