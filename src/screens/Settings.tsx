@@ -5,8 +5,7 @@ import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack, Button } from "../native_blocks/";
 import { TextButton } from "../components/TextButton";
 import { ThemeContext } from "../context/ThemeContext";
-import { Alert, Text } from "react-native";
-import { MiniTextButton } from "../components/MiniTextButton";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/types";
@@ -21,6 +20,10 @@ const Settings  = () => {
     const { requestTheme, background, primary, secondaryBackground, mode} = useContext(ThemeContext);
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const dispatch = useAppDispatch();
+
+    const textColor = mode == 'light' ? '#2E3440' : '#c0caf5'
+    const dangerColor = mode == 'light' ? '#BF616A' : '#f7768e'
+    const dividerColor = mode == 'light' ? '#2E344033' : '#c0caf533'
 
     const confirmDelete = (what: string, onDelete: () => void) =>
       Alert.alert(
@@ -50,7 +53,7 @@ const Settings  = () => {
     return (
       <Box p={30} flexMain={true} style={{backgroundColor : background!}} >
         {/* bg="nord.secondaryBackground" */}
-        <Box mAll={{t : 20}}  height={400} pVH={{v : 10}} justifyContent="flex-start">
+        <Box mAll={{t : 20}} pVH={{v : 10}} justifyContent="flex-start">
             <VStack flexMain={false} align="flex-start" >
                 <VStack flexMain={false} pVH={{v: 8, h: 2}} align="flex-start">
                     <Text style={{fontSize: 20, color: primary}}>Theme</Text>
@@ -94,31 +97,64 @@ const Settings  = () => {
            
                     </HStack>
                 </VStack>
-                <Text style={{fontSize: 20, color: primary}}>Your Data</Text>
-                <HStack justifyContent="flex-start"  flexMain={false} mVH={{v: 5}} pVH={{h: 2}} style={{backgroundColor : secondaryBackground!}}>
-                    <HStack p={4} justifyContent="flex-start">
-                        <Text style={{color: primary}}>Delete All Practice Data</Text>
-                    </HStack>
-                    <MiniTextButton  titles="Delete" onPress={() => confirmDelete('practice data', () => dispatch(deleteAllPracticeData()))}  />
-                </HStack>
-                <HStack flexMain={false} mVH={{v: 5}} pVH={{h: 2}} style={{backgroundColor : secondaryBackground!}} >
-                    <HStack p={4} justifyContent="flex-start">
-                        <Text style={{color: primary}}>Delete All Saved Routines</Text>
-                    </HStack>
-                    <MiniTextButton titles="Delete" onPress={() => confirmDelete('saved routines', () => dispatch(deleteAllRoutines()))}  />
-                </HStack>
-                {__DEV__ ?
-                  <HStack flexMain={false} mVH={{v: 5}} pVH={{h: 2}} style={{backgroundColor : secondaryBackground!}} >
-                      <HStack p={4} justifyContent="flex-start">
-                          <Text style={{color: primary}}>Graph Playground (dev)</Text>
-                      </HStack>
-                      <MiniTextButton titles="Open" onPress={() => navigation.navigate('GraphPlayground')}  />
-                  </HStack> : null
-                }
+                <Text style={{fontSize: 20, color: primary, marginTop: 32, marginBottom: 10}}>Your Data</Text>
+                <View style={{alignSelf: 'stretch', backgroundColor: secondaryBackground!, borderRadius: 10, overflow: 'hidden'}}>
+                    <SettingsRow
+                        label="Delete all practice data"
+                        action="Delete"
+                        color={dangerColor}
+                        textColor={textColor}
+                        onPress={() => confirmDelete('practice data', () => dispatch(deleteAllPracticeData()))} />
+                    <View style={{height: StyleSheet.hairlineWidth, backgroundColor: dividerColor, marginLeft: 16}} />
+                    <SettingsRow
+                        label="Delete all saved routines"
+                        action="Delete"
+                        color={dangerColor}
+                        textColor={textColor}
+                        onPress={() => confirmDelete('saved routines', () => dispatch(deleteAllRoutines()))} />
+                    {__DEV__ ?
+                      <>
+                        <View style={{height: StyleSheet.hairlineWidth, backgroundColor: dividerColor, marginLeft: 16}} />
+                        <SettingsRow
+                            label="Graph Playground (dev)"
+                            action="Open"
+                            color={primary}
+                            textColor={textColor}
+                            onPress={() => navigation.navigate('GraphPlayground')} />
+                      </> : null
+                    }
+                </View>
             </VStack>
         </Box>
       </Box>
     );
   };
+
+type SettingsRowProps = {
+    label: string
+    action: string
+    color: string
+    textColor: string
+    onPress: () => void
+}
+
+// One row in a grouped settings list: label on the left, text action on the right
+const SettingsRow = ({ label, action, color, textColor, onPress }: SettingsRowProps) => (
+    <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        style={({ pressed }) => ({
+            height: ROW_HEIGHT,
+            paddingHorizontal: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            opacity: pressed ? 0.6 : 1,
+        })}>
+        <Text style={{color: textColor, fontSize: 16}}>{label}</Text>
+        <Text style={{color, fontSize: 16, fontWeight: '600'}}>{action}</Text>
+    </Pressable>
+)
 
 export default Settings
