@@ -54,6 +54,10 @@ export const deleteRoutine = createAsyncThunk("routine/deleteRoutine", async(id 
   dispatch(routineSlice.actions.removeDeletedRoutineImmediately(id));
 }) 
 
+export const deleteAllRoutines = createAsyncThunk("routine/deleteAllRoutines", async() => {
+  await dbInstance.deleteAllRoutines();
+})
+
 //Reducer
 const routineSlice = createSlice({
     name: "routine",
@@ -159,6 +163,12 @@ const routineSlice = createSlice({
           .addCase(deleteRoutine.rejected, (state, action) => {
             state.status = 'rejected';
             // state.errors = action.error.message;
+          })
+          .addCase(deleteAllRoutines.fulfilled, (state) => {
+            state.routines = [];
+          })
+          .addCase(deleteAllRoutines.rejected, (state) => {
+            state.status = 'rejected';
           });
         },
       

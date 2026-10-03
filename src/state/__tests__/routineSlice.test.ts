@@ -1,5 +1,6 @@
 import {configureStore} from '@reduxjs/toolkit';
 import routineReducer, {
+  deleteAllRoutines,
   deleteRoutine,
   generateRoutine,
   getAllRoutines,
@@ -18,6 +19,7 @@ jest.mock('../../data/Database/database', () => ({
     saveRoutine: jest.fn(),
     getRoutineItems: jest.fn(),
     deleteRoutine: jest.fn(),
+    deleteAllRoutines: jest.fn(),
   },
 }));
 
@@ -279,5 +281,30 @@ describe('resumeRoutine', () => {
     await store.dispatch(resumeRoutine('7'));
 
     expect(store.getState().routine.generatedRoutine).toEqual([]);
+  });
+});
+
+describe('deleteAllRoutines', () => {
+  it('empties the saved routines list', async () => {
+    db.getAllRoutines.mockResolvedValue([routine('1'), routine('2')]);
+    const store = makeStore();
+    await store.dispatch(getAllRoutines());
+
+    await store.dispatch(deleteAllRoutines());
+
+    expect(db.deleteAllRoutines).toHaveBeenCalled();
+    expect(store.getState().routine.routines).toEqual([]);
+  });
+
+  it('keeps the list if the database delete fails', async () => {
+    db.getAllRoutines.mockResolvedValue([routine('1')]);
+    db.deleteAllRoutines.mockRejectedValue(new Error('db locked'));
+    const store = makeStore();
+    await store.dispatch(getAllRoutines());
+
+    await store.dispatch(deleteAllRoutines());
+
+    expect(store.getState().routine.routines.map(r => r.id)).toEqual(['1']);
+    expect(store.getState().routine.status).toBe('rejected');
   });
 });

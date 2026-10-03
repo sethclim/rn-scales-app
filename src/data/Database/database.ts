@@ -308,6 +308,24 @@ export class Database {
       `DELETE FROM RoutineItem WHERE routineForeignKey=${routineId}; DELETE FROM Routine WHERE id=${routineId};`,
     );
   }
+
+  async deleteAllPracticeData() {
+    if (this.db == null) {
+      console.log('DB not created');
+      return;
+    }
+
+    await this.db.execAsync('DELETE FROM PracticeData;');
+  }
+
+  async deleteAllRoutines() {
+    if (this.db == null) {
+      console.log('DB not created');
+      return;
+    }
+
+    await this.db.execAsync('DELETE FROM RoutineItem; DELETE FROM Routine;');
+  }
 }
 
 const dbInstance = new Database();

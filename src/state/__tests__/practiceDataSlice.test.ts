@@ -1,5 +1,6 @@
 import {configureStore} from '@reduxjs/toolkit';
 import practiceDataReducer, {
+  deleteAllPracticeData,
   getAllPracticedata,
   getTodaysPracticedata,
   recordPracticeData,
@@ -15,6 +16,7 @@ jest.mock('../../data/Database/database', () => ({
     getAllPracticeData: jest.fn(),
     getTodaysPracticeData: jest.fn(),
     savePracticedata: jest.fn(),
+    deleteAllPracticeData: jest.fn(),
   },
 }));
 
@@ -178,6 +180,44 @@ describe('getAllPracticedata', () => {
     await store.dispatch(getAllPracticedata());
 
     expect(store.getState().practice.practiceData).toEqual(data);
+    expect(store.getState().practice.status).toBe('rejected');
+  });
+});
+
+describe('deleteAllPracticeData', () => {
+  it('clears the graph and zeroes the current session', async () => {
+    db.getAllPracticeData.mockResolvedValue({
+      Week: [today({scale: 1})],
+      Year: [today({scale: 9})],
+      Month: [],
+      Day: [],
+    });
+    db.getTodaysPracticeData.mockResolvedValue(today({scale: 4}));
+    const store = makeStore();
+    await store.dispatch(getAllPracticedata());
+    await store.dispatch(getTodaysPracticedata());
+
+    await store.dispatch(deleteAllPracticeData());
+
+    expect(db.deleteAllPracticeData).toHaveBeenCalled();
+    expect(store.getState().practice.practiceData).toEqual({
+      Week: [],
+      Year: [],
+      Month: [],
+      Day: [],
+    });
+    expect(session(store)).toMatchObject({date: today().date, scale: 0});
+  });
+
+  it('keeps everything if the database delete fails', async () => {
+    db.getTodaysPracticeData.mockResolvedValue(today({scale: 4}));
+    db.deleteAllPracticeData.mockRejectedValue(new Error('db locked'));
+    const store = makeStore();
+    await store.dispatch(getTodaysPracticedata());
+
+    await store.dispatch(deleteAllPracticeData());
+
+    expect(session(store).scale).toBe(4);
     expect(store.getState().practice.status).toBe('rejected');
   });
 });

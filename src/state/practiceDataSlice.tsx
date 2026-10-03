@@ -40,6 +40,13 @@ export const getTodaysPracticedata = createAsyncThunk("practice/getTodaysPractic
     return await dbInstance.getTodaysPracticeData(new Date());
 })
 
+export const deleteAllPracticeData = createAsyncThunk("practice/deleteAllPracticeData", async() => {
+    await dbInstance.deleteAllPracticeData();
+})
+
+const emptySession = (date: string): IPracticeData =>
+  ({date, Total: 0, scale: 0, octave: 0, arpeggio: 0, solidChord : 0, brokenChord: 0})
+
 //Reducer
 const practiceDataSlice = createSlice({
     name: "practiceData",
@@ -107,6 +114,13 @@ const practiceDataSlice = createSlice({
           .addCase(getTodaysPracticedata.rejected, (state, action) => {
             state.status = 'rejected';
             // state.errors = action.error.message;
+          })
+          .addCase(deleteAllPracticeData.fulfilled, (state) => {
+            state.practiceData = initialState.practiceData;
+            state.currentSessionPracticeData = emptySession(state.currentSessionPracticeData.date);
+          })
+          .addCase(deleteAllPracticeData.rejected, (state) => {
+            state.status = 'rejected';
           });
         },
       
