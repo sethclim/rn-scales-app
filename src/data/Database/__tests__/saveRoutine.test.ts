@@ -29,7 +29,7 @@ const makeDatabase = async () => {
   const fake = makeFakeDb();
   const database = new Database();
   // Let the constructor's async open finish so it can't overwrite our fake
-  await new Promise(resolve => setTimeout(resolve, 0));
+  await new Promise<void>(resolve => setTimeout(resolve, 0));
   database.db = fake.db as unknown as Database['db'];
   return {database, ...fake};
 };
