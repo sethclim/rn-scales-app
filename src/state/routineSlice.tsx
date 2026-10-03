@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "./store"
-import { ExerciseType, Routine, RoutineItem } from "../data/Models/DataModels";
+import { ExerciseType, Exercises, Routine, RoutineItem } from "../data/Models/DataModels";
 import dbInstance from "../data/Database/database";
-import { Exercises } from "../screens/Generate";
 
 export interface IRoutineState {
   error: string;
