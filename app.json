@@ -1,18 +1,16 @@
 {
   "name": "ScalesApp",
-  "displayName": "ScalesApp",
   "slug": "scales-app",
   "version": "1.0.0",
   "orientation": "portrait",
   "icon": "./src/assets/icon.png",
-  "newArchEnabled": true,
   "plugins": [
     "expo-sqlite",
     "expo-font",
     [
       "expo-splash-screen",
       {
-        "image": "./src/assets/icon.png",
+        "image": "./src/assets/adaptive-icon-foreground.png",
         "imageWidth": 200,
         "resizeMode": "contain",
         "backgroundColor": "#2E3440"
@@ -37,5 +35,10 @@
       "android.permission.READ_EXTERNAL_STORAGE",
       "android.permission.WRITE_EXTERNAL_STORAGE"
     ]
+  },
+  "extra": {
+    "eas": {
+      "projectId": "d4f55b43-0f4a-482d-ae6f-6fdb13d0ff89"
+    }
   }
 }
