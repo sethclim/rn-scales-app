@@ -10,7 +10,7 @@ const makeStyle = (theme: any) => {
       },
       textStyle: {
         ...TextStyle.h3,
-        color: "white",
+        color: theme.onPrimary,
       },
     };
   };

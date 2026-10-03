@@ -48,7 +48,7 @@ const makeRoundedButtonStyle = (theme: any) => {
             backgroundColor: theme.primary,
         },
         textStyle: {
-            color: "white",
+            color: theme.onPrimary,
             fontSize: 45,
             FontWeight: "bold"
         }

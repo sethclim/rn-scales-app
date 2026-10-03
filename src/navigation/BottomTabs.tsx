@@ -23,10 +23,10 @@ const BottomTabs = () => {
     
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
 
-    const { primary, background, mode } = React.useContext(ThemeContext);
+    const { primary, background, scheme } = React.useContext(ThemeContext);
 
-    const headerForeground = mode == 'light' ? background! : primary 
-    const headerBackground = mode == 'light' ? primary : background! 
+    const headerForeground = scheme == 'light' ? background! : primary 
+    const headerBackground = scheme == 'light' ? primary : background! 
 
     return(
         <BottomTab.Navigator 

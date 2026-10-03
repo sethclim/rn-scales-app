@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useContext, useEffect, useState } from "react"
+import React, { FunctionComponent, useContext, useEffect, useLayoutEffect, useState } from "react"
 
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
@@ -7,7 +7,7 @@ import { ExerciseType, Exercises } from "../data/Models/DataModels";
 
 import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack } from "../native_blocks/";
-import { Modal, Alert, Text,  } from "react-native";
+import { Modal, Alert, Text, Pressable, TextInput } from "react-native";
 
 import { TextButton } from "../components/TextButton";
 
@@ -15,8 +15,6 @@ import check from "../assets/CheckIcon"
 import { CheckBox } from "../components/Checkbox";
 import { ThemeContext } from "../context/ThemeContext";
 import { Card } from "../components/Card";
-import { StyledTextInputField } from "../native_blocks/TextInput"
-import { MiniTextButton } from "../components/MiniTextButton";
 import { useAppDispatch } from "../state/hooks";
 
 import { generateRoutine, saveRoutines } from "../state/routineSlice";
@@ -39,7 +37,7 @@ const Generate = () => {
 
     const [showModal, setShowModal] = useState(false);
 
-    const { background, primary, secondaryBackground, requestTheme } = useContext(ThemeContext);
+    const { background, primary, onPrimary, secondaryBackground, requestTheme } = useContext(ThemeContext);
 
     const dispatch = useAppDispatch()
 
@@ -55,6 +53,21 @@ const Generate = () => {
             console.warn(e)
         }
     };
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: ({ tintColor }) => (
+                <Pressable
+                    onPress={() => setShowModal(true)}
+                    hitSlop={10}
+                    style={{ marginRight: 16 }}
+                    accessibilityRole="button"
+                    accessibilityLabel="Save routine">
+                    <Text style={{ color: tintColor, fontSize: 16, fontWeight: "600" }}>Save</Text>
+                </Pressable>
+            ),
+        })
+    }, [navigation])
 
     useEffect(() => {
         dispatch(getTodaysPracticedata())
@@ -140,13 +153,13 @@ const Generate = () => {
 
             <VStack mAll={{t: -60}} align="center" justifyContent="center" >
                 <Card height={120} padding={10}>
-                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Roots</Text>
-                        <VStack gap={3} pVH={{v: 4}} >
-                            <HStack>
+                    <Text style={{color : primary, fontSize: 18, fontWeight: "700", marginBottom: 4}}>Roots</Text>
+                        <VStack gap={6} pVH={{v: 4}} >
+                            <HStack colGap={4}>
                             {
                                 NATURAL_ROOTS.map( (naturalRoot, i) => { return (
                                     <CheckBox 
-                                        iconColor="white" 
+                                        iconColor={onPrimary} 
                                         iconSize={20} 
                                         checked={manageRoots[i]} 
                                         checkMark={check} 
@@ -156,11 +169,11 @@ const Generate = () => {
                                 )})
                             }
                             </HStack>
-                            <HStack>
+                            <HStack colGap={4}>
                             {
                                 ACCIDENTAL_ROOTS.map( (accidentalRoot, i) => { return (
                                     <CheckBox 
-                                        iconColor="white" 
+                                        iconColor={onPrimary} 
                                         iconSize={20} 
                                         checked={manageRoots[i + 7]} 
                                         checkMark={check} 
@@ -175,14 +188,14 @@ const Generate = () => {
                 
                 {/* borderRadius="5" rounded="md"  maxWidth="100%" shadow={9} */}
                 <Card height={120} padding={10}>
-                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Type</Text>
-                        <HStack gap={3} flexWrap="wrap" pVH={{v: 4}} >
+                    <Text style={{color : primary, fontSize: 18, fontWeight: "700", marginBottom: 4}}>Type</Text>
+                        <HStack colGap={14} rowGap={8} flexWrap="wrap" pVH={{v: 4}} >
                         {
                             SCALE_TYPES.map( (scaleType, i) => { return (
                                 <CheckBox 
                                     checkMark={check} 
                                     iconSize={20} 
-                                    iconColor="white" 
+                                    iconColor={onPrimary} 
                                     key={i} 
                                     onPress={() => onClickSelectType(i)} 
                                     checked={manageTypes[i]} 
@@ -193,13 +206,13 @@ const Generate = () => {
                 </Card>
 
                 <Card height={120} padding={10}>
-                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Exercise</Text>
-                        <HStack gap={3} flexWrap="wrap" pVH={{v: 4}} >
+                    <Text style={{color : primary, fontSize: 18, fontWeight: "700", marginBottom: 4}}>Exercise</Text>
+                        <HStack colGap={14} rowGap={8} flexWrap="wrap" pVH={{v: 4}} >
                         {
                             [...Exercises.keys()].map((exerciseType, i) => {
                                   return  <CheckBox 
                                             key={i} 
-                                            iconColor="white" 
+                                            iconColor={onPrimary} 
                                             checkMark={check} 
                                             iconSize={20} 
                                             onPress={() => onClickSelectExercise(i, exerciseType)}  
@@ -210,10 +223,9 @@ const Generate = () => {
                         </HStack>
                 </Card>
 
-                <HStack flexMain={false} mAll={{t:10}} gap={4} align="center">
-                    <TextButton titles="Start" onPress={() => StartRoutine()} />
-                    <TextButton titles="Save" onPress={() => setShowModal(true)} />
-                </HStack> 
+                <HStack flexMain={false} mAll={{t:10, l:20, r:20}} align="center">
+                    <TextButton titles="Start" onPress={() => StartRoutine()} style={{flex: 1}} />
+                </HStack>
 
             </VStack>
 
@@ -242,7 +254,14 @@ interface SaveModalProps {
 const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal, save}) => {
 
     const [value, setValue] = React.useState("");
-    const { background, primary, secondaryBackground } = useContext(ThemeContext);
+    const { background, primary, secondaryBackground, text } = useContext(ThemeContext);
+
+    const textColor = text
+
+    // Start with an empty name each time the dialog opens
+    useEffect(() => {
+        if (showModal) setValue("")
+    }, [showModal])
 
     return(
         <Modal
@@ -250,33 +269,52 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
             transparent={true} 
             visible={showModal} 
             onRequestClose={() => setShowModal(false)}>
-                <VStack justifyContent="center"  style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
-                    <VStack flexMain={false} m={30} style={{
-                        backgroundColor: secondaryBackground!, 
-                        borderColor: primary, 
-                        borderWidth: 2,
+                <Pressable
+                    onPress={() => setShowModal(false)}
+                    style={{flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                    {/* Inner Pressable swallows taps so only the backdrop closes the dialog */}
+                    <Pressable onPress={() => {}} style={{
+                        width: '85%',
+                        backgroundColor: background!,
+                        borderRadius: 12,
+                        padding: 20,
+                        gap: 16,
+                        elevation: 8,
                         shadowColor: '#000',
-                        shadowOffset: {
-                          width: 0,
-                          height: 2,
-                        },
+                        shadowOffset: { width: 0, height: 4 },
                         shadowOpacity: 0.25,
-                        shadowRadius: 4,    
-                        elevation: 5,
+                        shadowRadius: 8,
                     }}>
-                        <HStack style={{backgroundColor : primary}} height={60}>
-                            <Text style={{color : background!, fontSize: 32, fontWeight: 700}}>Save Routine</Text>
-                        </HStack>
+                        <Text style={{color: textColor, fontSize: 18, fontWeight: "700"}}>Save routine</Text>
 
-                        <VStack p={10}>
-                            <StyledTextInputField text={value} textChanged={(text) => setValue(text)} errorMessage="" />
-                        </VStack>
-                        <HStack gap={4} p={8}>
-                                <MiniTextButton titles="Cancel" onPress={() => setShowModal(false)} />
-                                <MiniTextButton titles="Save" onPress={() => save(value)} />
+                        <TextInput
+                            value={value}
+                            onChangeText={setValue}
+                            placeholder="Routine name"
+                            placeholderTextColor={text + '99'}
+                            autoFocus
+                            returnKeyType="done"
+                            onSubmitEditing={() => save(value)}
+                            style={{
+                                color: textColor,
+                                backgroundColor: secondaryBackground!,
+                                borderRadius: 8,
+                                paddingHorizontal: 12,
+                                paddingVertical: 10,
+                                fontSize: 16,
+                            }}
+                        />
+
+                        <HStack flexMain={false} justifyContent="flex-end" gap={8}>
+                            <Pressable onPress={() => setShowModal(false)} hitSlop={6} style={{paddingVertical: 8, paddingHorizontal: 14}}>
+                                <Text style={{color: primary, fontSize: 16, fontWeight: "600"}}>Cancel</Text>
+                            </Pressable>
+                            <Pressable onPress={() => save(value)} style={{backgroundColor: primary, borderRadius: 8, paddingVertical: 8, paddingHorizontal: 18}}>
+                                <Text style={{color: background!, fontSize: 16, fontWeight: "600"}}>Save</Text>
+                            </Pressable>
                         </HStack>
-                    </VStack>
-                </VStack>
+                    </Pressable>
+                </Pressable>
         </Modal>
     )
 }
