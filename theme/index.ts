@@ -3,6 +3,10 @@ export const lighttheme = {
   secondary: '#6B8F71',
   background: 'white',
   secondaryBackground: '#E5E9F0',
+  // Nord frost + aurora, one per exercise (scale, octave, arpeggio, solidChord, brokenChord)
+  chart: ['#88C0D0', '#A3BE8C', '#EBCB8B', '#D08770', '#B48EAD'],
+  // Nord polar night at 80% so the aurora colours keep >= 3.5:1 contrast on the blue page
+  chartBackground: '#2E3440CC',
 };
 
 export const toyoNightsTheme = {
@@ -10,4 +14,7 @@ export const toyoNightsTheme = {
   secondary: '#2ac3de',
   background: '#1a1b26',
   secondaryBackground: '#414868',
+  // Tokyo Night accents, one per exercise (scale, octave, arpeggio, solidChord, brokenChord)
+  chart: ['#7dcfff', '#9ece6a', '#e0af68', '#f7768e', '#bb9af7'],
+  chartBackground: '#00000055',
 };

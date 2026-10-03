@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { Canvas, createPicture, Path, Picture, Skia, useFont, SkPath } from "@shopify/react-native-skia";
 import { DerivedValue, SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Selection } from "./Selection";
@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../../state/hooks";
 import { getAllPracticedata } from "../../../state/practiceDataSlice";
 import { RootState } from "../../../state/store";
 import { IAllPracticeData } from "../../../data/Models/DataModels";
+import { ThemeContext } from "../../../context/ThemeContext";
 
 type GraphProps = {
   width: number,
@@ -50,11 +51,10 @@ const RenderExercisePathSet = ({ plots, index, color }: RenderExercisePathSetPro
 type RenderExercisesProps = {
   exercises: ExerciseSet[],
   index: SharedValue<number>
+  colours: string[]
 }
 
-const RenderExercises = ({ exercises, index }: RenderExercisesProps) => {
-
-  const colours = ["red", "blue", "pink", "orange", "purple", "white", "yellow"]
+const RenderExercises = ({ exercises, index, colours }: RenderExercisesProps) => {
 
   const scale = useDerivedValue(
     () => {
@@ -195,6 +195,9 @@ type GraphViewProps = GraphProps & {
 
 // Pure view: renders whatever practice data it's given (see GraphPlayground)
 export const GraphView = ({ width, height, data }: GraphViewProps) => {
+  // Read outside <Canvas>: context doesn't reliably reach Skia's renderer
+  const { chart, chartBackground } = useContext(ThemeContext);
+
   const currentGraph = useMemo<GraphData>(
     () => new GraphGenerator().getGraph(width, height, data),
     [width, height, data]
@@ -206,14 +209,14 @@ export const GraphView = ({ width, height, data }: GraphViewProps) => {
 
   return (
     <>
-      <Canvas style={{ height: height, width: width, backgroundColor: "#00000055" }}>
+      <Canvas style={{ height: height, width: width, backgroundColor: chartBackground }}>
         {
           currentGraph.grids.length > 0 ?
             <RenderGrid grids={currentGraph.grids} index={next} /> : null
         }
         {
           currentGraph.exercises.length > 0 ?
-            <RenderExercises index={next} exercises={currentGraph.exercises} /> : null
+            <RenderExercises index={next} exercises={currentGraph.exercises} colours={chart} /> : null
         }
         {
           currentGraph.labels.length > 0 ?
