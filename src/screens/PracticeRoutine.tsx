@@ -16,7 +16,7 @@ import { ThemeContext } from "../context/ThemeContext";
 import { useAppSelector, useAppDispatch } from "../state/hooks";
 import { RootState } from "../state/store";
 import { getTask } from "../state/routineSlice";
-import { recordPracticeData, savePracticeData } from "../state/practiceDataSlice";
+import { recordPractice, savePracticeData } from "../state/practiceDataSlice";
 import { ProgessBar } from "../components/ProgressBar";
 
 type RoundButtonProps = {
@@ -80,7 +80,7 @@ const PracticeRoutine = () =>{
 
         if(task != null)
         {
-            dispatch(recordPracticeData([task.exerciseType, 1]))
+            dispatch(recordPractice(task.exerciseType))
             
             setProgress(progress + 1)
         }

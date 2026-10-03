@@ -1,4 +1,5 @@
-import { IAllPracticeData, IPracticeData } from "../data/Models/DataModels";
+import { ExerciseType, IAllPracticeData, IPracticeData } from "../data/Models/DataModels";
+import { dateToString } from "../utils/date_utils";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import dbInstance from "../data/Database/database";
 import { RootState } from "./store";
@@ -47,11 +48,17 @@ export const deleteAllPracticeData = createAsyncThunk("practice/deleteAllPractic
 const emptySession = (date: string): IPracticeData =>
   ({date, Total: 0, scale: 0, octave: 0, arpeggio: 0, solidChord : 0, brokenChord: 0})
 
+const isSameLocalDay = (date: string, now: Date) =>
+  !isNaN(new Date(date).getTime()) && dateToString(new Date(date)) === dateToString(now)
+
 //Reducer
 const practiceDataSlice = createSlice({
     name: "practiceData",
     initialState,
     reducers: {
+      startSession: (state, action: { payload: string }) => {
+        state.currentSessionPracticeData = emptySession(action.payload)
+      },
       recordPracticeData: (state, action) => {      
         if(state.currentSessionPracticeData == null)
           state.currentSessionPracticeData = {date: "", Total: 0, scale: 0, octave: 0, arpeggio: 0, solidChord : 0, brokenChord: 0}
@@ -126,7 +133,26 @@ const practiceDataSlice = createSlice({
       
 })
 
-export const { recordPracticeData } = practiceDataSlice.actions
+export const { recordPracticeData, startSession } = practiceDataSlice.actions
+
+// Count one practised exercise against today. If the app was left open past
+// midnight, yesterday's session is saved under yesterday before starting today's.
+export const recordPractice = createAsyncThunk("practice/recordPractice", async(exercise : ExerciseType, { dispatch, getState }) => {
+    const now = new Date();
+    const session = (getState() as RootState).practice.currentSessionPracticeData;
+
+    if (!isSameLocalDay(session.date, now)) {
+        if (!isNaN(new Date(session.date).getTime()))
+            await dispatch(savePracticeData(null));
+
+        const today = await dispatch(getTodaysPracticedata());
+        // DB not open yet: start today from zero rather than adding to an old day
+        if (today.payload == null)
+            dispatch(startSession(now.toString()));
+    }
+
+    dispatch(recordPracticeData([exercise, 1]));
+})
 
 // // Other code such as selectors can use the imported `RootState` type
 // export const selectCount = (state: RootState) => state.routine.value

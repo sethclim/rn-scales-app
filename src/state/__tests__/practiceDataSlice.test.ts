@@ -2,6 +2,7 @@ import {configureStore} from '@reduxjs/toolkit';
 import practiceDataReducer, {
   deleteAllPracticeData,
   getAllPracticedata,
+  recordPractice,
   getTodaysPracticedata,
   recordPracticeData,
   savePracticeData,
@@ -181,6 +182,94 @@ describe('getAllPracticedata', () => {
 
     expect(store.getState().practice.practiceData).toEqual(data);
     expect(store.getState().practice.status).toBe('rejected');
+  });
+});
+
+describe('recordPractice', () => {
+  const OCT_2 = new Date(2026, 9, 2, 23, 50);
+  const OCT_3 = new Date(2026, 9, 3, 0, 10);
+  const onDay = (date: Date, counts: Partial<IPracticeData> = {}) => ({
+    ...today(counts),
+    date: date.toString(),
+  });
+
+  // Fake only Date so "now" can be moved; promises and timers run normally
+  const setNow = (date: Date) => {
+    jest.useFakeTimers({
+      now: date,
+      doNotFake: ['nextTick', 'setImmediate', 'setTimeout', 'setInterval', 'queueMicrotask', 'requestAnimationFrame'],
+    });
+  };
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('adds to the session without touching the DB on the same day', async () => {
+    setNow(OCT_2);
+    db.getTodaysPracticeData.mockResolvedValue(onDay(OCT_2, {scale: 2}));
+    const store = makeStore();
+    await store.dispatch(getTodaysPracticedata());
+    jest.clearAllMocks();
+
+    await store.dispatch(recordPractice('scale'));
+    await store.dispatch(recordPractice('octave'));
+
+    expect(session(store)).toMatchObject({scale: 3, octave: 1});
+    expect(db.savePracticedata).not.toHaveBeenCalled();
+    expect(db.getTodaysPracticeData).not.toHaveBeenCalled();
+  });
+
+  it("saves yesterday's session and starts today's after midnight", async () => {
+    setNow(OCT_2);
+    db.getTodaysPracticeData.mockResolvedValueOnce(onDay(OCT_2, {scale: 5}));
+    const store = makeStore();
+    await store.dispatch(getTodaysPracticedata());
+    await store.dispatch(recordPractice('scale'));
+
+    setNow(OCT_3);
+    db.getTodaysPracticeData.mockResolvedValueOnce(onDay(OCT_3));
+    await store.dispatch(recordPractice('arpeggio'));
+
+    // Yesterday kept its own counts, under its own date
+    expect(db.savePracticedata).toHaveBeenCalledWith(
+      onDay(OCT_2, {scale: 6}),
+    );
+    // Today only has today's practice
+    expect(session(store)).toMatchObject({
+      date: OCT_3.toString(),
+      scale: 0,
+      arpeggio: 1,
+    });
+  });
+
+  it("starts today from zero after midnight if the DB isn't ready", async () => {
+    setNow(OCT_2);
+    db.getTodaysPracticeData.mockResolvedValueOnce(onDay(OCT_2, {scale: 5}));
+    const store = makeStore();
+    await store.dispatch(getTodaysPracticedata());
+
+    setNow(OCT_3);
+    db.getTodaysPracticeData.mockResolvedValueOnce(null);
+    await store.dispatch(recordPractice('octave'));
+
+    expect(session(store)).toMatchObject({
+      date: OCT_3.toString(),
+      scale: 0,
+      octave: 1,
+    });
+  });
+
+  it("loads today's earlier practice first if it hasn't loaded yet", async () => {
+    setNow(OCT_3);
+    db.getTodaysPracticeData.mockResolvedValue(onDay(OCT_3, {scale: 4}));
+    const store = makeStore();
+
+    await store.dispatch(recordPractice('scale'));
+
+    expect(session(store)).toMatchObject({scale: 5});
+    // Nothing to save: the empty starting session has no day
+    expect(db.savePracticedata).not.toHaveBeenCalled();
   });
 });
 
