@@ -1,12 +1,27 @@
 {
   "name": "ScalesApp",
   "displayName": "ScalesApp",
+  "slug": "scales-app",
+  "version": "1.0.0",
+  "orientation": "portrait",
   "newArchEnabled": true,
   "plugins": [
     "expo-sqlite",
     "expo-font"
   ],
+  "ios": {
+    "bundleIdentifier": "com.sethclim.scalesapp",
+    "supportsTablet": false,
+    "infoPlist": {
+      "ITSAppUsesNonExemptEncryption": false
+    }
+  },
   "android": {
-    "package": "com.sethclim.scalesapp"
+    "package": "com.sethclim.scalesapp",
+    "blockedPermissions": [
+      "android.permission.SYSTEM_ALERT_WINDOW",
+      "android.permission.READ_EXTERNAL_STORAGE",
+      "android.permission.WRITE_EXTERNAL_STORAGE"
+    ]
   }
 }
