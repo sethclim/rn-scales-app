@@ -120,8 +120,8 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
 
   return (
     <View style={styles.root}>
-      <View style={styles.container}>
-        <Canvas style={StyleSheet.absoluteFill} onLayout={(event) => { find_dimesions(event.nativeEvent.layout) }} >
+      <View style={styles.container} onLayout={(event) => { find_dimesions(event.nativeEvent.layout) }}>
+        <Canvas style={StyleSheet.absoluteFill}>
           <Group transform={transform}>
             <RoundedRect x={0} y={0} height={64} width={b_Width} r={16}>
               <LinearGradient
