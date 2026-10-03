@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useContext, useEffect, useState } from "react"
+import React, { FunctionComponent, useContext, useEffect, useLayoutEffect, useState } from "react"
 
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
@@ -7,7 +7,7 @@ import { ExerciseType, Exercises } from "../data/Models/DataModels";
 
 import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack } from "../native_blocks/";
-import { Modal, Alert, Text,  } from "react-native";
+import { Modal, Alert, Text, Pressable } from "react-native";
 
 import { TextButton } from "../components/TextButton";
 
@@ -55,6 +55,21 @@ const Generate = () => {
             console.warn(e)
         }
     };
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: ({ tintColor }) => (
+                <Pressable
+                    onPress={() => setShowModal(true)}
+                    hitSlop={10}
+                    style={{ marginRight: 16 }}
+                    accessibilityRole="button"
+                    accessibilityLabel="Save routine">
+                    <Text style={{ color: tintColor, fontSize: 16, fontWeight: "600" }}>Save</Text>
+                </Pressable>
+            ),
+        })
+    }, [navigation])
 
     useEffect(() => {
         dispatch(getTodaysPracticedata())
@@ -140,9 +155,9 @@ const Generate = () => {
 
             <VStack mAll={{t: -60}} align="center" justifyContent="center" >
                 <Card height={120} padding={10}>
-                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Roots</Text>
-                        <VStack gap={3} pVH={{v: 4}} >
-                            <HStack>
+                    <Text style={{color : primary, fontSize: 18, fontWeight: "700"}}>Roots</Text>
+                        <VStack gap={6} pVH={{v: 4}} >
+                            <HStack colGap={4}>
                             {
                                 NATURAL_ROOTS.map( (naturalRoot, i) => { return (
                                     <CheckBox 
@@ -156,7 +171,7 @@ const Generate = () => {
                                 )})
                             }
                             </HStack>
-                            <HStack>
+                            <HStack colGap={4}>
                             {
                                 ACCIDENTAL_ROOTS.map( (accidentalRoot, i) => { return (
                                     <CheckBox 
@@ -175,8 +190,8 @@ const Generate = () => {
                 
                 {/* borderRadius="5" rounded="md"  maxWidth="100%" shadow={9} */}
                 <Card height={120} padding={10}>
-                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Type</Text>
-                        <HStack gap={3} flexWrap="wrap" pVH={{v: 4}} >
+                    <Text style={{color : primary, fontSize: 18, fontWeight: "700"}}>Type</Text>
+                        <HStack colGap={14} rowGap={8} flexWrap="wrap" pVH={{v: 4}} >
                         {
                             SCALE_TYPES.map( (scaleType, i) => { return (
                                 <CheckBox 
@@ -193,8 +208,8 @@ const Generate = () => {
                 </Card>
 
                 <Card height={120} padding={10}>
-                    <Text style={{color : primary, fontSize: 20, fontWeight: "700"}}>Exercise</Text>
-                        <HStack gap={3} flexWrap="wrap" pVH={{v: 4}} >
+                    <Text style={{color : primary, fontSize: 18, fontWeight: "700"}}>Exercise</Text>
+                        <HStack colGap={14} rowGap={8} flexWrap="wrap" pVH={{v: 4}} >
                         {
                             [...Exercises.keys()].map((exerciseType, i) => {
                                   return  <CheckBox 
@@ -210,10 +225,9 @@ const Generate = () => {
                         </HStack>
                 </Card>
 
-                <HStack flexMain={false} mAll={{t:10}} gap={4} align="center">
-                    <TextButton titles="Start" onPress={() => StartRoutine()} />
-                    <TextButton titles="Save" onPress={() => setShowModal(true)} />
-                </HStack> 
+                <HStack flexMain={false} mAll={{t:10, l:20, r:20}} align="center">
+                    <TextButton titles="Start" onPress={() => StartRoutine()} style={{flex: 1}} />
+                </HStack>
 
             </VStack>
 
