@@ -7,7 +7,7 @@ import { ExerciseType, Exercises } from "../data/Models/DataModels";
 
 import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack } from "../native_blocks/";
-import { Modal, Alert, Text, Pressable } from "react-native";
+import { Modal, Alert, Text, Pressable, TextInput } from "react-native";
 
 import { TextButton } from "../components/TextButton";
 
@@ -15,8 +15,6 @@ import check from "../assets/CheckIcon"
 import { CheckBox } from "../components/Checkbox";
 import { ThemeContext } from "../context/ThemeContext";
 import { Card } from "../components/Card";
-import { StyledTextInputField } from "../native_blocks/TextInput"
-import { MiniTextButton } from "../components/MiniTextButton";
 import { useAppDispatch } from "../state/hooks";
 
 import { generateRoutine, saveRoutines } from "../state/routineSlice";
@@ -256,7 +254,14 @@ interface SaveModalProps {
 const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal, save}) => {
 
     const [value, setValue] = React.useState("");
-    const { background, primary, secondaryBackground } = useContext(ThemeContext);
+    const { background, primary, secondaryBackground, mode } = useContext(ThemeContext);
+
+    const textColor = mode == 'light' ? '#2E3440' : '#c0caf5'
+
+    // Start with an empty name each time the dialog opens
+    useEffect(() => {
+        if (showModal) setValue("")
+    }, [showModal])
 
     return(
         <Modal
@@ -264,33 +269,52 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
             transparent={true} 
             visible={showModal} 
             onRequestClose={() => setShowModal(false)}>
-                <VStack justifyContent="center"  style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
-                    <VStack flexMain={false} m={30} style={{
-                        backgroundColor: secondaryBackground!, 
-                        borderColor: primary, 
-                        borderWidth: 2,
+                <Pressable
+                    onPress={() => setShowModal(false)}
+                    style={{flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                    {/* Inner Pressable swallows taps so only the backdrop closes the dialog */}
+                    <Pressable onPress={() => {}} style={{
+                        width: '85%',
+                        backgroundColor: background!,
+                        borderRadius: 12,
+                        padding: 20,
+                        gap: 16,
+                        elevation: 8,
                         shadowColor: '#000',
-                        shadowOffset: {
-                          width: 0,
-                          height: 2,
-                        },
+                        shadowOffset: { width: 0, height: 4 },
                         shadowOpacity: 0.25,
-                        shadowRadius: 4,    
-                        elevation: 5,
+                        shadowRadius: 8,
                     }}>
-                        <HStack style={{backgroundColor : primary}} height={60}>
-                            <Text style={{color : background!, fontSize: 32, fontWeight: 700}}>Save Routine</Text>
-                        </HStack>
+                        <Text style={{color: textColor, fontSize: 18, fontWeight: "700"}}>Save routine</Text>
 
-                        <VStack p={10}>
-                            <StyledTextInputField text={value} textChanged={(text) => setValue(text)} errorMessage="" />
-                        </VStack>
-                        <HStack gap={4} p={8}>
-                                <MiniTextButton titles="Cancel" onPress={() => setShowModal(false)} />
-                                <MiniTextButton titles="Save" onPress={() => save(value)} />
+                        <TextInput
+                            value={value}
+                            onChangeText={setValue}
+                            placeholder="Routine name"
+                            placeholderTextColor={mode == 'light' ? '#4C566A99' : '#c0caf599'}
+                            autoFocus
+                            returnKeyType="done"
+                            onSubmitEditing={() => save(value)}
+                            style={{
+                                color: textColor,
+                                backgroundColor: secondaryBackground!,
+                                borderRadius: 8,
+                                paddingHorizontal: 12,
+                                paddingVertical: 10,
+                                fontSize: 16,
+                            }}
+                        />
+
+                        <HStack flexMain={false} justifyContent="flex-end" gap={8}>
+                            <Pressable onPress={() => setShowModal(false)} hitSlop={6} style={{paddingVertical: 8, paddingHorizontal: 14}}>
+                                <Text style={{color: primary, fontSize: 16, fontWeight: "600"}}>Cancel</Text>
+                            </Pressable>
+                            <Pressable onPress={() => save(value)} style={{backgroundColor: primary, borderRadius: 8, paddingVertical: 8, paddingHorizontal: 18}}>
+                                <Text style={{color: background!, fontSize: 16, fontWeight: "600"}}>Save</Text>
+                            </Pressable>
                         </HStack>
-                    </VStack>
-                </VStack>
+                    </Pressable>
+                </Pressable>
         </Modal>
     )
 }
