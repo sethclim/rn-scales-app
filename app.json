@@ -1,5 +1,11 @@
 {
   "name": "ScalesApp",
   "displayName": "ScalesApp",
-  "newArchEnabled" : true
+  "newArchEnabled": true,
+  "plugins": [
+    "expo-sqlite"
+  ],
+  "android": {
+    "package": "com.sethclim.scalesapp"
+  }
 }
