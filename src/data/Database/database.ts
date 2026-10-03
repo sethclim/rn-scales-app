@@ -1,7 +1,8 @@
 import * as SQLite from 'expo-sqlite';
 
 import {IAllPracticeData, IPracticeData, Routine} from '../Models/DataModels';
-import {dateToString} from '../../utils/date_utils';
+import {dateToString, getWeekRange} from '../../utils/date_utils';
+import {mapWeekRows, mapYearRows} from './practiceDataMappers';
 import {GRAPH_ID} from '../../screens/PracticeStats/Graph/GraphBuilder';
 
 type DBRoutine = {
@@ -28,10 +29,6 @@ export type DBPracticeData = {
   arpeggio: number;
   solidChord: number;
   brokenChord: number;
-};
-
-const daysInMonth = (month: number, year: number) => {
-  return new Date(year, month + 1, 0).getDate();
 };
 
 export class Database {
@@ -199,39 +196,7 @@ export class Database {
       return {Year: [], Month: [], Week: [], Day: []};
     }
 
-    const year = today_date.getFullYear();
-    const month = today_date.getMonth();
-    const today = today_date.getDate();
-
-    console.log(`year ${year} month ${month} today ${today}`);
-
-    const startOfWeek = dateToString(
-      new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        today_date.getDate() - today_date.getDay(),
-        0,
-        0,
-      ),
-    );
-
-    let day_end_week = today_date.getDate() + (7 - today_date.getDay());
-    const num_days_in_month = daysInMonth(month, year);
-    console.log(`num_days_in_month ${num_days_in_month}`);
-    if (day_end_week > num_days_in_month) {
-      day_end_week = num_days_in_month;
-    }
-
-    console.log(`day_end_week ${day_end_week}`);
-    const endOfWeek = dateToString(
-      new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        day_end_week,
-        23,
-        59,
-      ),
-    );
+    const {start: startOfWeek, end: endOfWeek} = getWeekRange(today_date);
 
     console.log(`startOfWeek ${startOfWeek} endOfWeek ${endOfWeek}`);
 
@@ -252,7 +217,7 @@ export class Database {
       SUM(arpeggio) AS arpeggio_count,
       SUM(solidChord) AS solidChord_count,
       SUM(brokenChord) AS brokenChord_count
-      FROM PracticeData WHERE date_month_year BETWEEN $d1 AND $d2 GROUP BY date`,
+      FROM PracticeData WHERE date BETWEEN $d1 AND $d2 GROUP BY date ORDER BY date`,
       {
         $d1: startOfWeek,
         $d2: endOfWeek,
@@ -261,22 +226,7 @@ export class Database {
 
     console.log('Week PD: ' + JSON.stringify(practiceDataWeek));
 
-    const exportPracticeDataWeek: IPracticeData[] = practiceDataWeek.map(x => {
-      const date = new Date(x.date_month_year);
-
-      //console.log('Date ' + date);
-
-      const pd: IPracticeData = {
-        date: date.toString(),
-        scale: x.scale_count,
-        octave: x.octave_count,
-        arpeggio: x.arpeggio_count,
-        solidChord: x.solidChord_count,
-        brokenChord: x.brokenChord_count,
-      };
-
-      return pd;
-    });
+    const exportPracticeDataWeek = mapWeekRows(practiceDataWeek);
 
     const practiceDataYear = await this.db.getAllAsync<DBPracticeDataGrouped>(
       `SELECT id, STRFTIME('%m-%Y', date) AS date_month_year, 
@@ -285,16 +235,12 @@ export class Database {
       SUM(arpeggio) AS arpeggio_count,
       SUM(solidChord) AS solidChord_count,
       SUM(brokenChord) AS brokenChord_count
-      FROM PracticeData WHERE date BETWEEN $d1 AND $d2 GROUP BY STRFTIME('%m-%Y', date_month_year)`,
+      FROM PracticeData WHERE date BETWEEN $d1 AND $d2 GROUP BY date_month_year ORDER BY date`,
       {
         $d1: startOfYear,
         $d2: endOfYear,
       },
     );
-
-    //WHERE date BETWEEN $d1 AND $d2
-
-    //GROUP BY STRFTIME('%m-%Y', date_month_year)
 
     //SUM(scale) AS scale_count
     // SUM(octave) AS octave_count,
@@ -304,26 +250,8 @@ export class Database {
 
     console.log('Year PD: ' + JSON.stringify(practiceDataYear));
 
-    const exportPracticeDataYear: IPracticeData[] = practiceDataYear.map(x => {
-      const date = new Date(x.date_month_year);
-      date.setFullYear(
-        parseInt(x.date_month_year.split('-')[1]),
-        parseInt(x.date_month_year.split('-')[0]) - 1,
-        1,
-      );
+    const exportPracticeDataYear = mapYearRows(practiceDataYear);
 
-      //console.log('Date ' + date);
-
-      const pd: IPracticeData = {
-        date: new Date().toString(),
-        scale: x.scale_count,
-        octave: x.octave_count,
-        arpeggio: x.arpeggio_count,
-        solidChord: x.solidChord_count,
-        brokenChord: x.brokenChord_count,
-      };
-      return pd;
-    });
     return {
       Year: exportPracticeDataYear,
       Month: [],

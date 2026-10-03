@@ -82,7 +82,8 @@ const getX = (
   if (index == 1) {
     return dateXPositionMap[date.getMonth()];
   } else if (index == 0) {
-    return dateXPositionMap[date.getDay() % 7];
+    // getDay() is Sunday-first; the week columns are Mon..Sun
+    return dateXPositionMap[(date.getDay() + 6) % 7];
   }
 
   return dateXPositionMap[date.getMonth()];
@@ -107,6 +108,8 @@ const createPlot = (): PathSet => {
 const PADDING = 20;
 const GRID_RIGHT_MARGIN = 30;
 const GRID_BOTTOM_MARGIN = 50;
+// Pushes the 12px label text down so it sits centred on its grid line
+const Y_LABEL_BASELINE_OFFSET = 4;
 
 const orderPracticeDataArrys = (dataMap: IAllPracticeData) => {
   const ret: Array<IPracticeData[]> = [];
@@ -177,14 +180,18 @@ export class GraphGenerator {
   };
 
   buildYAxisLabels = () => {
-    const scale_y = (this.pad_height / this.YlineCount) * 0.87;
+    // Same spacing as the grid rows in buildGrid so labels never drift
+    const scale_y = this.inner_height / this.YlineCount;
 
     const labels: AxisLabelInfo[] = [];
 
     for (let i = 0; i <= this.YlineCount; i++) {
       labels.push({
         text: (this.max_y - (this.max_y / this.YlineCount) * i).toString(),
-        pos: {x: this.pad_x_start, y: i * scale_y + this.pad_x_start + 28},
+        pos: {
+          x: this.pad_x_start,
+          y: i * scale_y + PADDING + Y_LABEL_BASELINE_OFFSET,
+        },
       });
     }
 
@@ -194,12 +201,10 @@ export class GraphGenerator {
   buildXAxisLabels = (index: number) => {
     const res: AxisLabelInfo[] = [];
 
-    const scale_x = this.WIDTH / (this.grid_div + 0.6);
-
     for (let i = 0; i < this.grid_div; i++) {
       res.push({
         text: LABELS[index][i] != null ? LABELS[index][i]!.toString() : 'Hi',
-        pos: {x: i * scale_x + this.inner_x_start, y: this.pad_height},
+        pos: {x: this.xPositions[i], y: this.pad_height},
       });
     }
 
@@ -312,7 +317,8 @@ export class GraphGenerator {
 
       this.getGridXPositions();
       let max_y = getMaxY(practiceDatas);
-      this.max_y = Math.ceil(max_y / 10) * 10;
+      // At least 10 so an all-zero week doesn't divide by zero
+      this.max_y = Math.max(10, Math.ceil(max_y / 10) * 10);
 
       this.buildGrid();
 
