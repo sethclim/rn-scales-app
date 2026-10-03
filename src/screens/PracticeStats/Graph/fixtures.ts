@@ -99,6 +99,27 @@ export const GRAPH_FIXTURES: Record<string, IAllPracticeData> = {
     ),
   }),
 
+  'Every day + month': data({
+    Week: Array.from({length: 7}, (_, d) =>
+      entry(weekday(d), {
+        scale: 4 + ((d * 3) % 7),
+        octave: 2 + (d % 4),
+        arpeggio: 8 - d,
+        solidChord: d,
+        brokenChord: 3 + ((d * 5) % 6),
+      }),
+    ),
+    Year: Array.from({length: 12}, (_, m) =>
+      entry(month(m), {
+        scale: 60 + ((m * 17) % 40),
+        octave: 30 + m * 3,
+        arpeggio: 80 - m * 5,
+        solidChord: 15 + ((m * 11) % 25),
+        brokenChord: 45 + ((m * 7) % 30),
+      }),
+    ),
+  }),
+
   'Jan + Dec only': data({
     Year: [entry(month(0), {scale: 12}), entry(month(11), {scale: 30})],
   }),

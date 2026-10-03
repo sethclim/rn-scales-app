@@ -27,7 +27,7 @@ type ChipsProps = {
 }
 
 const Chips = ({ options, selected, onSelect, color }: ChipsProps) => (
-  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chips}>
+  <View style={styles.chips}>
     {options.map(option => (
       <TouchableOpacity
         key={option}
@@ -37,7 +37,7 @@ const Chips = ({ options, selected, onSelect, color }: ChipsProps) => (
         <Text style={{ color: option === selected ? 'black' : color }}>{option}</Text>
       </TouchableOpacity>
     ))}
-  </ScrollView>
+  </View>
 );
 
 const GraphPlayground = () => {
@@ -70,15 +70,16 @@ const GraphPlayground = () => {
 
 const styles = StyleSheet.create({
   chips: {
-    flexGrow: 0,
-    marginBottom: 8,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: 10,
   },
   chip: {
     borderWidth: 1,
     borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    marginRight: 6,
   },
   graph: {
     marginTop: 8,
