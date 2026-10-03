@@ -11,7 +11,7 @@ import { Modal, Alert, Text,  } from "react-native";
 
 import { TextButton } from "../components/TextButton";
 
-import check from "../assets/check.svg"
+import check from "../assets/CheckIcon"
 import { CheckBox } from "../components/Checkbox";
 import { ThemeContext } from "../context/ThemeContext";
 import { Card } from "../components/Card";

@@ -3,7 +3,8 @@
   "displayName": "ScalesApp",
   "newArchEnabled": true,
   "plugins": [
-    "expo-sqlite"
+    "expo-sqlite",
+    "expo-font"
   ],
   "android": {
     "package": "com.sethclim.scalesapp"
