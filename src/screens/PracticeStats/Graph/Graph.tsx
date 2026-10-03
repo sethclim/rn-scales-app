@@ -1,4 +1,5 @@
 import React, { useContext, useMemo } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { Canvas, createPicture, Path, Picture, Skia, useFont, SkPath } from "@shopify/react-native-skia";
 import { DerivedValue, SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Selection } from "./Selection";
@@ -8,7 +9,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useAppDispatch, useAppSelector } from "../../../state/hooks";
 import { getAllPracticedata } from "../../../state/practiceDataSlice";
 import { RootState } from "../../../state/store";
-import { IAllPracticeData } from "../../../data/Models/DataModels";
+import { ExerciseType, Exercises, IAllPracticeData } from "../../../data/Models/DataModels";
 import { ThemeContext } from "../../../context/ThemeContext";
 
 type GraphProps = {
@@ -47,6 +48,12 @@ const RenderExercisePathSet = ({ plots, index, color }: RenderExercisePathSetPro
     </>
   )
 }
+
+// Theme chart colours are assigned in this order, for both the lines and the legend
+const EXERCISE_ORDER: ExerciseType[] = ['scale', 'octave', 'arpeggio', 'solidChord', 'brokenChord']
+
+const colourFor = (colours: string[], exercise: ExerciseType) =>
+  colours[EXERCISE_ORDER.indexOf(exercise)]
 
 type RenderExercisesProps = {
   exercises: ExerciseSet[],
@@ -95,11 +102,11 @@ const RenderExercises = ({ exercises, index, colours }: RenderExercisesProps) =>
 
   return (
     <>
-        <RenderExercisePathSet plots={scale} index={index} color={colours[0]} />
-        <RenderExercisePathSet plots={octave} index={index} color={colours[1]} />
-        <RenderExercisePathSet plots={arpeggio} index={index} color={colours[2]} />
-        <RenderExercisePathSet plots={solidChord} index={index} color={colours[3]} />
-        <RenderExercisePathSet plots={brokenChord} index={index} color={colours[4]} />
+        <RenderExercisePathSet plots={scale} index={index} color={colourFor(colours, 'scale')} />
+        <RenderExercisePathSet plots={octave} index={index} color={colourFor(colours, 'octave')} />
+        <RenderExercisePathSet plots={arpeggio} index={index} color={colourFor(colours, 'arpeggio')} />
+        <RenderExercisePathSet plots={solidChord} index={index} color={colourFor(colours, 'solidChord')} />
+        <RenderExercisePathSet plots={brokenChord} index={index} color={colourFor(colours, 'brokenChord')} />
     </>
   )
 }
@@ -189,6 +196,51 @@ const RenderLabels = ({ labels, index }: RenderLabelsProps) => {
   )
 }
 
+type LegendProps = {
+  width: number
+}
+
+const Legend = ({ width }: LegendProps) => {
+  const { chart, chartBackground, toggle } = useContext(ThemeContext);
+
+  return (
+    <View style={[styles.legend, { width, backgroundColor: chartBackground }]}>
+      {EXERCISE_ORDER.map(exercise => (
+        <View key={exercise} style={styles.legendItem}>
+          <View style={[styles.legendDot, { backgroundColor: colourFor(chart, exercise) }]} />
+          <Text style={[styles.legendLabel, { color: toggle.text }]}>{Exercises.get(exercise)}</Text>
+        </View>
+      ))}
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  legend: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    columnGap: 14,
+    rowGap: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    marginBottom: 12,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  legendDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+  legendLabel: {
+    fontSize: 12,
+  },
+})
+
 type GraphViewProps = GraphProps & {
   data: IAllPracticeData,
 }
@@ -223,6 +275,7 @@ export const GraphView = ({ width, height, data }: GraphViewProps) => {
             <RenderLabels labels={currentGraph.labels} index={next} /> : null
         }
       </Canvas>
+      <Legend width={width} />
       <Selection current={current} next={next} transition={transition} graphData={currentGraph} />
     </>
   )
