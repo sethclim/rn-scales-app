@@ -33,3 +33,11 @@ export interface IAllPracticeData {
   Week: IPracticeData[];
   Day: IPracticeData[];
 }
+
+export const Exercises = new Map<ExerciseType, string>([
+  ["scale", "Scale"],
+  ["octave", "Octaves"],
+  ["arpeggio", "Arpeggio"],
+  ["solidChord", "Solid Chords"],
+  ["brokenChord", "Broken Chords"],
+]);

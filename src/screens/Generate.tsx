@@ -3,7 +3,7 @@ import React, { FunctionComponent, useContext, useEffect, useState } from "react
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { ExerciseType } from "../data/Models/DataModels";
+import { ExerciseType, Exercises } from "../data/Models/DataModels";
 
 import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack } from "../native_blocks/";
@@ -28,13 +28,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
 const ACCIDENTAL_ROOTS = ["C#", "Eb", "F#", "G#", "Bb"]
 const SCALE_TYPES      = ["Major", "Minor", "Augmented", "Diminished"]
-export const Exercises = new Map<ExerciseType, string>([
-    ["scale", "Scale"],
-    ["octave", "Octaves"],
-    ["arpeggio", "Arpeggio"],
-    ["solidChord", "Solid Chords"],
-    ["brokenChord", "Broken Chords"]
-]);
 
 const Generate = () => {
 
