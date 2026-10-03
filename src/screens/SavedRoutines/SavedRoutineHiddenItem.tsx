@@ -2,7 +2,7 @@ import React from "react";
 import { FunctionComponent, useContext } from "react";
 
 import { HStack, Button } from "../../native_blocks/";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {RoutineItem, Routine} from "../../data/Models/DataModels";
 
 // import Context from "../../state/modules/routine/context";

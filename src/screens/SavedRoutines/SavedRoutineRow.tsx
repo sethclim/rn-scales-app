@@ -15,7 +15,7 @@ import { RowProps } from "./types";
 import {RoutineItem} from "../../data/Models/DataModels";
 // import Context from "../../state/modules/routine/context";
 
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Text } from "react-native";
 import { ThemeContext } from "../../context/ThemeContext";
 import { useAppDispatch } from "../../state/hooks";

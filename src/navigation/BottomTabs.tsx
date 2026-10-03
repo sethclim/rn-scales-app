@@ -8,8 +8,8 @@ import SavedRoutines from '../screens/SavedRoutines/SavedRoutines';
 import PracticeStats  from '../screens/PracticeStats/PracticeStats'
 import { HomePage } from "../screens/HomePage"
 
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Button } from "../native_blocks/";
 
 import { useNavigation } from '@react-navigation/native';
