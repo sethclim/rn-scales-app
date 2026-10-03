@@ -38,3 +38,7 @@ jobs:
 
       - name: Test
         run: yarn test --ci
+
+      # Catches broken imports and bundling errors without a native build
+      - name: Bundle JS
+        run: npx expo export --platform android --platform ios --output-dir /tmp/expo-export
