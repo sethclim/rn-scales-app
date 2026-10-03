@@ -79,39 +79,22 @@ export class Database {
     }
 
     await this.db.withExclusiveTransactionAsync(async txn => {
-      await txn.execAsync(
-        `INSERT INTO Routine (title, createdAt) VALUES ('${routine.title}', '${routine.createdAt}')`,
+      // Bound params so titles like "Seth's warmup" can't break the SQL
+      const inserted = await txn.runAsync(
+        'INSERT INTO Routine (title, createdAt) VALUES (?, ?)',
+        [routine.title, routine.createdAt],
       );
 
-      type result = {
-        id: number;
-      };
+      // Use the new row's id; looking it up by title picks the wrong
+      // routine when two share a name
+      const routineId = inserted.lastInsertRowId;
 
-      const insertedRoutineIdResult = await txn.getFirstAsync<result>(
-        'SELECT id FROM ROUTINE WHERE title = $title',
-        {$title: routine.title},
-      );
-
-      if (insertedRoutineIdResult == null) return;
-
-      console.log(
-        'insertedRoutineId ' + JSON.stringify(insertedRoutineIdResult),
-      );
-
-      let source = '';
-      const insert = `INSERT INTO RoutineItem (displayItem, exerciseType, routineForeignKey) VALUES `;
-      const end = ';';
-
-      routine.RoutineItems.forEach(value => {
-        source += insert;
-        source += `('${value.displayItem}', '${value.exerciseType}', '${insertedRoutineIdResult.id}')`;
-        source += end;
-      });
-
-      // console.log('source ' + source);
-
-      const insertedRoutineItemsIdResult = await txn.execAsync(source);
-      console.log('Done save routine ' + insertedRoutineItemsIdResult);
+      for (const item of routine.RoutineItems) {
+        await txn.runAsync(
+          'INSERT INTO RoutineItem (displayItem, exerciseType, routineForeignKey) VALUES (?, ?, ?)',
+          [item.displayItem, item.exerciseType, routineId],
+        );
+      }
     });
 
     return true;

@@ -38,7 +38,7 @@ export const saveRoutines = createAsyncThunk("routine/saveRoutine", async(option
     id: '-1',
     title: options[0],
     RoutineItems: state.routine.generatedRoutine, //generatedRoutine
-    createdAt: '99',
+    createdAt: new Date().toISOString(),
   };
 
   const res = await dbInstance.saveRoutine(routineToSave);
