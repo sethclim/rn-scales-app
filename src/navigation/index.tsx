@@ -8,8 +8,9 @@ import Settings from '../screens/Settings';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeContext } from '../context/ThemeContext';
+import { RootStackParamList } from './types';
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 const RootNavigator = () => {
 

@@ -2,8 +2,8 @@ import React, { useContext, useState } from "react"
 import { Text, TouchableOpacity } from "react-native";
 
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { BottomTabNavigatorParamList } from "../navigation/types";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../navigation/types";
 
 import { Box } from "../native_blocks/primatives/Box";
 import { TextButton } from "../components/TextButton";
@@ -64,7 +64,7 @@ const makeRoundedButtonStyle = (theme: any) => {
 
 const PracticeRoutine = () =>{
 
-    const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const { primary, background } = useContext(ThemeContext);
     const dispatch = useAppDispatch()
 
@@ -113,7 +113,7 @@ const PracticeRoutine = () =>{
                     <VStack flexMain={false} height={170}>
                         <Text style={{color: primary, fontSize: 40, textAlign: "center"}}>Practice Complete</Text>
                     </VStack>
-                    <TextButton titles="Go Back" onPress={()=> navigation.navigate('Generate')} />
+                    <TextButton titles="Go Back" onPress={()=> navigation.navigate('Main', { screen: 'Generate' })} />
                 </>
             }
             </VStack>
