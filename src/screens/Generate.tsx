@@ -155,7 +155,7 @@ const Generate = () => {
 
             <VStack mAll={{t: -60}} align="center" justifyContent="center" >
                 <Card height={120} padding={10}>
-                    <Text style={{color : primary, fontSize: 18, fontWeight: "700"}}>Roots</Text>
+                    <Text style={{color : primary, fontSize: 18, fontWeight: "700", marginBottom: 4}}>Roots</Text>
                         <VStack gap={6} pVH={{v: 4}} >
                             <HStack colGap={4}>
                             {
@@ -190,7 +190,7 @@ const Generate = () => {
                 
                 {/* borderRadius="5" rounded="md"  maxWidth="100%" shadow={9} */}
                 <Card height={120} padding={10}>
-                    <Text style={{color : primary, fontSize: 18, fontWeight: "700"}}>Type</Text>
+                    <Text style={{color : primary, fontSize: 18, fontWeight: "700", marginBottom: 4}}>Type</Text>
                         <HStack colGap={14} rowGap={8} flexWrap="wrap" pVH={{v: 4}} >
                         {
                             SCALE_TYPES.map( (scaleType, i) => { return (
@@ -208,7 +208,7 @@ const Generate = () => {
                 </Card>
 
                 <Card height={120} padding={10}>
-                    <Text style={{color : primary, fontSize: 18, fontWeight: "700"}}>Exercise</Text>
+                    <Text style={{color : primary, fontSize: 18, fontWeight: "700", marginBottom: 4}}>Exercise</Text>
                         <HStack colGap={14} rowGap={8} flexWrap="wrap" pVH={{v: 4}} >
                         {
                             [...Exercises.keys()].map((exerciseType, i) => {
