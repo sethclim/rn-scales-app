@@ -1,4 +1,9 @@
-import {GraphGenerator, GraphData, PathSet} from '../GraphBuilder';
+import {
+  GraphGenerator,
+  GraphData,
+  PathSet,
+  layoutXLabels,
+} from '../GraphBuilder';
 import {GRAPH_FIXTURES} from '../fixtures';
 import {
   ExerciseType,
@@ -316,4 +321,31 @@ describe('Graph Playground fixtures', () => {
       }
     },
   );
+});
+
+describe('layoutXLabels', () => {
+  // Roughly SF Mono at 12px
+  const monoMeasure = (text: string) => text.length * 7.2;
+
+  it.each([
+    ['Week', WEEK],
+    ['Year', YEAR],
+  ])('anchors each %s label at its column, below the grid', (_, index) => {
+    const graph = build({});
+    const cols = gridColumns(graph, index);
+    const {bottom} = gridBounds(graph, index);
+    const placed = layoutXLabels(graph.labels[index].xLabels, monoMeasure);
+
+    expect(placed).toHaveLength(cols.length);
+    placed.forEach((label, i) => {
+      expect(label.x).toBe(cols[i]);
+      expect(label.y).toBeGreaterThan(bottom);
+      expect(label.y).toBeLessThan(HEIGHT);
+      expect(label.width).toBe(monoMeasure(label.text));
+    });
+  });
+
+  it('handles no labels', () => {
+    expect(layoutXLabels([], monoMeasure)).toEqual([]);
+  });
 });

@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Canvas, createPicture, Path, Picture, Skia, useFont, SkPath } from "@shopify/react-native-skia";
 import { DerivedValue, SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Selection } from "./Selection";
-import { ExerciseSet, GraphData, GraphGenerator, Labels, PathSet } from "./GraphBuilder";
+import { ExerciseSet, GraphData, GraphGenerator, Labels, layoutXLabels, PathSet, X_LABEL_SLANT } from "./GraphBuilder";
 
 import { useFocusEffect } from "@react-navigation/native";
 import { useAppDispatch, useAppSelector } from "../../../state/hooks";
@@ -136,9 +136,17 @@ const RenderLabels = ({ labels, index }: RenderLabelsProps) => {
     return labels[index.value].yLabels
   })
 
+  // Measure on the JS thread once the font has loaded
+  const placedXLabels = useMemo(
+    () => font == null
+      ? labels.map(() => [])
+      : labels.map(l => layoutXLabels(l.xLabels ?? [], text => font.measureText(text).width)),
+    [labels, font]
+  );
+
   const xLabels = useDerivedValue(() => {
-    return labels[index.value].xLabels ? labels[index.value].xLabels : []
-  })
+    return placedXLabels[index.value] ?? []
+  }, [index, placedXLabels])
 
   const ylabelsPicture = useDerivedValue(() => createPicture(
     (canvas) => {
@@ -162,9 +170,13 @@ const RenderLabels = ({ labels, index }: RenderLabelsProps) => {
       const paint = Skia.Paint();
 
       paint.setColor(Skia.Color("white"));
-      xLabels.value.map(info => {
-        canvas.drawText(info.text, info.pos.x ? info.pos.x : 150, info.pos.y ? info.pos.y : 150, paint, font)
-        canvas.drawTextBlob
+      xLabels.value.map(label => {
+        // Rotate around the anchor so the text ends just under its column
+        canvas.save()
+        canvas.translate(label.x, label.y)
+        canvas.rotate(X_LABEL_SLANT, 0, 0)
+        canvas.drawText(label.text, -label.width, 0, paint, font)
+        canvas.restore()
       })
     }
   ));

@@ -39,10 +39,33 @@ const LABELS = [
   ],
 ];
 
-type AxisLabelInfo = {
+export type AxisLabelInfo = {
   text: string;
   pos: SkPoint;
 };
+
+// Slanted x label: the text ends at (x, y) and runs down-left at X_LABEL_SLANT
+export type PlacedXLabel = {
+  text: string;
+  x: number;
+  y: number;
+  width: number;
+};
+
+export const X_LABEL_SLANT = -45;
+// Slanted labels hang below their anchor, so anchor them higher than the baseline
+const X_LABEL_SLANT_LIFT = 16;
+
+export const layoutXLabels = (
+  labels: AxisLabelInfo[],
+  measure: (text: string) => number,
+): PlacedXLabel[] =>
+  labels.map(label => ({
+    text: label.text,
+    x: label.pos.x,
+    y: label.pos.y - X_LABEL_SLANT_LIFT,
+    width: measure(label.text),
+  }));
 
 export type GraphData = {
   exercises: ExerciseSet[];
