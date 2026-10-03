@@ -41,8 +41,8 @@ const RenderExercisePathSet = ({ plots, index, color }: RenderExercisePathSetPro
 
   return (
     <>
-      <Path path={animatedPath} color={color} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-      <Path path={animatedPath2} color={color} strokeWidth={5} style="fill" />
+      <Path path={animatedPath} color={color} strokeWidth={2} style="stroke" strokeJoin="round" strokeCap="round" />
+      <Path path={animatedPath2} color={color} style="fill" />
     </>
   )
 }
@@ -118,7 +118,7 @@ const RenderGrid = ({ grids, index }: RenderGridProps) => {
     [index, grids]
   );
   return (
-    <Path path={animatedGrid} color="#ffffff44" strokeWidth={2} style="stroke" />
+    <Path path={animatedGrid} color="#ffffff44" strokeWidth={1} style="stroke" />
   )
 }
 

@@ -131,6 +131,7 @@ const createPlot = (): PathSet => {
 const PADDING = 20;
 const GRID_RIGHT_MARGIN = 30;
 const GRID_BOTTOM_MARGIN = 50;
+const DOT_RADIUS = 3.5;
 // Pushes the 12px label text down so it sits centred on its grid line
 const Y_LABEL_BASELINE_OFFSET = 4;
 
@@ -308,11 +309,11 @@ export class GraphGenerator {
         ex.brokenChord.line.lineTo(x, y_brokenChord);
       }
 
-      ex.scale.dots.addCircle(x, y_scale, 6);
-      ex.octave.dots.addCircle(x, y_octave, 6);
-      ex.arpeggio.dots.addCircle(x, y_arpeggio, 6);
-      ex.solidChord.dots.addCircle(x, y_solidChord, 6);
-      ex.brokenChord.dots.addCircle(x, y_brokenChord, 6);
+      ex.scale.dots.addCircle(x, y_scale, DOT_RADIUS);
+      ex.octave.dots.addCircle(x, y_octave, DOT_RADIUS);
+      ex.arpeggio.dots.addCircle(x, y_arpeggio, DOT_RADIUS);
+      ex.solidChord.dots.addCircle(x, y_solidChord, DOT_RADIUS);
+      ex.brokenChord.dots.addCircle(x, y_brokenChord, DOT_RADIUS);
     }
     console.log('Adding to exercies' + this.exercises.length);
     this.exercises.push(ex);
