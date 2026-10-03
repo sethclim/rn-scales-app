@@ -42,8 +42,9 @@ const SavedRoutines  = () => {
     }
   };
 
+  // Box centres children by default, which would shrink the list to its content
   return (
-    <Box p={30} style={{backgroundColor: background!}}>
+    <Box p={30} align="stretch" style={{backgroundColor: background!}}>
       <SwipeListView<Routine> 
         data={routines} 
         renderItem={ (data, rowMap) => (

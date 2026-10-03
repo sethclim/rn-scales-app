@@ -1,7 +1,13 @@
 import * as SQLite from 'expo-sqlite';
 
-import {IAllPracticeData, IPracticeData, Routine} from '../Models/DataModels';
-import {dateToString} from '../../utils/date_utils';
+import {
+  ExerciseType,
+  IAllPracticeData,
+  IPracticeData,
+  Routine,
+} from '../Models/DataModels';
+import {dateToString, getWeekRange} from '../../utils/date_utils';
+import {mapWeekRows, mapYearRows} from './practiceDataMappers';
 import {GRAPH_ID} from '../../screens/PracticeStats/Graph/GraphBuilder';
 
 type DBRoutine = {
@@ -20,6 +26,13 @@ export type DBPracticeDataGrouped = {
   brokenChord_count: number;
 };
 
+export type DBRoutineItem = {
+  id: number;
+  displayItem: string;
+  exerciseType: ExerciseType;
+  routineForeignKey: number;
+};
+
 export type DBPracticeData = {
   id: number;
   date: string;
@@ -28,10 +41,6 @@ export type DBPracticeData = {
   arpeggio: number;
   solidChord: number;
   brokenChord: number;
-};
-
-const daysInMonth = (month: number, year: number) => {
-  return new Date(year, month + 1, 0).getDate();
 };
 
 export class Database {
@@ -70,39 +79,22 @@ export class Database {
     }
 
     await this.db.withExclusiveTransactionAsync(async txn => {
-      await txn.execAsync(
-        `INSERT INTO Routine (title, createdAt) VALUES ('${routine.title}', '${routine.createdAt}')`,
+      // Bound params so titles like "Seth's warmup" can't break the SQL
+      const inserted = await txn.runAsync(
+        'INSERT INTO Routine (title, createdAt) VALUES (?, ?)',
+        [routine.title, routine.createdAt],
       );
 
-      type result = {
-        id: number;
-      };
+      // Use the new row's id; looking it up by title picks the wrong
+      // routine when two share a name
+      const routineId = inserted.lastInsertRowId;
 
-      const insertedRoutineIdResult = await txn.getFirstAsync<result>(
-        'SELECT id FROM ROUTINE WHERE title = $title',
-        {$title: routine.title},
-      );
-
-      if (insertedRoutineIdResult == null) return;
-
-      console.log(
-        'insertedRoutineId ' + JSON.stringify(insertedRoutineIdResult),
-      );
-
-      let source = '';
-      const insert = `INSERT INTO RoutineItem (displayItem, exerciseType, routineForeignKey) VALUES `;
-      const end = ';';
-
-      routine.RoutineItems.forEach(value => {
-        source += insert;
-        source += `('${value.displayItem}', '${value.exerciseType}', '${insertedRoutineIdResult.id}')`;
-        source += end;
-      });
-
-      // console.log('source ' + source);
-
-      const insertedRoutineItemsIdResult = await txn.execAsync(source);
-      console.log('Done save routine ' + insertedRoutineItemsIdResult);
+      for (const item of routine.RoutineItems) {
+        await txn.runAsync(
+          'INSERT INTO RoutineItem (displayItem, exerciseType, routineForeignKey) VALUES (?, ?, ?)',
+          [item.displayItem, item.exerciseType, routineId],
+        );
+      }
     });
 
     return true;
@@ -142,7 +134,7 @@ export class Database {
     const request = `SELECT * FROM RoutineItem WHERE routineForeignKey=${routineId};`;
     console.log('request ' + request);
 
-    const allRows2 = await this.db.getAllAsync(request);
+    const allRows2 = await this.db.getAllAsync<DBRoutineItem>(request);
     //      {$value: routineId.toString()},
     console.log('allRows2 ' + JSON.stringify(allRows2));
 
@@ -199,39 +191,7 @@ export class Database {
       return {Year: [], Month: [], Week: [], Day: []};
     }
 
-    const year = today_date.getFullYear();
-    const month = today_date.getMonth();
-    const today = today_date.getDate();
-
-    console.log(`year ${year} month ${month} today ${today}`);
-
-    const startOfWeek = dateToString(
-      new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        today_date.getDate() - today_date.getDay(),
-        0,
-        0,
-      ),
-    );
-
-    let day_end_week = today_date.getDate() + (7 - today_date.getDay());
-    const num_days_in_month = daysInMonth(month, year);
-    console.log(`num_days_in_month ${num_days_in_month}`);
-    if (day_end_week > num_days_in_month) {
-      day_end_week = num_days_in_month;
-    }
-
-    console.log(`day_end_week ${day_end_week}`);
-    const endOfWeek = dateToString(
-      new Date(
-        today_date.getFullYear(),
-        today_date.getMonth(),
-        day_end_week,
-        23,
-        59,
-      ),
-    );
+    const {start: startOfWeek, end: endOfWeek} = getWeekRange(today_date);
 
     console.log(`startOfWeek ${startOfWeek} endOfWeek ${endOfWeek}`);
 
@@ -252,7 +212,7 @@ export class Database {
       SUM(arpeggio) AS arpeggio_count,
       SUM(solidChord) AS solidChord_count,
       SUM(brokenChord) AS brokenChord_count
-      FROM PracticeData WHERE date_month_year BETWEEN $d1 AND $d2 GROUP BY date`,
+      FROM PracticeData WHERE date BETWEEN $d1 AND $d2 GROUP BY date ORDER BY date`,
       {
         $d1: startOfWeek,
         $d2: endOfWeek,
@@ -261,22 +221,7 @@ export class Database {
 
     console.log('Week PD: ' + JSON.stringify(practiceDataWeek));
 
-    const exportPracticeDataWeek: IPracticeData[] = practiceDataWeek.map(x => {
-      const date = new Date(x.date_month_year);
-
-      //console.log('Date ' + date);
-
-      const pd: IPracticeData = {
-        date: date.toString(),
-        scale: x.scale_count,
-        octave: x.octave_count,
-        arpeggio: x.arpeggio_count,
-        solidChord: x.solidChord_count,
-        brokenChord: x.brokenChord_count,
-      };
-
-      return pd;
-    });
+    const exportPracticeDataWeek = mapWeekRows(practiceDataWeek);
 
     const practiceDataYear = await this.db.getAllAsync<DBPracticeDataGrouped>(
       `SELECT id, STRFTIME('%m-%Y', date) AS date_month_year, 
@@ -285,16 +230,12 @@ export class Database {
       SUM(arpeggio) AS arpeggio_count,
       SUM(solidChord) AS solidChord_count,
       SUM(brokenChord) AS brokenChord_count
-      FROM PracticeData WHERE date BETWEEN $d1 AND $d2 GROUP BY STRFTIME('%m-%Y', date_month_year)`,
+      FROM PracticeData WHERE date BETWEEN $d1 AND $d2 GROUP BY date_month_year ORDER BY date`,
       {
         $d1: startOfYear,
         $d2: endOfYear,
       },
     );
-
-    //WHERE date BETWEEN $d1 AND $d2
-
-    //GROUP BY STRFTIME('%m-%Y', date_month_year)
 
     //SUM(scale) AS scale_count
     // SUM(octave) AS octave_count,
@@ -304,26 +245,8 @@ export class Database {
 
     console.log('Year PD: ' + JSON.stringify(practiceDataYear));
 
-    const exportPracticeDataYear: IPracticeData[] = practiceDataYear.map(x => {
-      const date = new Date(x.date_month_year);
-      date.setFullYear(
-        parseInt(x.date_month_year.split('-')[1]),
-        parseInt(x.date_month_year.split('-')[0]) - 1,
-        1,
-      );
+    const exportPracticeDataYear = mapYearRows(practiceDataYear);
 
-      //console.log('Date ' + date);
-
-      const pd: IPracticeData = {
-        date: new Date().toString(),
-        scale: x.scale_count,
-        octave: x.octave_count,
-        arpeggio: x.arpeggio_count,
-        solidChord: x.solidChord_count,
-        brokenChord: x.brokenChord_count,
-      };
-      return pd;
-    });
     return {
       Year: exportPracticeDataYear,
       Month: [],
@@ -384,6 +307,24 @@ export class Database {
     await this.db.execAsync(
       `DELETE FROM RoutineItem WHERE routineForeignKey=${routineId}; DELETE FROM Routine WHERE id=${routineId};`,
     );
+  }
+
+  async deleteAllPracticeData() {
+    if (this.db == null) {
+      console.log('DB not created');
+      return;
+    }
+
+    await this.db.execAsync('DELETE FROM PracticeData;');
+  }
+
+  async deleteAllRoutines() {
+    if (this.db == null) {
+      console.log('DB not created');
+      return;
+    }
+
+    await this.db.execAsync('DELETE FROM RoutineItem; DELETE FROM Routine;');
   }
 }
 

@@ -11,7 +11,7 @@ import { Modal, Alert, Text,  } from "react-native";
 
 import { TextButton } from "../components/TextButton";
 
-import check from "../assets/check.svg"
+import check from "../assets/CheckIcon"
 import { CheckBox } from "../components/Checkbox";
 import { ThemeContext } from "../context/ThemeContext";
 import { Card } from "../components/Card";
@@ -24,10 +24,14 @@ import { generateRoutine, saveRoutines } from "../state/routineSlice";
 import { getTodaysPracticedata } from "../state/practiceDataSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-//Options
-const NATURAL_ROOTS    = ["C", "D", "E", "F", "G", "A", "B"]
-const ACCIDENTAL_ROOTS = ["C#", "Eb", "F#", "G#", "Bb"]
-const SCALE_TYPES      = ["Major", "Minor", "Augmented", "Diminished"]
+import {
+    ACCIDENTAL_ROOTS,
+    NATURAL_ROOTS,
+    SCALE_TYPES,
+    getSaveRoutineError,
+    getSelections,
+    isValidRoutineConfiguration,
+} from "../data/routineOptions";
 
 const Generate = () => {
 
@@ -38,10 +42,6 @@ const Generate = () => {
     const { background, primary, secondaryBackground, requestTheme } = useContext(ThemeContext);
 
     const dispatch = useAppDispatch()
-
-    const CheckValidRoutineConfiguration = (selectedRoots : string[], selectedTypes : string[], selectedExercises : any) : boolean => {
-        return (selectedRoots.length > 0 && selectedTypes.length > 0 && selectedExercises.length > 0)
-    }
 
     const readTheme = async () => {
         try {
@@ -62,59 +62,28 @@ const Generate = () => {
     }, [])
 
     const StartRoutine = () => {
-        const selectedRoots : string[] = []
-        const selectedTypes : string[] = []
-        const selectedExercises : ExerciseType[] = []
+        const { roots, types, exercises } = getSelections(manageRoots, manageTypes, manageExercise)
 
-        const array3 = NATURAL_ROOTS.concat(ACCIDENTAL_ROOTS);
-        manageRoots.forEach((type, index) => {
-            if(type)
-                selectedRoots.push(array3[index])
-        });
-        
-        manageTypes.forEach((type, index) => {
-            if(type)
-                selectedTypes.push(SCALE_TYPES[index])
-        });
-
-        manageExercise.forEach((type, index) =>{
-            if(type)
-                selectedExercises.push(Array.from(Exercises.keys())[index])
-        });
-
-        // console.log("StartRoutine " + JSON.stringify([selectedRoots, selectedTypes, selectedExercises]))
-        
-        if(CheckValidRoutineConfiguration(selectedRoots, selectedTypes, selectedExercises))
+        if (isValidRoutineConfiguration({ roots, types, exercises }))
         {    
-            dispatch(generateRoutine([selectedRoots, selectedTypes, selectedExercises]))
+            dispatch(generateRoutine([roots, types, exercises]))
             navigation.navigate('Practice')
         }
         else
-            showAlert()
-            // setIsOpen(!isOpen)
+            showAlert('Pick at least one root, type and exercise.')
     }
 
     const SaveRoutine = (saveName : string) => {
-        const selectedRoots : string[] = []
-        const selectedTypes : string[] = []
-        const selectedExercises : ExerciseType[] = []
+        const selections = getSelections(manageRoots, manageTypes, manageExercise)
+        const error = getSaveRoutineError(saveName, selections)
 
-        const array3 = NATURAL_ROOTS.concat(ACCIDENTAL_ROOTS);
-        manageRoots.forEach((type, index) => {
-            if(type)
-                selectedRoots.push(array3[index])
-        });
-        
-        manageTypes.forEach((type, index) => {
-            if(type)
-                selectedTypes.push(SCALE_TYPES[index])
-        });
+        if (error != null) {
+            showAlert(error)
+            return
+        }
 
-        manageExercise.forEach((type, index) =>{
-            if(type)
-                selectedExercises.push(Array.from(Exercises.keys())[index])
-        });
-        dispatch(saveRoutines([saveName, selectedRoots, selectedTypes, selectedExercises]))
+        const { roots, types, exercises } = selections
+        dispatch(saveRoutines([saveName.trim(), roots, types, exercises]))
         setShowModal(false);
     }
 
@@ -146,10 +115,10 @@ const Generate = () => {
         setManageExercise(temp)
     }
 
-    const showAlert = () =>
+    const showAlert = (message : string) =>
         Alert.alert(
-          'Warning',
           'Invalid Routine Configuration',
+          message,
           [
             {
               text: 'Ok',
@@ -274,8 +243,6 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
 
     const [value, setValue] = React.useState("");
     const { background, primary, secondaryBackground } = useContext(ThemeContext);
-
-    const save_routine = () => _WORKLET
 
     return(
         <Modal

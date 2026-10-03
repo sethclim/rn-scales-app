@@ -38,7 +38,7 @@ export const saveRoutines = createAsyncThunk("routine/saveRoutine", async(option
     id: '-1',
     title: options[0],
     RoutineItems: state.routine.generatedRoutine, //generatedRoutine
-    createdAt: '99',
+    createdAt: new Date().toISOString(),
   };
 
   const res = await dbInstance.saveRoutine(routineToSave);
@@ -49,10 +49,14 @@ export const resumeRoutine = createAsyncThunk("routine/resumeRoutine", async(id 
   return await dbInstance.getRoutineItems(id);
 })
 
-export const deleteRoutine = createAsyncThunk("routine/saveRoutine", async(id : string, { dispatch, getState }) => {
+export const deleteRoutine = createAsyncThunk("routine/deleteRoutine", async(id : string, { dispatch, getState }) => {
   await dbInstance.deleteRoutine(id);
   dispatch(routineSlice.actions.removeDeletedRoutineImmediately(id));
 }) 
+
+export const deleteAllRoutines = createAsyncThunk("routine/deleteAllRoutines", async() => {
+  await dbInstance.deleteAllRoutines();
+})
 
 //Reducer
 const routineSlice = createSlice({
@@ -102,10 +106,13 @@ const routineSlice = createSlice({
         }
         console.log('Calling GenerateRoutine' + results.length);
         state.generatedRoutine = results;
+        // Don't carry a task over from the previous routine
+        state.currentTask = null;
       },
       getTask : (state, action) => {
         const index = Math.floor(Math.random() * state.generatedRoutine.length);
-        state.currentTask = state.generatedRoutine.splice(index, 1)[0];
+        // splice returns [] once the routine is finished
+        state.currentTask = state.generatedRoutine.splice(index, 1)[0] ?? null;
       },
       removeDeletedRoutineImmediately : (state, action) => {
         const temp = [...state.routines]
@@ -139,7 +146,13 @@ const routineSlice = createSlice({
             state.status = 'rejected';
             // state.errors = action.error.message;
           })
-          //getAllRoutines
+          .addCase(resumeRoutine.fulfilled, (state, action) => {
+            state.generatedRoutine = (action.payload ?? []).map(item => ({
+              displayItem: item.displayItem,
+              exerciseType: item.exerciseType,
+            }));
+            state.currentTask = null;
+          })
           .addCase(deleteRoutine.pending, (state) => {
             state.status = 'pending';
           })
@@ -150,6 +163,12 @@ const routineSlice = createSlice({
           .addCase(deleteRoutine.rejected, (state, action) => {
             state.status = 'rejected';
             // state.errors = action.error.message;
+          })
+          .addCase(deleteAllRoutines.fulfilled, (state) => {
+            state.routines = [];
+          })
+          .addCase(deleteAllRoutines.rejected, (state) => {
+            state.status = 'rejected';
           });
         },
       

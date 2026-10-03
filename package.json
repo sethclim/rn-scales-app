@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
-    "@react-native-async-storage/async-storage": "3.1.1",
+    "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/bottom-tabs": "7.20.0",
     "@react-navigation/native": "7.5.0",
     "@react-navigation/native-stack": "7.20.0",
@@ -19,6 +19,7 @@
     "@reduxjs/toolkit": "^2.5.1",
     "@shopify/react-native-skia": "2.6.2",
     "expo": "~57.0.26",
+    "expo-font": "~57.0.4",
     "expo-sqlite": "~57.0.3",
     "native-blocks-core": "^1.0.0",
     "react": "19.2.3",
@@ -36,6 +37,7 @@
   "devDependencies": {
     "@babel/core": "^7.29.7",
     "@react-native/jest-preset": "0.86.3",
+    "@testing-library/react-native": "^14",
     "@types/jest": "^29.5.13",
     "@types/react": "~19.2.4",
     "eslint": "^9.39.0",
@@ -44,8 +46,8 @@
     "jest": "^29.7.0",
     "jest-expo": "^57.0.5",
     "prettier": "^3.5.1",
-    "react-native-svg-transformer": "^1.5.0",
     "react-test-renderer": "19.2.3",
+    "test-renderer": "^1",
     "typescript": "~6.0.3"
   },
   "jest": {

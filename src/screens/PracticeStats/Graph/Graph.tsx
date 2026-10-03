@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useMemo } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { Canvas, createPicture, Path, Picture, Skia, useFont, SkPath } from "@shopify/react-native-skia";
 import { DerivedValue, SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Selection } from "./Selection";
-import { ExerciseSet, GraphData, GraphGenerator, Labels, PathSet } from "./GraphBuilder";
+import { ExerciseSet, GraphData, GraphGenerator, Labels, layoutXLabels, PathSet, X_LABEL_SLANT } from "./GraphBuilder";
 
 import { useFocusEffect } from "@react-navigation/native";
 import { useAppDispatch, useAppSelector } from "../../../state/hooks";
 import { getAllPracticedata } from "../../../state/practiceDataSlice";
 import { RootState } from "../../../state/store";
+import { ExerciseType, Exercises, IAllPracticeData } from "../../../data/Models/DataModels";
+import { ThemeContext } from "../../../context/ThemeContext";
 
 type GraphProps = {
   width: number,
@@ -40,20 +43,25 @@ const RenderExercisePathSet = ({ plots, index, color }: RenderExercisePathSetPro
 
   return (
     <>
-      <Path path={animatedPath} color={color} strokeWidth={5} style="stroke" strokeJoin="round" strokeCap="round" />
-      <Path path={animatedPath2} color={color} strokeWidth={5} style="fill" />
+      <Path path={animatedPath} color={color} strokeWidth={2} style="stroke" strokeJoin="round" strokeCap="round" />
+      <Path path={animatedPath2} color={color} style="fill" />
     </>
   )
 }
 
+// Theme chart colours are assigned in this order, for both the lines and the legend
+const EXERCISE_ORDER: ExerciseType[] = ['scale', 'octave', 'arpeggio', 'solidChord', 'brokenChord']
+
+const colourFor = (colours: string[], exercise: ExerciseType) =>
+  colours[EXERCISE_ORDER.indexOf(exercise)]
+
 type RenderExercisesProps = {
   exercises: ExerciseSet[],
   index: SharedValue<number>
+  colours: string[]
 }
 
-const RenderExercises = ({ exercises, index }: RenderExercisesProps) => {
-
-  const colours = ["red", "blue", "pink", "orange", "purple", "white", "yellow"]
+const RenderExercises = ({ exercises, index, colours }: RenderExercisesProps) => {
 
   const scale = useDerivedValue(
     () => {
@@ -94,11 +102,11 @@ const RenderExercises = ({ exercises, index }: RenderExercisesProps) => {
 
   return (
     <>
-        <RenderExercisePathSet plots={scale} index={index} color={colours[0]} />
-        <RenderExercisePathSet plots={octave} index={index} color={colours[1]} />
-        <RenderExercisePathSet plots={arpeggio} index={index} color={colours[2]} />
-        <RenderExercisePathSet plots={solidChord} index={index} color={colours[3]} />
-        <RenderExercisePathSet plots={brokenChord} index={index} color={colours[4]} />
+        <RenderExercisePathSet plots={scale} index={index} color={colourFor(colours, 'scale')} />
+        <RenderExercisePathSet plots={octave} index={index} color={colourFor(colours, 'octave')} />
+        <RenderExercisePathSet plots={arpeggio} index={index} color={colourFor(colours, 'arpeggio')} />
+        <RenderExercisePathSet plots={solidChord} index={index} color={colourFor(colours, 'solidChord')} />
+        <RenderExercisePathSet plots={brokenChord} index={index} color={colourFor(colours, 'brokenChord')} />
     </>
   )
 }
@@ -109,18 +117,15 @@ type RenderGridProps = {
 }
 
 const RenderGrid = ({ grids, index }: RenderGridProps) => {
-  // Save current and next paths (initially the same)
-  const paths = useSharedValue(grids);
-
   const animatedGrid = useDerivedValue(
     () => {
       "worklet"
-      return paths.value[index.value]
+      return grids[index.value]
     },
-    [index, paths]
+    [index, grids]
   );
   return (
-    <Path path={animatedGrid} color="#ffffff44" strokeWidth={2} style="stroke" />
+    <Path path={animatedGrid} color="#ffffff44" strokeWidth={1} style="stroke" />
   )
 }
 
@@ -138,9 +143,17 @@ const RenderLabels = ({ labels, index }: RenderLabelsProps) => {
     return labels[index.value].yLabels
   })
 
+  // Measure on the JS thread once the font has loaded
+  const placedXLabels = useMemo(
+    () => font == null
+      ? labels.map(() => [])
+      : labels.map(l => layoutXLabels(l.xLabels ?? [], text => font.measureText(text).width)),
+    [labels, font]
+  );
+
   const xLabels = useDerivedValue(() => {
-    return labels[index.value].xLabels ? labels[index.value].xLabels : []
-  })
+    return placedXLabels[index.value] ?? []
+  }, [index, placedXLabels])
 
   const ylabelsPicture = useDerivedValue(() => createPicture(
     (canvas) => {
@@ -164,9 +177,13 @@ const RenderLabels = ({ labels, index }: RenderLabelsProps) => {
       const paint = Skia.Paint();
 
       paint.setColor(Skia.Color("white"));
-      xLabels.value.map(info => {
-        canvas.drawText(info.text, info.pos.x ? info.pos.x : 150, info.pos.y ? info.pos.y : 150, paint, font)
-        canvas.drawTextBlob
+      xLabels.value.map(label => {
+        // Rotate around the anchor so the text ends just under its column
+        canvas.save()
+        canvas.translate(label.x, label.y)
+        canvas.rotate(X_LABEL_SLANT, 0, 0)
+        canvas.drawText(label.text, -label.width, 0, paint, font)
+        canvas.restore()
       })
     }
   ));
@@ -179,58 +196,102 @@ const RenderLabels = ({ labels, index }: RenderLabelsProps) => {
   )
 }
 
-const initialGraph: GraphData = {
-  exercises: [],
-  grids: [],
-  titles: [],
-  labels: []
+type LegendProps = {
+  width: number
 }
 
-const Graph = ({ width, height }: GraphProps) => {
-  const dispatch = useAppDispatch()
-  const practiceData = useAppSelector((state: RootState) => state.practice.practiceData)
+const Legend = ({ width }: LegendProps) => {
+  const { chart, chartBackground, toggle } = useContext(ThemeContext);
 
-  const fetchPracticeData = () => {
-    dispatch(getAllPracticedata())
-  }
+  return (
+    <View style={[styles.legend, { width, backgroundColor: chartBackground }]}>
+      {EXERCISE_ORDER.map(exercise => (
+        <View key={exercise} style={styles.legendItem}>
+          <View style={[styles.legendDot, { backgroundColor: colourFor(chart, exercise) }]} />
+          <Text style={[styles.legendLabel, { color: toggle.text }]}>{Exercises.get(exercise)}</Text>
+        </View>
+      ))}
+    </View>
+  )
+}
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchPracticeData();
-    }, [])
+const styles = StyleSheet.create({
+  legend: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    columnGap: 14,
+    rowGap: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    marginBottom: 12,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  legendDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+  legendLabel: {
+    fontSize: 12,
+  },
+})
+
+type GraphViewProps = GraphProps & {
+  data: IAllPracticeData,
+}
+
+// Pure view: renders whatever practice data it's given (see GraphPlayground)
+export const GraphView = ({ width, height, data }: GraphViewProps) => {
+  // Read outside <Canvas>: context doesn't reliably reach Skia's renderer
+  const { chart, chartBackground } = useContext(ThemeContext);
+
+  const currentGraph = useMemo<GraphData>(
+    () => new GraphGenerator().getGraph(width, height, data),
+    [width, height, data]
   );
-
-  const [currentGraph, setCurrentGraph] = useState<GraphData>(initialGraph);
 
   const transition = useSharedValue(0);
   const next = useSharedValue(0);
   const current = useSharedValue(0);
 
-  useEffect(() => {
-    const GG = new GraphGenerator();
-    setCurrentGraph(GG.getGraph(width, height, practiceData))
-  }, [practiceData])
-
-
   return (
     <>
-      <Canvas style={{ height: height, width: width, backgroundColor: "#00000055" }}>
+      <Canvas style={{ height: height, width: width, backgroundColor: chartBackground }}>
         {
           currentGraph.grids.length > 0 ?
             <RenderGrid grids={currentGraph.grids} index={next} /> : null
         }
         {
           currentGraph.exercises.length > 0 ?
-            <RenderExercises index={next} exercises={currentGraph.exercises} /> : null
+            <RenderExercises index={next} exercises={currentGraph.exercises} colours={chart} /> : null
         }
         {
           currentGraph.labels.length > 0 ?
             <RenderLabels labels={currentGraph.labels} index={next} /> : null
         }
       </Canvas>
+      <Legend width={width} />
       <Selection current={current} next={next} transition={transition} graphData={currentGraph} />
     </>
   )
+}
+
+const Graph = ({ width, height }: GraphProps) => {
+  const dispatch = useAppDispatch()
+  const practiceData = useAppSelector((state: RootState) => state.practice.practiceData)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(getAllPracticedata());
+    }, [])
+  );
+
+  return <GraphView width={width} height={height} data={practiceData} />
 }
 
 export default Graph;

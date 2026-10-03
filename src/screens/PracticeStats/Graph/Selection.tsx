@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Text, View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import {
   Canvas,
@@ -12,6 +12,7 @@ import { SharedValue, runOnJS, runOnUI, useSharedValue } from "react-native-rean
 import { useDerivedValue, withTiming } from "react-native-reanimated";
 
 import type { GraphData } from "./GraphBuilder";
+import { ThemeContext } from "../../../context/ThemeContext";
 
 // const buttonWidth = 98;
 const styles = StyleSheet.create({
@@ -20,7 +21,6 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   container: {
-    backgroundColor: "#272636",
     borderRadius: 16,
     flexDirection: "row",
   },
@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
   label: {
     // fontFamily: "Helvetica",
     fontSize: 16,
-    color: "white",
     textAlign: "center",
   },
 });
@@ -54,6 +53,9 @@ interface SelectionProps {
 export const Selection = ({ current, next, transition, graphData }: SelectionProps) => {
 
   const [b_Width, setB_Width] = useState(98)
+  // Mirrors next for text colour; both start on the first title
+  const [selected, setSelected] = useState(0)
+  const { chartBackground, toggle } = useContext(ThemeContext)
   
   const find_dimesions = (layout: any) => {
     const { x, y, width, height } = layout;
@@ -94,6 +96,7 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
     //console.log("state.value.next " + state.value.next)
     current.value = next.value;
     next.value = index;
+    setSelected(index);
 
     // console.log("next.value " + next.value)
 
@@ -120,12 +123,12 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
 
   return (
     <View style={styles.root}>
-      <View style={styles.container} onLayout={(event) => { find_dimesions(event.nativeEvent.layout) }}>
+      <View style={[styles.container, { backgroundColor: chartBackground }]} onLayout={(event) => { find_dimesions(event.nativeEvent.layout) }}>
         <Canvas style={StyleSheet.absoluteFill}>
           <Group transform={transform}>
             <RoundedRect x={0} y={0} height={64} width={b_Width} r={16}>
               <LinearGradient
-                colors={["#31CBD1", "#61E0A1"]}
+                colors={toggle.gradient}
                 start={vec(0, 0)}
                 end={vec(b_Width, 64)}
               />
@@ -140,7 +143,7 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
           >
             <View style={[styles.button,  {width : b_Width }]} 
             >
-              <Text style={styles.label}>{title}</Text>
+              <Text style={[styles.label, { color: index === selected ? toggle.activeText : toggle.text }]}>{title}</Text>
             </View>
           </TouchableWithoutFeedback>
         ))}
