@@ -25,4 +25,5 @@ export type RootStackParamList = {
   Main: NavigatorScreenParams<BottomTabNavigatorParamList>;
   Practice: undefined;
   Settings: undefined;
+  GraphPlayground: undefined;
 };

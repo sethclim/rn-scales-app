@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { Canvas, createPicture, Path, Picture, Skia, useFont, SkPath } from "@shopify/react-native-skia";
 import { DerivedValue, SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Selection } from "./Selection";
@@ -8,6 +8,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useAppDispatch, useAppSelector } from "../../../state/hooks";
 import { getAllPracticedata } from "../../../state/practiceDataSlice";
 import { RootState } from "../../../state/store";
+import { IAllPracticeData } from "../../../data/Models/DataModels";
 
 type GraphProps = {
   width: number,
@@ -109,15 +110,12 @@ type RenderGridProps = {
 }
 
 const RenderGrid = ({ grids, index }: RenderGridProps) => {
-  // Save current and next paths (initially the same)
-  const paths = useSharedValue(grids);
-
   const animatedGrid = useDerivedValue(
     () => {
       "worklet"
-      return paths.value[index.value]
+      return grids[index.value]
     },
-    [index, paths]
+    [index, grids]
   );
   return (
     <Path path={animatedGrid} color="#ffffff44" strokeWidth={2} style="stroke" />
@@ -179,38 +177,20 @@ const RenderLabels = ({ labels, index }: RenderLabelsProps) => {
   )
 }
 
-const initialGraph: GraphData = {
-  exercises: [],
-  grids: [],
-  titles: [],
-  labels: []
+type GraphViewProps = GraphProps & {
+  data: IAllPracticeData,
 }
 
-const Graph = ({ width, height }: GraphProps) => {
-  const dispatch = useAppDispatch()
-  const practiceData = useAppSelector((state: RootState) => state.practice.practiceData)
-
-  const fetchPracticeData = () => {
-    dispatch(getAllPracticedata())
-  }
-
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchPracticeData();
-    }, [])
+// Pure view: renders whatever practice data it's given (see GraphPlayground)
+export const GraphView = ({ width, height, data }: GraphViewProps) => {
+  const currentGraph = useMemo<GraphData>(
+    () => new GraphGenerator().getGraph(width, height, data),
+    [width, height, data]
   );
-
-  const [currentGraph, setCurrentGraph] = useState<GraphData>(initialGraph);
 
   const transition = useSharedValue(0);
   const next = useSharedValue(0);
   const current = useSharedValue(0);
-
-  useEffect(() => {
-    const GG = new GraphGenerator();
-    setCurrentGraph(GG.getGraph(width, height, practiceData))
-  }, [practiceData])
-
 
   return (
     <>
@@ -231,6 +211,19 @@ const Graph = ({ width, height }: GraphProps) => {
       <Selection current={current} next={next} transition={transition} graphData={currentGraph} />
     </>
   )
+}
+
+const Graph = ({ width, height }: GraphProps) => {
+  const dispatch = useAppDispatch()
+  const practiceData = useAppSelector((state: RootState) => state.practice.practiceData)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(getAllPracticedata());
+    }, [])
+  );
+
+  return <GraphView width={width} height={height} data={practiceData} />
 }
 
 export default Graph;

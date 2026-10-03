@@ -1,4 +1,5 @@
 import {GraphGenerator, GraphData, PathSet} from '../GraphBuilder';
+import {GRAPH_FIXTURES} from '../fixtures';
 import {
   ExerciseType,
   IAllPracticeData,
@@ -293,6 +294,25 @@ describe('GraphGenerator axis labels', () => {
       // Text baseline may sit a fixed distance off the line, but must not drift
       for (const offset of offsets) {
         expect(Math.abs(offset - offsets[0])).toBeLessThanOrEqual(PX_TOLERANCE);
+      }
+    },
+  );
+});
+
+describe('Graph Playground fixtures', () => {
+  it.each(Object.entries(GRAPH_FIXTURES))(
+    '"%s" builds with every point finite and inside the grid',
+    (_, data) => {
+      const graph = new GraphGenerator().getGraph(WIDTH, HEIGHT, data);
+
+      for (const index of [WEEK, YEAR]) {
+        const {left, right, top, bottom} = gridBounds(graph, index);
+        for (const op of allPlotOps(graph, index)) {
+          expect(op.x).toBeGreaterThanOrEqual(left);
+          expect(op.x).toBeLessThanOrEqual(right);
+          expect(op.y).toBeGreaterThanOrEqual(top);
+          expect(op.y).toBeLessThanOrEqual(bottom);
+        }
       }
     },
   );

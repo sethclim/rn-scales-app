@@ -7,12 +7,16 @@ import { TextButton } from "../components/TextButton";
 import { ThemeContext } from "../context/ThemeContext";
 import { Text } from "react-native";
 import { MiniTextButton } from "../components/MiniTextButton";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../navigation/types";
 
 const ROW_HEIGHT = 50
 
 const Settings  = () => {
 
     const { requestTheme, background, primary, secondaryBackground, mode} = useContext(ThemeContext);
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
     const storeData = async (value: string) => {
         try {
@@ -89,6 +93,14 @@ const Settings  = () => {
                     </HStack>
                     <MiniTextButton titles="Delete" onPress={() => {}}  />
                 </HStack>
+                {__DEV__ ?
+                  <HStack flexMain={false} mVH={{v: 5}} pVH={{h: 2}} style={{backgroundColor : secondaryBackground!}} >
+                      <HStack p={4} justifyContent="flex-start">
+                          <Text style={{color: primary}}>Graph Playground (dev)</Text>
+                      </HStack>
+                      <MiniTextButton titles="Open" onPress={() => navigation.navigate('GraphPlayground')}  />
+                  </HStack> : null
+                }
             </VStack>
         </Box>
       </Box>

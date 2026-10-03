@@ -5,6 +5,7 @@ import BottomTabs from "./BottomTabs"
 
 import PracticeRoutine from '../screens/PracticeRoutine';
 import Settings from '../screens/Settings';
+import GraphPlayground from '../screens/PracticeStats/GraphPlayground';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeContext } from '../context/ThemeContext';
@@ -51,6 +52,16 @@ const RootNavigator = () => {
                         fontWeight: 'bold',
                     }
                 }} />
+                {__DEV__ ?
+                  <Stack.Screen name="GraphPlayground" component={GraphPlayground}
+                    options={{ 
+                      title: "Graph Playground",
+                      headerStyle: {
+                          backgroundColor: headerBackground,
+                      },
+                      headerTintColor: headerForeground,
+                  }} /> : null
+                }
             </Stack.Navigator>
       </NavigationContainer>
     );
