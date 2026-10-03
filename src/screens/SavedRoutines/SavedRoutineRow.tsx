@@ -45,10 +45,10 @@ export const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index,
     }
   
     return (
-      <VStack width={370}  height={50} style={{"backgroundColor" : mode == "light" ? primary : secondaryBackground!}}>
+      <VStack height={50} style={{"backgroundColor" : mode == "light" ? primary : secondaryBackground!}}>
         <HStack gap={3} justifyContent="flex-start" align="center" p={6}>
           <HStack justifyContent="flex-start" p={5}>
-            <Text style={{color : "white", fontSize: 20}}>{routine.title.charAt(0).toUpperCase() + routine.title.slice(1)}</Text>
+            <Text numberOfLines={1} style={{color : "white", fontSize: 20, flexShrink: 1}}>{routine.title.charAt(0).toUpperCase() + routine.title.slice(1)}</Text>
           </HStack>
 
           <Button onPress={() => StartSavedRoutine()}>
