@@ -26,10 +26,14 @@ export const getAllPracticedata = createAsyncThunk("practice/getAllPracticeData"
     return await dbInstance.getAllPracticeData(new Date());
 })
 
+// The session starts with date "" until today's data loads; save it under today then
+const withValidDate = (pd: IPracticeData): IPracticeData =>
+  isNaN(new Date(pd.date).getTime()) ? { ...pd, date: new Date().toString() } : pd
+
 export const savePracticeData = createAsyncThunk("practice/savePracticeData", async(empty : any, { dispatch, getState }) => {
     const state = getState() as RootState;
     
-    return await dbInstance.savePracticedata(state.practice.currentSessionPracticeData);
+    return await dbInstance.savePracticedata(withValidDate(state.practice.currentSessionPracticeData));
 })
 
 export const getTodaysPracticedata = createAsyncThunk("practice/getTodaysPracticedata", async() => {
@@ -96,7 +100,9 @@ const practiceDataSlice = createSlice({
           })
           .addCase(getTodaysPracticedata.fulfilled, (state, action) => {
             state.status = 'fulfilled';
-            state.currentSessionPracticeData = action.payload!;
+            // null means the DB isn't open yet; keep the session we have
+            if (action.payload != null)
+              state.currentSessionPracticeData = action.payload;
           })
           .addCase(getTodaysPracticedata.rejected, (state, action) => {
             state.status = 'rejected';

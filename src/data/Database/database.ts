@@ -1,6 +1,11 @@
 import * as SQLite from 'expo-sqlite';
 
-import {IAllPracticeData, IPracticeData, Routine} from '../Models/DataModels';
+import {
+  ExerciseType,
+  IAllPracticeData,
+  IPracticeData,
+  Routine,
+} from '../Models/DataModels';
 import {dateToString, getWeekRange} from '../../utils/date_utils';
 import {mapWeekRows, mapYearRows} from './practiceDataMappers';
 import {GRAPH_ID} from '../../screens/PracticeStats/Graph/GraphBuilder';
@@ -19,6 +24,13 @@ export type DBPracticeDataGrouped = {
   arpeggio_count: number;
   solidChord_count: number;
   brokenChord_count: number;
+};
+
+export type DBRoutineItem = {
+  id: number;
+  displayItem: string;
+  exerciseType: ExerciseType;
+  routineForeignKey: number;
 };
 
 export type DBPracticeData = {
@@ -139,7 +151,7 @@ export class Database {
     const request = `SELECT * FROM RoutineItem WHERE routineForeignKey=${routineId};`;
     console.log('request ' + request);
 
-    const allRows2 = await this.db.getAllAsync(request);
+    const allRows2 = await this.db.getAllAsync<DBRoutineItem>(request);
     //      {$value: routineId.toString()},
     console.log('allRows2 ' + JSON.stringify(allRows2));
 
