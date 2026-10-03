@@ -26,7 +26,7 @@ export const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index,
 
     // const { myDispatch } = useContext(Context);
     const navigation = useNavigation<BottomTabNavigationProp<BottomTabNavigatorParamList>>();
-    const { primary, background, secondary, secondaryBackground, mode } = useContext(ThemeContext);
+    const { primary, background, secondary, secondaryBackground, scheme } = useContext(ThemeContext);
 
     const dispatch = useAppDispatch()
 
@@ -45,7 +45,7 @@ export const SavedRoutineRow :  FunctionComponent<RowProps>  = ({routine, index,
     }
   
     return (
-      <VStack height={50} style={{"backgroundColor" : mode == "light" ? primary : secondaryBackground!}}>
+      <VStack height={50} style={{"backgroundColor" : scheme == "light" ? primary : secondaryBackground!}}>
         <HStack gap={3} justifyContent="flex-start" align="center" p={6}>
           <HStack justifyContent="flex-start" p={5}>
             <Text numberOfLines={1} style={{color : "white", fontSize: 20, flexShrink: 1}}>{routine.title.charAt(0).toUpperCase() + routine.title.slice(1)}</Text>

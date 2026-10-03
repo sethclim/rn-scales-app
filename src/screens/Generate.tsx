@@ -37,7 +37,7 @@ const Generate = () => {
 
     const [showModal, setShowModal] = useState(false);
 
-    const { background, primary, secondaryBackground, requestTheme } = useContext(ThemeContext);
+    const { background, primary, onPrimary, secondaryBackground, requestTheme } = useContext(ThemeContext);
 
     const dispatch = useAppDispatch()
 
@@ -159,7 +159,7 @@ const Generate = () => {
                             {
                                 NATURAL_ROOTS.map( (naturalRoot, i) => { return (
                                     <CheckBox 
-                                        iconColor="white" 
+                                        iconColor={onPrimary} 
                                         iconSize={20} 
                                         checked={manageRoots[i]} 
                                         checkMark={check} 
@@ -173,7 +173,7 @@ const Generate = () => {
                             {
                                 ACCIDENTAL_ROOTS.map( (accidentalRoot, i) => { return (
                                     <CheckBox 
-                                        iconColor="white" 
+                                        iconColor={onPrimary} 
                                         iconSize={20} 
                                         checked={manageRoots[i + 7]} 
                                         checkMark={check} 
@@ -195,7 +195,7 @@ const Generate = () => {
                                 <CheckBox 
                                     checkMark={check} 
                                     iconSize={20} 
-                                    iconColor="white" 
+                                    iconColor={onPrimary} 
                                     key={i} 
                                     onPress={() => onClickSelectType(i)} 
                                     checked={manageTypes[i]} 
@@ -212,7 +212,7 @@ const Generate = () => {
                             [...Exercises.keys()].map((exerciseType, i) => {
                                   return  <CheckBox 
                                             key={i} 
-                                            iconColor="white" 
+                                            iconColor={onPrimary} 
                                             checkMark={check} 
                                             iconSize={20} 
                                             onPress={() => onClickSelectExercise(i, exerciseType)}  
@@ -254,9 +254,9 @@ interface SaveModalProps {
 const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal, save}) => {
 
     const [value, setValue] = React.useState("");
-    const { background, primary, secondaryBackground, mode } = useContext(ThemeContext);
+    const { background, primary, secondaryBackground, text } = useContext(ThemeContext);
 
-    const textColor = mode == 'light' ? '#2E3440' : '#c0caf5'
+    const textColor = text
 
     // Start with an empty name each time the dialog opens
     useEffect(() => {
@@ -291,7 +291,7 @@ const SaveModal : FunctionComponent<SaveModalProps> = ({showModal, setShowModal,
                             value={value}
                             onChangeText={setValue}
                             placeholder="Routine name"
-                            placeholderTextColor={mode == 'light' ? '#4C566A99' : '#c0caf599'}
+                            placeholderTextColor={text + '99'}
                             autoFocus
                             returnKeyType="done"
                             onSubmitEditing={() => save(value)}

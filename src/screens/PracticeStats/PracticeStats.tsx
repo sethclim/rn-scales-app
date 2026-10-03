@@ -11,10 +11,10 @@ const PracticeStats = () => {
 
     const { width, height } = useWindowDimensions();
 
-    const { primary, background, mode } = useContext(ThemeContext);
+    const { primary, background, scheme } = useContext(ThemeContext);
 
     return(
-      <View style={{flex: 1, padding: Padding, backgroundColor: mode == 'light' ? primary : background! }}>
+      <View style={{flex: 1, padding: Padding, backgroundColor: scheme == 'light' ? primary : background! }}>
         <Graph width={width - Padding * 2 } height={height * 0.5 - 50}/>
       </View>
     )

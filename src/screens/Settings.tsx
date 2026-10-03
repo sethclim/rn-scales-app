@@ -15,15 +15,23 @@ import { deleteAllRoutines } from "../state/routineSlice";
 
 const ROW_HEIGHT = 50
 
+const THEME_TILES = [
+    { mode: 'light', title: 'Nord', color: '#5E81AC', foreground: undefined },
+    { mode: 'latte', title: 'Latte', color: '#8839ef', foreground: undefined },
+    { mode: 'tokyo', title: 'Tokyo Nights', color: '#7aa2f7', foreground: undefined },
+    { mode: 'rosepine', title: 'Rosé Pine', color: '#ebbcba', foreground: '#191724' },
+    { mode: 'mocha', title: 'Mocha', color: '#cba6f7', foreground: '#1e1e2e' },
+]
+
 const Settings  = () => {
 
-    const { requestTheme, background, primary, secondaryBackground, mode} = useContext(ThemeContext);
+    const { requestTheme, background, primary, secondaryBackground, mode, text, danger} = useContext(ThemeContext);
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const dispatch = useAppDispatch();
 
-    const textColor = mode == 'light' ? '#2E3440' : '#c0caf5'
-    const dangerColor = mode == 'light' ? '#BF616A' : '#f7768e'
-    const dividerColor = mode == 'light' ? '#2E344033' : '#c0caf533'
+    const textColor = text
+    const dangerColor = danger
+    const dividerColor = text + '33'
 
     const confirmDelete = (what: string, onDelete: () => void) =>
       Alert.alert(
@@ -55,48 +63,20 @@ const Settings  = () => {
         {/* bg="nord.secondaryBackground" */}
         <Box mAll={{t : 20}} pVH={{v : 10}} justifyContent="flex-start">
             <VStack flexMain={false} align="flex-start" >
-                <VStack flexMain={false} pVH={{v: 8, h: 2}} align="flex-start">
-                    <Text style={{fontSize: 20, color: primary}}>Theme</Text>
-                    <HStack justifyContent="center" align="flex-start">
-                        <Button  onPress={() => changeTheme('light')} style={{height: 120}}>
-                            <Box flexMain={false} height={120} width={75} m={2} p={4} style={{backgroundColor : '#5E81AC'}} >
-                                <Text style={{color: 'white'}}>Nord</Text>
-                                <VStack justifyContent="flex-end">
-                                    <Box flexMain={false}  style={{
-                                            backgroundColor : mode == "light" ? '#5E81AC' : "white", 
-                                            borderRadius: 1000,
-                                            borderWidth:  mode == "light" ? 2 : 0, 
-                                            borderColor: "white"
-                                        }} 
-                                        width={12} height={12}
-                                    >
-                                    </Box>
-                                </VStack>
-                            </Box>
-                        </Button>
-                        {/* <Box height={120} width={75} m={2} >
-                            <TextButton  titles="Blackout" onPress={() => {}}  />
-                        </Box> */}
-                        <Button  onPress={() => changeTheme('tokyo')} style={{height: 120}}>
-                            <Box flexMain={false} height={120} width={75} m={2} p={4} style={{backgroundColor : '#7aa2f7'}} >
-                                <Text style={{color: 'white'}}>Tokyo Nights</Text>
-                                <VStack justifyContent="flex-end">
-                                    <Box flexMain={false}  style={{
-                                            backgroundColor : mode == "tokyo" ? '#7aa2f7' : "white", 
-                                            borderRadius: 1000,
-                                            borderWidth:  mode == "tokyo" ? 2 : 0, 
-                                            borderColor: "white"
-                                        }} 
-                                        width={12} height={12}
-                                    >
-
-                                    </Box>
-                                </VStack>
-                            </Box>
-                        </Button>
-           
-                    </HStack>
-                </VStack>
+                <Text style={{fontSize: 20, color: primary, marginBottom: 10}}>Theme</Text>
+                {/* Three tiles per row; the negative margin cancels the outer cell padding */}
+                <View style={{alignSelf: 'stretch', flexDirection: 'row', flexWrap: 'wrap', margin: -6}}>
+                    {THEME_TILES.map(tile => (
+                        <View key={tile.mode} style={{width: '33.333%', padding: 6}}>
+                            <ThemeTile
+                                title={tile.title}
+                                color={tile.color}
+                                foreground={tile.foreground}
+                                selected={mode == tile.mode}
+                                onPress={() => changeTheme(tile.mode)} />
+                        </View>
+                    ))}
+                </View>
                 <Text style={{fontSize: 20, color: primary, marginTop: 32, marginBottom: 10}}>Your Data</Text>
                 <View style={{alignSelf: 'stretch', backgroundColor: secondaryBackground!, borderRadius: 10, overflow: 'hidden'}}>
                     <SettingsRow
@@ -129,6 +109,44 @@ const Settings  = () => {
       </Box>
     );
   };
+
+type ThemeTileProps = {
+    title: string
+    color: string
+    foreground?: string
+    selected: boolean
+    onPress: () => void
+}
+
+// Theme swatch: name at the top, radio dot at the bottom showing the active theme
+const ThemeTile = ({ title, color, foreground = 'white', selected, onPress }: ThemeTileProps) => (
+    <Pressable
+        onPress={onPress}
+        accessibilityRole="radio"
+        accessibilityState={{ selected }}
+        accessibilityLabel={`${title} theme`}
+        style={({ pressed }) => ({
+            height: 100,
+            padding: 12,
+            borderRadius: 10,
+            backgroundColor: color,
+            justifyContent: 'space-between',
+            opacity: pressed ? 0.8 : 1,
+        })}>
+        <Text style={{color: foreground, fontSize: 15, fontWeight: '600'}}>{title}</Text>
+        <View style={{
+            width: 18,
+            height: 18,
+            borderRadius: 9,
+            borderWidth: 2,
+            borderColor: foreground,
+            alignItems: 'center',
+            justifyContent: 'center',
+        }}>
+            {selected ? <View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: foreground}} /> : null}
+        </View>
+    </Pressable>
+)
 
 type SettingsRowProps = {
     label: string

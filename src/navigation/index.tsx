@@ -15,10 +15,10 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const RootNavigator = () => {
 
-    const { primary, background, mode } = React.useContext(ThemeContext);
+    const { primary, background, scheme } = React.useContext(ThemeContext);
 
-    const headerForeground = mode == 'light' ? background! : primary 
-    const headerBackground = mode == 'light' ? primary : background! 
+    const headerForeground = scheme == 'light' ? background! : primary 
+    const headerBackground = scheme == 'light' ? primary : background! 
 
     return (
       <NavigationContainer>
