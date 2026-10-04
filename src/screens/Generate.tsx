@@ -1,3 +1,4 @@
+import { log } from "../utils/logger";
 import React, { FunctionComponent, useContext, useEffect, useLayoutEffect, useState } from "react"
 
 import { useNavigation } from "@react-navigation/native";
@@ -50,7 +51,7 @@ const Generate = () => {
                 requestTheme(mode)
             }
         } catch (e) {
-            console.warn(e)
+            log.warn(e)
         }
     };
 

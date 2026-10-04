@@ -66,7 +66,6 @@ const RenderExercises = ({ exercises, index, colours }: RenderExercisesProps) =>
   const scale = useDerivedValue(
     () => {
       "worklet"
-      console.log(`index ${index.value} ${exercises.length}`)
       return exercises[index.value].scale
     },
     [index, exercises]

@@ -1,0 +1,39 @@
+name: Release
+
+# Runs when a version tag is pushed, e.g. `git tag v1.0.0 && git push origin v1.0.0`
+# (creating a GitHub Release with a new tag does the same). Release candidates
+# like v1.1.0-rc.1 are skipped.
+on:
+  push:
+    tags: ['v*.*.*', '!v*.*.*-rc.*']
+
+jobs:
+  build_android:
+    name: Build Android app
+    type: build
+    params:
+      platform: android
+      profile: production
+
+  # build_ios:
+  #   name: Build iOS app
+  #   type: build
+  #   params:
+  #     platform: ios
+  #     profile: production
+
+  submit_android:
+    name: Submit to Google Play
+    needs: [build_android]
+    type: submit
+    params:
+      profile: production
+      build_id: ${{ needs.build_android.outputs.build_id }}
+
+  # submit_ios:
+  #   name: Submit to App Store Connect
+  #   needs: [build_ios]
+  #   type: submit
+  #   params:
+  #     profile: production
+  #     build_id: ${{ needs.build_ios.outputs.build_id }}

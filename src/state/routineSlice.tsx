@@ -1,3 +1,4 @@
+import { log } from "../utils/logger";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "./store"
 import { ExerciseType, Exercises, Routine, RoutineItem } from "../data/Models/DataModels";
@@ -64,9 +65,9 @@ const routineSlice = createSlice({
     initialState,
     reducers: {
       generateRoutine: (state, action) => {
-        console.log(`Calling GenerateRoutine ${JSON.stringify(action.payload)} !`);
+        log.debug(`Calling GenerateRoutine ${JSON.stringify(action.payload)} !`);
         state.generatedRoutine = []
-        console.log(`Calling GenerateRoutine ${state.generatedRoutine} !`);
+        log.debug(`Calling GenerateRoutine ${state.generatedRoutine} !`);
       
         const roots = action.payload[0];
         const types = action.payload[1];
@@ -104,7 +105,7 @@ const routineSlice = createSlice({
             }
           }
         }
-        console.log('Calling GenerateRoutine' + results.length);
+        log.debug('Calling GenerateRoutine' + results.length);
         state.generatedRoutine = results;
         // Don't carry a task over from the previous routine
         state.currentTask = null;

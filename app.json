@@ -1,12 +1,44 @@
 {
   "name": "ScalesApp",
-  "displayName": "ScalesApp",
-  "newArchEnabled": true,
+  "slug": "scales-app",
+  "version": "1.0.0",
+  "orientation": "portrait",
+  "icon": "./src/assets/icon.png",
   "plugins": [
     "expo-sqlite",
-    "expo-font"
+    "expo-font",
+    [
+      "expo-splash-screen",
+      {
+        "image": "./src/assets/adaptive-icon-foreground.png",
+        "imageWidth": 200,
+        "resizeMode": "contain",
+        "backgroundColor": "#2E3440"
+      }
+    ]
   ],
+  "ios": {
+    "bundleIdentifier": "com.sethclim.scalesapp",
+    "supportsTablet": false,
+    "infoPlist": {
+      "ITSAppUsesNonExemptEncryption": false
+    }
+  },
   "android": {
-    "package": "com.sethclim.scalesapp"
+    "package": "com.sethclim.scalesapp",
+    "adaptiveIcon": {
+      "foregroundImage": "./src/assets/adaptive-icon-foreground.png",
+      "backgroundImage": "./src/assets/adaptive-icon-background.png"
+    },
+    "blockedPermissions": [
+      "android.permission.SYSTEM_ALERT_WINDOW",
+      "android.permission.READ_EXTERNAL_STORAGE",
+      "android.permission.WRITE_EXTERNAL_STORAGE"
+    ]
+  },
+  "extra": {
+    "eas": {
+      "projectId": "d4f55b43-0f4a-482d-ae6f-6fdb13d0ff89"
+    }
   }
 }

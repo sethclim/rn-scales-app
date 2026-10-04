@@ -1,3 +1,4 @@
+import { dbLog } from '../../utils/logger';
 import * as SQLite from 'expo-sqlite';
 
 import {
@@ -74,7 +75,7 @@ export class Database {
 
   async saveRoutine(routine: Routine) {
     if (this.db == null) {
-      console.log('DB not created');
+      dbLog.warn('DB not created');
       return false;
     }
 
@@ -102,7 +103,7 @@ export class Database {
 
   async getAllRoutines() {
     if (this.db == null) {
-      console.log('DB not created');
+      dbLog.warn('DB not created');
       return [];
     }
 
@@ -124,30 +125,30 @@ export class Database {
   }
 
   async getRoutineItems(routineId: string) {
-    console.log('getRoutineItems HERE');
+    dbLog.debug('getRoutineItems HERE');
 
     if (this.db == null) {
-      console.log('DB not created');
+      dbLog.warn('DB not created');
       return;
     }
 
     const request = `SELECT * FROM RoutineItem WHERE routineForeignKey=${routineId};`;
-    console.log('request ' + request);
+    dbLog.debug('request ' + request);
 
     const allRows2 = await this.db.getAllAsync<DBRoutineItem>(request);
     //      {$value: routineId.toString()},
-    console.log('allRows2 ' + JSON.stringify(allRows2));
+    dbLog.debug('allRows2 ' + JSON.stringify(allRows2));
 
     return allRows2;
   }
 
   async savePracticedata(practiceData: IPracticeData) {
     if (this.db == null) {
-      console.log('DB not created');
+      dbLog.warn('DB not created');
       return;
     }
 
-    console.log(`practiceData ${JSON.stringify(practiceData)}`);
+    dbLog.debug(`practiceData ${JSON.stringify(practiceData)}`);
 
     const string_date = dateToString(new Date(practiceData.date));
 
@@ -167,7 +168,7 @@ export class Database {
           VALUES ('${string_date}', '${practiceData.scale}', '${practiceData.octave}', '${practiceData.arpeggio}', '${practiceData.solidChord}', '${practiceData.brokenChord}')`,
       );
     } else {
-      console.log('updating row ');
+      dbLog.debug('updating row ');
       //
       const updateRes = await this.db.runAsync(
         'UPDATE PracticeData SET scale = $1, octave = $2, arpeggio = $3, solidChord = $4, brokenChord = $5 WHERE date = $d',
@@ -187,13 +188,13 @@ export class Database {
 
   async getAllPracticeData(today_date: Date): Promise<IAllPracticeData> {
     if (this.db == null) {
-      console.log('DB not created');
+      dbLog.warn('DB not created');
       return {Year: [], Month: [], Week: [], Day: []};
     }
 
     const {start: startOfWeek, end: endOfWeek} = getWeekRange(today_date);
 
-    console.log(`startOfWeek ${startOfWeek} endOfWeek ${endOfWeek}`);
+    dbLog.debug(`startOfWeek ${startOfWeek} endOfWeek ${endOfWeek}`);
 
     const startOfYear = dateToString(
       new Date(today_date.getFullYear(), 0, 1, 0, 0),
@@ -219,7 +220,7 @@ export class Database {
       },
     );
 
-    console.log('Week PD: ' + JSON.stringify(practiceDataWeek));
+    dbLog.debug('Week PD: ' + JSON.stringify(practiceDataWeek));
 
     const exportPracticeDataWeek = mapWeekRows(practiceDataWeek);
 
@@ -243,7 +244,7 @@ export class Database {
     // SUM(solidChord) AS solidChord_count,
     // SUM(brokenChord) AS brokenChord_count
 
-    console.log('Year PD: ' + JSON.stringify(practiceDataYear));
+    dbLog.debug('Year PD: ' + JSON.stringify(practiceDataYear));
 
     const exportPracticeDataYear = mapYearRows(practiceDataYear);
 
@@ -257,7 +258,7 @@ export class Database {
 
   async getTodaysPracticeData(todaysDate: Date) {
     if (this.db == null) {
-      console.log('DB not created');
+      dbLog.warn('DB not created');
       return null;
     }
 
@@ -298,11 +299,11 @@ export class Database {
 
   async deleteRoutine(routineId: string) {
     if (this.db == null) {
-      console.log('DB not created');
+      dbLog.warn('DB not created');
       return null;
     }
 
-    console.log('[DB] deleteRoutine');
+    dbLog.debug('[DB] deleteRoutine');
 
     await this.db.execAsync(
       `DELETE FROM RoutineItem WHERE routineForeignKey=${routineId}; DELETE FROM Routine WHERE id=${routineId};`,
@@ -311,7 +312,7 @@ export class Database {
 
   async deleteAllPracticeData() {
     if (this.db == null) {
-      console.log('DB not created');
+      dbLog.warn('DB not created');
       return;
     }
 
@@ -320,7 +321,7 @@ export class Database {
 
   async deleteAllRoutines() {
     if (this.db == null) {
-      console.log('DB not created');
+      dbLog.warn('DB not created');
       return;
     }
 

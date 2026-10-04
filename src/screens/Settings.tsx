@@ -1,3 +1,4 @@
+import { log } from "../utils/logger";
 import React, { useContext } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -48,7 +49,7 @@ const Settings  = () => {
           await AsyncStorage.setItem('theme', value);
         } catch (e) {
           // saving error
-          console.warn(e)
+          log.warn(e)
         }
       };
 

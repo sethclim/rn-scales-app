@@ -1,3 +1,4 @@
+import { log } from "../../utils/logger";
 import React from "react";
 import { FunctionComponent, useContext } from "react";
 
@@ -19,7 +20,7 @@ const SavedRoutineHiddenItem :  FunctionComponent<RowProps>  = ({routine, index,
 
     const deleteRow = async() => {
 
-        console.log("deleteRow")
+        log.debug("deleteRow")
 
         // if(myDispatch == null)
         //   return
