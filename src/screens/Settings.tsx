@@ -18,7 +18,7 @@ const ROW_HEIGHT = 50
 
 const THEME_TILES = [
     { mode: 'light', title: 'Nord', color: '#5E81AC', foreground: undefined },
-    { mode: 'latte', title: 'Latte', color: '#8839ef', foreground: undefined },
+    { mode: 'latte', title: 'Violet', color: '#8839ef', foreground: undefined },
     { mode: 'tokyo', title: 'Tokyo Nights', color: '#7aa2f7', foreground: undefined },
     { mode: 'rosepine', title: 'Rosé Pine', color: '#ebbcba', foreground: '#191724' },
     { mode: 'mocha', title: 'Mocha', color: '#cba6f7', foreground: '#1e1e2e' },

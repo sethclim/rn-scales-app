@@ -12,6 +12,8 @@ export type ThemeContextType = {
   danger : string;
   chart : string[];
   chartBackground : string;
+  // Stats page fill; when unset light themes use primary, dark themes background
+  statsBackground? : string;
   toggle : { gradient: string[], activeText: string, text: string };
   requestTheme: (theme : string) => void;
   mode : string;

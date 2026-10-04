@@ -70,8 +70,10 @@ export const catppuccinLatteTheme = {
   danger: '#d20f39', // red
   // Latte's accents are tuned for light backgrounds, so the dark chart panel borrows Mocha's
   chart: ['#89dceb', '#a6e3a1', '#f9e2af', '#fab387', '#f5c2e7'],
-  // Latte text at 80%, same idea as Nord's polar night panel
-  chartBackground: '#4c4f69CC',
+  // Mauve is too loud to fill the whole stats page like Nord's blue does,
+  // so the page stays on Latte base and the panel is solid Mocha base
+  chartBackground: '#1e1e2e',
+  statsBackground: '#eff1f5',
   toggle: {
     gradient: ['#7287fd', '#8839ef'], // lavender -> mauve
     activeText: '#eff1f5',
