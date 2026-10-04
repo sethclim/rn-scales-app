@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import {  useWindowDimensions, View } from "react-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import Graph from './Graph/Graph';
 import { ThemeContext } from '../../context/ThemeContext';
@@ -9,15 +10,16 @@ const Padding = 10;
 
 const PracticeStats = () => {
 
-    const { width, height } = useWindowDimensions();
+    const { width } = useWindowDimensions();
+    // The tab bar floats over the screen, so stop the graph above it
+    const tabBarHeight = useBottomTabBarHeight();
 
-    const { primary, background, scheme, statsBackground } = useContext(ThemeContext);
-
-    const pageColour = statsBackground ?? (scheme == 'light' ? primary : background!)
+    // Page matches the graph panel so the graph runs edge to edge
+    const { chartBackground } = useContext(ThemeContext);
 
     return(
-      <View style={{flex: 1, padding: Padding, backgroundColor: pageColour }}>
-        <Graph width={width - Padding * 2 } height={height * 0.5 - 50}/>
+      <View style={{flex: 1, padding: Padding, paddingBottom: tabBarHeight, backgroundColor: chartBackground }}>
+        <Graph width={width - Padding * 2 } />
       </View>
     )
 }

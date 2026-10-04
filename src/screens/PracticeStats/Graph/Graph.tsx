@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Canvas, createPicture, Path, Picture, Skia, useFont, SkPath } from "@shopify/react-native-skia";
 import { DerivedValue, SharedValue, useDerivedValue, useSharedValue } from "react-native-reanimated";
@@ -14,7 +14,8 @@ import { ThemeContext } from "../../../context/ThemeContext";
 
 type GraphProps = {
   width: number,
-  height: number,
+  // Omit to fill the space the legend and toggle leave
+  height?: number,
 }
 
 type RenderExercisePathSetProps = {
@@ -245,9 +246,12 @@ type GraphViewProps = GraphProps & {
 }
 
 // Pure view: renders whatever practice data it's given (see GraphPlayground)
-export const GraphView = ({ width, height, data }: GraphViewProps) => {
+export const GraphView = ({ width, height: fixedHeight, data }: GraphViewProps) => {
   // Read outside <Canvas>: context doesn't reliably reach Skia's renderer
   const { chart, chartBackground } = useContext(ThemeContext);
+
+  const [measuredHeight, setMeasuredHeight] = useState(0);
+  const height = fixedHeight ?? measuredHeight;
 
   const currentGraph = useMemo<GraphData>(
     () => new GraphGenerator().getGraph(width, height, data),
@@ -260,6 +264,10 @@ export const GraphView = ({ width, height, data }: GraphViewProps) => {
 
   return (
     <>
+      <View
+        style={[fixedHeight == null ? { flex: 1 } : { height: fixedHeight }, { backgroundColor: chartBackground }]}
+        onLayout={e => setMeasuredHeight(Math.floor(e.nativeEvent.layout.height))}>
+      {height > 0 ?
       <Canvas style={{ height: height, width: width, backgroundColor: chartBackground }}>
         {
           currentGraph.grids.length > 0 ?
@@ -273,7 +281,8 @@ export const GraphView = ({ width, height, data }: GraphViewProps) => {
           currentGraph.labels.length > 0 ?
             <RenderLabels labels={currentGraph.labels} index={next} /> : null
         }
-      </Canvas>
+      </Canvas> : null}
+      </View>
       <Legend width={width} />
       <Selection current={current} next={next} transition={transition} graphData={currentGraph} />
     </>

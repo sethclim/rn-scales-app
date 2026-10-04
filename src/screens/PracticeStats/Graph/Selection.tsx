@@ -15,21 +15,23 @@ import type { GraphData } from "./GraphBuilder";
 import { ThemeContext } from "../../../context/ThemeContext";
 
 // const buttonWidth = 98;
+const BUTTON_HEIGHT = 44;
+const RADIUS = 12;
 const styles = StyleSheet.create({
   root: {
     paddingHorizontal: 0,
     paddingBottom: 16,
   },
   container: {
-    borderRadius: 16,
+    borderRadius: RADIUS,
     flexDirection: "row",
   },
   button: {
-    height: 64,
+    height: BUTTON_HEIGHT,
     // width: buttonWidth,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 16,
+    borderRadius: RADIUS,
   },
   label: {
     // fontFamily: "Helvetica",
@@ -55,7 +57,7 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
   const [b_Width, setB_Width] = useState(98)
   // Mirrors next for text colour; both start on the first title
   const [selected, setSelected] = useState(0)
-  const { chartBackground, toggle } = useContext(ThemeContext)
+  const { toggle } = useContext(ThemeContext)
   
   const find_dimesions = (layout: any) => {
     const { x, y, width, height } = layout;
@@ -111,11 +113,11 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
   const getButtonStyle = () => {
     return StyleSheet.create({
       button: {
-        height: 64,
+        height: BUTTON_HEIGHT,
         width: b_Width,
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 16,
+        borderRadius: RADIUS,
       }
     })
   }
@@ -123,14 +125,14 @@ export const Selection = ({ current, next, transition, graphData }: SelectionPro
 
   return (
     <View style={styles.root}>
-      <View style={[styles.container, { backgroundColor: chartBackground }]} onLayout={(event) => { find_dimesions(event.nativeEvent.layout) }}>
+      <View style={[styles.container, { backgroundColor: toggle.track }]} onLayout={(event) => { find_dimesions(event.nativeEvent.layout) }}>
         <Canvas style={StyleSheet.absoluteFill}>
           <Group transform={transform}>
-            <RoundedRect x={0} y={0} height={64} width={b_Width} r={16}>
+            <RoundedRect x={0} y={0} height={BUTTON_HEIGHT} width={b_Width} r={RADIUS}>
               <LinearGradient
                 colors={toggle.gradient}
                 start={vec(0, 0)}
-                end={vec(b_Width, 64)}
+                end={vec(b_Width, BUTTON_HEIGHT)}
               />
             </RoundedRect>
           </Group>

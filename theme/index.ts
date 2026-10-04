@@ -9,13 +9,14 @@ export const lighttheme = {
   danger: '#BF616A',
   // Nord frost + aurora, one per exercise (scale, octave, arpeggio, solidChord, brokenChord)
   chart: ['#88C0D0', '#A3BE8C', '#EBCB8B', '#D08770', '#B48EAD'],
-  // Nord polar night at 80% so the aurora colours keep >= 3.5:1 contrast on the blue page
-  chartBackground: '#2E3440CC',
+  // Stats page and graph panel: Nord polar night 0
+  chartBackground: '#2E3440',
   // Week/Year toggle: frost gradient pill, polar night text on it, snow storm text off it
   toggle: {
     gradient: ['#88C0D0', '#81A1C1'],
     activeText: '#2E3440',
     text: '#ECEFF4',
+    track: '#3B4252', // polar night 1
   },
 };
 
@@ -30,11 +31,12 @@ export const toyoNightsTheme = {
   danger: '#f7768e',
   // Tokyo Night accents, one per exercise (scale, octave, arpeggio, solidChord, brokenChord)
   chart: ['#7dcfff', '#9ece6a', '#e0af68', '#f7768e', '#bb9af7'],
-  chartBackground: '#00000055',
+  chartBackground: '#1a1b26',
   toggle: {
     gradient: ['#7aa2f7', '#bb9af7'],
     activeText: '#1a1b26',
     text: '#c0caf5',
+    track: '#24283b', // Storm bg
   },
 };
 
@@ -50,11 +52,12 @@ export const rosePineTheme = {
   danger: '#eb6f92', // love
   // One per exercise (scale, octave, arpeggio, solidChord, brokenChord)
   chart: ['#9ccfd8', '#c4a7e7', '#f6c177', '#eb6f92', '#ebbcba'],
-  chartBackground: '#00000055',
+  chartBackground: '#191724', // base
   toggle: {
     gradient: ['#ebbcba', '#c4a7e7'],
     activeText: '#191724',
     text: '#e0def4',
+    track: '#26233a', // overlay
   },
 };
 
@@ -70,14 +73,13 @@ export const catppuccinLatteTheme = {
   danger: '#d20f39', // red
   // Latte's accents are tuned for light backgrounds, so the dark chart panel borrows Mocha's
   chart: ['#89dceb', '#a6e3a1', '#f9e2af', '#fab387', '#f5c2e7'],
-  // Mauve is too loud to fill the whole stats page like Nord's blue does,
-  // so the page stays on Latte base and the panel is solid Mocha base
+  // Mocha base: Latte's own base is too light for the pastel chart colours
   chartBackground: '#1e1e2e',
-  statsBackground: '#eff1f5',
   toggle: {
     gradient: ['#7287fd', '#8839ef'], // lavender -> mauve
     activeText: '#eff1f5',
     text: '#eff1f5',
+    track: '#313244', // Mocha surface0, a step up from the page
   },
 };
 
@@ -93,10 +95,11 @@ export const catppuccinMochaTheme = {
   danger: '#f38ba8', // red
   // One per exercise (scale, octave, arpeggio, solidChord, brokenChord)
   chart: ['#89dceb', '#a6e3a1', '#f9e2af', '#fab387', '#f5c2e7'],
-  chartBackground: '#00000055',
+  chartBackground: '#1e1e2e', // base
   toggle: {
     gradient: ['#89b4fa', '#cba6f7'], // blue -> mauve
     activeText: '#1e1e2e',
     text: '#cdd6f4',
+    track: '#313244', // surface0
   },
 };
