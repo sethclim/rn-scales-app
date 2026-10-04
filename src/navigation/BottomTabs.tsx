@@ -6,7 +6,6 @@ import {BottomTabNavigatorParamList} from './types';
 import Generate from '../screens/Generate';
 import SavedRoutines from '../screens/SavedRoutines/SavedRoutines';
 import PracticeStats  from '../screens/PracticeStats/PracticeStats'
-import { HomePage } from "../screens/HomePage"
 
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -75,24 +74,6 @@ const BottomTabs = () => {
                     tabBarActiveTintColor:primary,
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="folder" color={color} size={size} />
-                    ),
-              }}
-            />
-
-            <BottomTab.Screen name="HomePage" component={HomePage} 
-                options={{
-                    title: 'Home',
-                    headerStyle: {
-                        backgroundColor: headerBackground,
-                    },
-                    headerTintColor:  headerForeground,
-                    headerTitleStyle: {
-                        fontWeight: 'bold',
-                    },
-                    //tabBarInactiveTintColor:"#00ff00",
-                    tabBarActiveTintColor:primary,
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="home" color={color} size={size} />
                     ),
               }}
             />
