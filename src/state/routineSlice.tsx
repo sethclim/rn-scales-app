@@ -1,7 +1,8 @@
 import { log } from "../utils/logger";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "./store"
-import { ExerciseType, Exercises, Routine, RoutineItem } from "../data/Models/DataModels";
+import { Routine, RoutineItem } from "../data/Models/DataModels";
+import { buildRoutineItems } from "../data/routineOptions";
 import dbInstance from "../data/Database/database";
 
 export interface IRoutineState {
@@ -31,7 +32,7 @@ export const getAllRoutines = createAsyncThunk("routine/getAllRoutines", async()
   return res
 })
 
-export const saveRoutines = createAsyncThunk("routine/saveRoutine", async(options : [string, string[], string[], ExerciseType[]], { dispatch, getState }) => {
+export const saveRoutines = createAsyncThunk("routine/saveRoutine", async(options : [string, string[], string[], string[]], { dispatch, getState }) => {
   dispatch(routineSlice.actions.generateRoutine(options.slice(1, 4)));
   const state = getState() as RootState;
 
@@ -69,13 +70,8 @@ const routineSlice = createSlice({
         state.generatedRoutine = []
         log.debug(`Calling GenerateRoutine ${state.generatedRoutine} !`);
       
-        const roots = action.payload[0];
-        const types = action.payload[1];
-        const exercises = action.payload[2];
-        //const exType    = inputOptions[3];
-      
-        const results: Array<RoutineItem> = [];
-      
+        const [roots, types, exercises] = action.payload;
+
         // Inputs-------
         // C  D
         // Major Minor
@@ -83,28 +79,7 @@ const routineSlice = createSlice({
         //--------------
         //RESULT->
         // Cmaj scale, Cmin scale, Dmaj scale, Dmin scale,
-        for (var r = 0; r < roots.length; r++) {
-          for (var t = 0; t < types.length; t++) {
-            for (var e = 0; e < exercises.length; e++) {
-              const root = roots[r];
-              const type = types[t];
-              const exerciseType = exercises[e] as ExerciseType;
-      
-              var exerciseDisplay = Exercises.get(exerciseType);
-      
-              const result = `${root} ${type} ${exerciseDisplay}`;
-      
-              var routineItem: RoutineItem = {
-                displayItem: result,
-                exerciseType: exerciseType,
-              };
-              // routineItem.displayItem = result;
-              // routineItem.exerciseType = exerciseType;
-      
-              results.push(routineItem);
-            }
-          }
-        }
+        const results = buildRoutineItems({ roots, types, exercises });
         log.debug('Calling GenerateRoutine' + results.length);
         state.generatedRoutine = results;
         // Don't carry a task over from the previous routine

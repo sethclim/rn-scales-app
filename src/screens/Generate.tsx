@@ -3,12 +3,10 @@ import React, { FunctionComponent, useContext, useEffect, useLayoutEffect, useSt
 
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigatorParamList } from "../navigation/types";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { ExerciseType, Exercises } from "../data/Models/DataModels";
+import { BottomTabNavigationProp, useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
-import { Box, } from "../native_blocks/primatives/Box";
 import { VStack, HStack } from "../native_blocks/";
-import { Modal, Alert, Text, Pressable, TextInput } from "react-native";
+import { Modal, Alert, Text, Pressable, TextInput, ScrollView, StyleSheet, View } from "react-native";
 
 import { TextButton } from "../components/TextButton";
 
@@ -25,11 +23,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {
     ACCIDENTAL_ROOTS,
+    EXERCISE_GROUPS,
+    EXERCISE_OPTIONS,
     NATURAL_ROOTS,
     SCALE_TYPES,
+    TYPE_GROUPS,
     getSaveRoutineError,
+    getSelectionError,
     getSelections,
-    isValidRoutineConfiguration,
 } from "../data/routineOptions";
 
 const Generate = () => {
@@ -38,9 +39,11 @@ const Generate = () => {
 
     const [showModal, setShowModal] = useState(false);
 
-    const { background, primary, onPrimary, secondaryBackground, requestTheme } = useContext(ThemeContext);
+    const { background, primary, onPrimary, text, requestTheme } = useContext(ThemeContext);
 
     const dispatch = useAppDispatch()
+
+    const tabBarHeight = useBottomTabBarHeight()
 
     const readTheme = async () => {
         try {
@@ -77,14 +80,15 @@ const Generate = () => {
 
     const StartRoutine = () => {
         const { roots, types, exercises } = getSelections(manageRoots, manageTypes, manageExercise)
+        const error = getSelectionError({ roots, types, exercises })
 
-        if (isValidRoutineConfiguration({ roots, types, exercises }))
+        if (error == null)
         {    
             dispatch(generateRoutine([roots, types, exercises]))
             navigation.navigate('Practice')
         }
         else
-            showAlert('Pick at least one root, type and exercise.')
+            showAlert(error)
     }
 
     const SaveRoutine = (saveName : string) => {
@@ -108,8 +112,8 @@ const Generate = () => {
     const cancelRef = React.useRef(null);
 
     const [manageRoots, setManageRoots] = useState([true, true, true, true, true, true, true, false, false, false, false, false])
-    const [manageTypes, setManageTypes] = useState([false, false, false, false])
-    const [manageExercise, setManageExercise] = useState([false, false, false, false, false])
+    const [manageTypes, setManageTypes] = useState(() => SCALE_TYPES.map(() => false))
+    const [manageExercise, setManageExercise] = useState(() => EXERCISE_OPTIONS.map(() => false))
 
     const onClickNaturalRoot = (index : number, root : string) => {
         let temp = [...manageRoots];
@@ -123,7 +127,7 @@ const Generate = () => {
         setManageTypes(temp)
     }
 
-    const onClickSelectExercise = (index : number, exercise : ExerciseType) => {
+    const onClickSelectExercise = (index : number) => {
         let temp = [...manageExercise];
         temp[index] = !temp[index]
         setManageExercise(temp)
@@ -150,10 +154,12 @@ const Generate = () => {
         );
 
     return (
-        <Box flexMain={true} p={1} style={{backgroundColor: background!}}> 
+        <View style={{ flex: 1, backgroundColor: background! }}>
 
-            <VStack mAll={{t: -60}} align="center" justifyContent="center" >
-                <Card height={120} padding={10}>
+            {/* The tab bar floats over the screen, so pad the end to scroll Start clear of it */}
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: 10, paddingBottom: tabBarHeight + 10 }}>
+            <VStack flexMain={false} align="center" justifyContent="center" >
+                <Card padding={10}>
                     <Text style={{color : primary, fontSize: 18, fontWeight: "700", marginBottom: 4}}>Roots</Text>
                         <VStack gap={6} pVH={{v: 4}} >
                             <HStack colGap={4}>
@@ -188,47 +194,68 @@ const Generate = () => {
                 </Card>
                 
                 {/* borderRadius="5" rounded="md"  maxWidth="100%" shadow={9} */}
-                <Card height={120} padding={10}>
+                <Card padding={10}>
                     <Text style={{color : primary, fontSize: 18, fontWeight: "700", marginBottom: 4}}>Type</Text>
-                        <HStack colGap={14} rowGap={8} flexWrap="wrap" pVH={{v: 4}} >
-                        {
-                            SCALE_TYPES.map( (scaleType, i) => { return (
-                                <CheckBox 
-                                    checkMark={check} 
-                                    iconSize={20} 
-                                    iconColor={onPrimary} 
-                                    key={i} 
-                                    onPress={() => onClickSelectType(i)} 
-                                    checked={manageTypes[i]} 
-                                    title={scaleType} />
-                            )})
-                        }
-                        </HStack>
+                    {
+                        TYPE_GROUPS.map(group => (
+                            <VStack key={group.title} flexMain={false} align="stretch" pVH={{v: 4}}>
+                                <Text style={{color : text, fontSize: 13, fontWeight: "600", opacity: 0.7, textAlign: "left", paddingBottom: 2, marginBottom: 6, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: text + "66"}}>{group.title}</Text>
+                                <HStack flexMain={false} colGap={14} rowGap={8} flexWrap="wrap" justifyContent="flex-start">
+                                {
+                                    group.types.map(scaleType => {
+                                        const i = SCALE_TYPES.indexOf(scaleType)
+                                        return (
+                                            <CheckBox 
+                                                checkMark={check} 
+                                                iconSize={20} 
+                                                iconColor={onPrimary} 
+                                                key={scaleType} 
+                                                onPress={() => onClickSelectType(i)} 
+                                                checked={manageTypes[i]} 
+                                                title={scaleType} />
+                                        )
+                                    })
+                                }
+                                </HStack>
+                            </VStack>
+                        ))
+                    }
                 </Card>
 
-                <Card height={120} padding={10}>
+                <Card padding={10}>
                     <Text style={{color : primary, fontSize: 18, fontWeight: "700", marginBottom: 4}}>Exercise</Text>
-                        <HStack colGap={14} rowGap={8} flexWrap="wrap" pVH={{v: 4}} >
-                        {
-                            [...Exercises.keys()].map((exerciseType, i) => {
-                                  return  <CheckBox 
-                                            key={i} 
-                                            iconColor={onPrimary} 
-                                            checkMark={check} 
-                                            iconSize={20} 
-                                            onPress={() => onClickSelectExercise(i, exerciseType)}  
-                                            checked={manageExercise[i]}   
-                                            title={Exercises.get(exerciseType)!} />
-                            })
-                        }
-                        </HStack>
+                    {
+                        EXERCISE_GROUPS.map(group => (
+                            <VStack key={group.title} flexMain={false} align="stretch" pVH={{v: 4}}>
+                                <Text style={{color : text, fontSize: 13, fontWeight: "600", opacity: 0.7, textAlign: "left", paddingBottom: 2, marginBottom: 6, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: text + "66"}}>{group.title}</Text>
+                                <HStack flexMain={false} colGap={14} rowGap={8} flexWrap="wrap" justifyContent="flex-start">
+                                {
+                                    group.exercises.map(exercise => {
+                                        const i = EXERCISE_OPTIONS.indexOf(exercise)
+                                        return (
+                                            <CheckBox 
+                                                key={exercise.id} 
+                                                iconColor={onPrimary} 
+                                                checkMark={check} 
+                                                iconSize={20} 
+                                                onPress={() => onClickSelectExercise(i)}  
+                                                checked={manageExercise[i]}   
+                                                title={exercise.label} />
+                                        )
+                                    })
+                                }
+                                </HStack>
+                            </VStack>
+                        ))
+                    }
                 </Card>
-
-                <HStack flexMain={false} mAll={{t:10, l:20, r:20}} align="center">
-                    <TextButton titles="Start" onPress={() => StartRoutine()} style={{flex: 1}} />
-                </HStack>
 
             </VStack>
+
+            <View style={{ paddingTop: 10, paddingHorizontal: 20 }}>
+                <TextButton titles="Start" onPress={() => StartRoutine()} />
+            </View>
+            </ScrollView>
 
             {/* <AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
                 <AlertDialog.Content>
@@ -242,7 +269,7 @@ const Generate = () => {
 
             <SaveModal showModal={showModal} setShowModal={setShowModal} save={SaveRoutine} />
 
-        </Box>
+        </View>
     )
 }
 

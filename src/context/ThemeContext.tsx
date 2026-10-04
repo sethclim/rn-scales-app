@@ -11,8 +11,10 @@ export type ThemeContextType = {
   text : string;
   danger : string;
   chart : string[];
+  // Solid fill for the whole stats page, graph and legend
   chartBackground : string;
-  toggle : { gradient: string[], activeText: string, text: string };
+  // track: fill behind the Week/Year pill, a step off chartBackground
+  toggle : { gradient: string[], activeText: string, text: string, track: string };
   requestTheme: (theme : string) => void;
   mode : string;
 };
@@ -27,8 +29,8 @@ const defaultThemeContext : ThemeContextType = {
   text : '#2E3440',
   danger : '#BF616A',
   chart : [],
-  chartBackground : '#00000055',
-  toggle : { gradient: ['#31CBD1', '#61E0A1'], activeText: 'black', text: 'white' },
+  chartBackground : '#2E3440',
+  toggle : { gradient: ['#31CBD1', '#61E0A1'], activeText: 'black', text: 'white', track: '#3B4252' },
   requestTheme: () => {},
   mode : 'light'
 }

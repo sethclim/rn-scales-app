@@ -3,7 +3,7 @@ import { Box } from '../native_blocks/primatives/Box';
 import { withStyle } from '../native_blocks/hoc/WithStyle';
 
 type CardProps = {
-    height: number
+    height?: number
     padding: number
     style?: {}
     children?: React.ReactNode

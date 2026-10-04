@@ -1,7 +1,8 @@
 import {
   ALL_ROOTS,
-  EXERCISE_TYPES,
+  EXERCISE_IDS,
   SCALE_TYPES,
+  buildRoutineItems,
   getSaveRoutineError,
   getSelections,
   isValidRoutineConfiguration,
@@ -13,7 +14,7 @@ const only = (n: number, ...indexes: number[]) =>
 
 const ROOTS = ALL_ROOTS.length;
 const TYPES = SCALE_TYPES.length;
-const EXERCISES = EXERCISE_TYPES.length;
+const EXERCISES = EXERCISE_IDS.length;
 
 describe('getSelections', () => {
   it('maps natural root checkboxes to note names', () => {
@@ -35,9 +36,9 @@ describe('getSelections', () => {
   });
 
   it('maps exercise checkboxes to exercise types', () => {
-    const s = getSelections(none(ROOTS), none(TYPES), only(EXERCISES, 0, 4));
+    const s = getSelections(none(ROOTS), none(TYPES), only(EXERCISES, 0, 5));
 
-    expect(s.exercises).toEqual(['scale', 'brokenChord']);
+    expect(s.exercises).toEqual(['scale', 'brokenOctave']);
   });
 
   it('selects everything when everything is checked', () => {
@@ -46,13 +47,7 @@ describe('getSelections', () => {
 
     expect(s.roots).toEqual(ALL_ROOTS);
     expect(s.types).toEqual(SCALE_TYPES);
-    expect(s.exercises).toEqual([
-      'scale',
-      'octave',
-      'arpeggio',
-      'solidChord',
-      'brokenChord',
-    ]);
+    expect(s.exercises).toEqual(EXERCISE_IDS);
   });
 
   it("matches the Generate screen's default checkboxes", () => {
@@ -64,8 +59,52 @@ describe('getSelections', () => {
   });
 });
 
+describe('buildRoutineItems', () => {
+  const build = (types: string[], exercises: string[]) =>
+    buildRoutineItems({roots: ['C'], types, exercises}).map(i => i.displayItem);
+
+  it('skips combinations that do not make sense', () => {
+    expect(build(['Dorian', 'Dominant 7th'], ['scale', 'arpeggio'])).toEqual([
+      'C Dorian Scale',
+      'C Dominant 7th Arpeggio',
+    ]);
+  });
+
+  it('only offers major and minor progressions', () => {
+    expect(build(['Major', 'Minor', 'Augmented'], ['chordProgression'])).toEqual([
+      'C Major I-IV-V-I Progression',
+      'C Minor I-IV-V-I Progression',
+    ]);
+  });
+
+  it('uses the long name for scale variations', () => {
+    expect(
+      build(['Harmonic Minor'], ['contraryScale', 'scaleThirds', 'brokenOctave']),
+    ).toEqual([
+      'C Harmonic Minor Scale in Contrary Motion',
+      'C Harmonic Minor Scale in Thirds',
+      'C Harmonic Minor Broken Octaves',
+    ]);
+  });
+
+  it('counts new exercises towards their stats family', () => {
+    const items = buildRoutineItems({
+      roots: ['C'],
+      types: ['Major'],
+      exercises: ['scaleSixths', 'brokenOctave', 'chordInversions'],
+    });
+
+    expect(items.map(i => i.exerciseType)).toEqual(['scale', 'octave', 'solidChord']);
+  });
+
+  it('every type works with at least one exercise', () => {
+    for (const type of SCALE_TYPES)
+      expect(build([type], EXERCISE_IDS).length).toBeGreaterThan(0);
+  });
+});
+
 describe('isValidRoutineConfiguration', () => {
-  const valid = {roots: ['C'], types: ['Major'], exercises: ['scale' as const]};
+  const valid = {roots: ['C'], types: ['Major'], exercises: ['scale']};
 
   it('accepts at least one of each', () => {
     expect(isValidRoutineConfiguration(valid)).toBe(true);
@@ -80,7 +119,7 @@ describe('isValidRoutineConfiguration', () => {
 });
 
 describe('getSaveRoutineError', () => {
-  const valid = {roots: ['C'], types: ['Major'], exercises: ['scale' as const]};
+  const valid = {roots: ['C'], types: ['Major'], exercises: ['scale']};
 
   it('allows a named, valid routine', () => {
     expect(getSaveRoutineError('Warmup', valid)).toBeNull();
@@ -94,5 +133,11 @@ describe('getSaveRoutineError', () => {
     expect(getSaveRoutineError('Warmup', {...valid, roots: []})).toMatch(
       /root, type and exercise/,
     );
+  });
+
+  it('needs at least one combination that makes sense', () => {
+    expect(
+      getSaveRoutineError('Warmup', {...valid, types: ['Dorian'], exercises: ['arpeggio']}),
+    ).toMatch(/go with/);
   });
 });

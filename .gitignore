@@ -71,3 +71,6 @@ web-build/
 # Store credentials (EAS Submit)
 play-service-account.json
 *.p8
+
+
+scales-app-01-*.json
